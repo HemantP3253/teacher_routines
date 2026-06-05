@@ -1,0 +1,14 @@
+import { CustomSvgProps } from "@/interfaces/interfaces";
+import Svg, { Path } from "react-native-svg";
+
+const ClassIcon = (props: CustomSvgProps) => (
+  <Svg width={24} height={24} viewBox="0 -960 960 960" {...props}>
+    {props.fillItem ? (
+      <Path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h480q33 0 56.5 23.5T800-800v640q0 33-23.5 56.5T720-80H240Zm200-440 100-60 100 60v-280H440v280Z" />
+    ) : (
+      <Path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h480q33 0 56.5 23.5T800-800v640q0 33-23.5 56.5T720-80H240Zm0-80h480v-640h-80v280l-100-60-100 60v-280H240v640Zm0 0v-640 640Zm200-360 100-60 100 60-100-60-100 60Z" />
+    )}
+  </Svg>
+);
+
+export default ClassIcon;
