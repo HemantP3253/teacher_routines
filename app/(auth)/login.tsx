@@ -12,8 +12,9 @@ import { useLogInForm } from "@/hooks/useLogInForm";
 import { supabase } from "@/services/supabase";
 import { checkLogInFormValidity } from "@/utils/validationUtils";
 import { useRouter } from "expo-router";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Keyboard,
   ScrollView,
   StatusBar,
@@ -22,7 +23,6 @@ import {
 } from "react-native";
 
 const landing = () => {
-  const router = useRouter();
   const {
     logInData,
     setLogInData,
@@ -30,8 +30,10 @@ const landing = () => {
     logInError,
     handleInputChange,
   } = useLogInForm();
-  const passwordRef = useRef<TextInput>(null);
   const { colors } = useAppTheme().theme;
+  const passwordRef = useRef<TextInput>(null);
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   return (
     <ThemedView style={styles.rootContainer}>
@@ -40,7 +42,7 @@ const landing = () => {
         <Spacer size={8} />
 
         <ThemedText type="baseContent" style={styles.headingText}>
-          {logInData.userType} Login
+          Login
         </ThemedText>
 
         <Spacer size={8} />
@@ -76,45 +78,39 @@ const landing = () => {
         <Spacer size={8} />
 
         <ThemedPressable
+          disabled={isSubmitting}
           onPress={async () => {
             if (!checkLogInFormValidity(logInData, setLogInError, setLogInData))
               return;
-            const { error } = await supabase.auth.signInWithPassword({
-              email: logInData.usernameOrEmail,
-              password: logInData.password,
-            });
 
-            if (error) {
-              setLogInError({
-                usernameOrEmail: error.message,
-                password: error.message,
+            setIsSubmitting(true);
+
+            try {
+              const { data, error } = await supabase.auth.signInWithPassword({
+                email: logInData.usernameOrEmail,
+                password: logInData.password,
               });
-            }
 
-            if (!error) {
-              logInData.userType === "User"
-                ? router.navigate("/(user)/home")
-                : router.navigate("/(admin)/home"); // Change to router.replace("/(tabs)/home")
+              if (error) {
+                setLogInError({
+                  usernameOrEmail: error.message,
+                  password: error.message,
+                });
+                setIsSubmitting(false); // Only reset if there's an error
+              }
+              // DO NOT reset isSubmitting if success; let the navigation handle it
+            } catch (e) {
+              setIsSubmitting(false);
             }
           }}
         >
-          <ThemedText type="primaryContent" style={styles.pressableText}>
-            Log In
-          </ThemedText>
-        </ThemedPressable>
-
-        <Spacer size={12} />
-        <ThemedPressable
-          onPress={() => {
-            setLogInData((prev) => ({
-              ...prev,
-              userType: logInData.userType === "Admin" ? "User" : "Admin",
-            }));
-          }}
-        >
-          <ThemedText type="primaryContent" style={styles.pressableText}>
-            {logInData.userType === "Admin" ? "User" : "Admin"} Log In
-          </ThemedText>
+          {isSubmitting ? (
+            <ActivityIndicator size={"small"} color={colors.primaryContent} />
+          ) : (
+            <ThemedText type="primaryContent" style={styles.pressableText}>
+              Log In
+            </ThemedText>
+          )}
         </ThemedPressable>
 
         <Spacer size={20} lineVisible />

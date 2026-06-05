@@ -291,8 +291,6 @@ const signUp = () => {
                   );
                   return;
                 }
-
-                console.log("User and profile registered successfully");
               } catch (error: any) {
                 console.error("Signup Error (in signUp.tsx): ", error.message);
               }

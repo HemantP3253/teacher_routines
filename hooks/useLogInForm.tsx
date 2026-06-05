@@ -6,7 +6,7 @@ export const useLogInForm = () => {
   const [logInData, setLogInData] = useState<LogInProps>({
     usernameOrEmail: "",
     password: "",
-    userType: "User",
+    is_admin: false,
     error: false,
   });
 

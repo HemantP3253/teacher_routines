@@ -136,7 +136,7 @@ interface SignUpErrorProps {
 interface LogInProps {
   usernameOrEmail: string;
   password: string;
-  userType: userType;
+  is_admin: boolean;
   error?: boolean;
 }
 
@@ -295,7 +295,7 @@ interface UserProfileProps {
   is_admin: boolean;
   approved_by: string[] | null;
   rejected_by: string[] | null;
-  created_at: string;
+  created_at?: string;
 }
 
 interface ChooseTimeComponentProps {

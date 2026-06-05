@@ -1,6 +1,6 @@
 import { getAllDegreeNames } from "@/data/degreeDataTU";
 import { DynamicRoutineDetails } from "@/interfaces/interfaces";
-import { AppStorage } from "@/utils/storage"; // Import your typed MMKV helper
+import { storage } from "@/utils/storage";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 interface AppSettings {
@@ -36,7 +36,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   userRole: "user",
 };
 
-// 1. Define a clean key name matching your AppStorage typing if needed
+// 1. Define a clean key name matching your storage typing if needed
 const STORAGE_KEY = "user_theme_preference"; // Or add a generic 'app_settings' key to your StorageKeys type
 
 interface AppContextType {
@@ -55,7 +55,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   // There is zero layout pop or waiting for loading states!
   const [settings, setSettings] = useState<AppSettings>(() => {
     // We reuse our setObject/getObject implementation logic using our raw key string
-    const cached = AppStorage.getObject<Partial<AppSettings>>(
+    const cached = storage.getObject<Partial<AppSettings>>(
       "user_theme_preference" as any,
     );
     if (cached) {
@@ -85,7 +85,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setSettings(updatedSettings);
 
     // Save to MMKV completely synchronously
-    AppStorage.setObject("user_theme_preference" as any, updatedSettings);
+    storage.setObject("user_theme_preference" as any, updatedSettings);
   };
 
   return (

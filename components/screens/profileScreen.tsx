@@ -10,11 +10,9 @@ import {
 } from "@/assets/icons";
 import { ThemedStatusBar, ThemedText, ThemedView } from "@/components/themed";
 import { useAppTheme } from "@/contexts/ThemeContext";
-import { UserProfileProps } from "@/interfaces/interfaces";
-import { getCurrentUserId, getUserProfileById } from "@/services/authService";
+import { useUserInfo } from "@/contexts/UserInfoContext";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -24,75 +22,28 @@ import {
 } from "react-native";
 
 const UserProfileScreen = () => {
-  const [userInfo, setUserInfo] = useState<UserProfileProps>({
-    id: "",
-    username: "",
-    full_name: "",
-    date_of_birth: "",
-    colleges: [],
-    gender: "",
-    phone: "",
-    avatar_url: "",
-    is_admin: false,
-    approved_by: [],
-    address: "",
-    rejected_by: [],
-  });
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { userInfo, isLoading, refreshUser } = useUserInfo();
   const { theme } = useAppTheme();
   const colors = theme.colors;
   const router = useRouter();
 
-  useEffect(() => {
-    const getUserProfile = async () => {
-      try {
-        const userId = await getCurrentUserId();
-        if (!userId) {
-          console.error("No authenticated user session");
-          setIsLoading(false);
-          return;
-        }
-
-        const profileData = await getUserProfileById(userId);
-
-        if (profileData) {
-          setUserInfo({
-            id: userId,
-            username: profileData.username,
-            full_name: profileData.full_name,
-            date_of_birth: profileData.date_of_birth,
-            colleges: profileData.colleges,
-            gender: profileData.gender,
-            address: profileData.address,
-            phone: profileData.phone,
-            avatar_url: profileData.avatar_url,
-            is_admin: !!profileData.is_admin,
-            approved_by: profileData.approved_by,
-            rejected_by: profileData.rejected_by,
-          });
-        }
-
-        setIsLoading(false);
-      } catch (error: any) {
-        console.error("Error while getting profiles: ", error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getUserProfile();
-  }, []);
-
   if (isLoading)
     return (
-      <ThemedView style={StyleSheet.absoluteFill}>
+      <ThemedView
+        style={[
+          StyleSheet.absoluteFill,
+          { alignItems: "center", justifyContent: "center" },
+        ]}
+      >
         <ActivityIndicator
           animating
-          style={{ flex: 1, backgroundColor: "#000000" }}
+          style={{ flex: 1, backgroundColor: colors.primary }}
           size="large"
         />
       </ThemedView>
     );
+
+  if (!userInfo) return <ThemedText>No user info available.</ThemedText>;
 
   return (
     <ThemedView style={{ flex: 1, paddingTop: StatusBar.currentHeight }}>
