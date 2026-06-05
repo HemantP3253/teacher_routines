@@ -12,8 +12,6 @@ export default appSchema({
         { name: "address", type: "string" },
         { name: "authorized_users", type: "string" },
         { name: "available_faculties", type: "string" },
-        { name: "created_at", type: "number" },
-        { name: "updated_at", type: "number" },
       ],
     }),
 
@@ -31,8 +29,6 @@ export default appSchema({
         { name: "colleges", type: "string", isOptional: true },
         { name: "approved_by", type: "string", isOptional: true },
         { name: "rejected_by", type: "string", isOptional: true },
-        { name: "created_at", type: "number" },
-        { name: "updated_at", type: "number" },
       ],
     }),
 
@@ -46,8 +42,6 @@ export default appSchema({
         { name: "start_time", type: "string" },
         { name: "duration", type: "string" },
         { name: "remarks", type: "string", isOptional: true },
-        { name: "created_at", type: "number" },
-        { name: "updated_at", type: "number" },
       ],
     }),
   ],
