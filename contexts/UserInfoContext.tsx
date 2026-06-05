@@ -25,27 +25,31 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getCurrentUserProfile = useCallback(async () => {
+    setIsLoading(true); // Force start
     try {
       const {
-        data: { user: authUser },
+        data: { user },
       } = await supabase.auth.getUser();
 
-      if (!authUser) {
+      if (!user) {
         setCachedUserInfo(null);
+        setIsLoading(false);
         return;
       }
 
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", authUser.id)
-        .single();
+        .eq("id", user.id)
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
-      setCachedUserInfo(data || null);
-    } catch (error: any) {
-      console.error("Error while getting current user: ", error.message);
+      setCachedUserInfo(data);
+    } catch (err) {
+      setCachedUserInfo(null);
     } finally {
       setIsLoading(false);
     }
@@ -54,6 +58,22 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     getCurrentUserProfile();
 
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        getCurrentUserProfile();
+      }
+      if (event === "SIGNED_OUT") {
+        setCachedUserInfo(null);
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [getCurrentUserProfile]);
+
+  useEffect(() => {
     if (!cachedUserInfo?.id) return;
 
     const channelInstanceId = `user-row-sync-${cachedUserInfo.id}`;
@@ -69,8 +89,9 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
           filter: `id=eq.${cachedUserInfo.id}`,
         },
         (payload) => {
-          const updatedRecord = payload.new as UserProfileProps;
-          if (updatedRecord) setCachedUserInfo(updatedRecord);
+          if (JSON.stringify(payload.new) !== JSON.stringify(cachedUserInfo)) {
+            setCachedUserInfo(payload.new as UserProfileProps);
+          }
         },
       )
       .subscribe();
@@ -78,7 +99,7 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       supabase.removeChannel(profileSubscription);
     };
-  }, [getCurrentUserProfile, cachedUserInfo?.id]);
+  }, [cachedUserInfo?.id]);
 
   const contextValue = useMemo(
     () => ({

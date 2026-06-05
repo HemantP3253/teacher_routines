@@ -17,7 +17,6 @@ export const getProfilesByStatus = async (
     baseQuery = baseQuery
       .or(`approved_by.is.null,approved_by.not.cs.{${collegeCode}}`)
       .or(`rejected_by.is.null,rejected_by.not.cs.{${collegeCode}}`);
-    console.log(baseQuery);
   } else if (userStatus === "approved") {
     baseQuery = baseQuery.contains("approved_by", [collegeCode]);
   } else if (userStatus === "rejected") {
@@ -118,94 +117,3 @@ export const userAction = async (
     );
   }
 };
-
-// export const onApprove = async (userData: UserProfileProps) => {
-//   try {
-//     const currentApprovals = userData?.approved_by || [];
-//     const updatedApprovals = [...new Set([...currentApprovals, collegeCode])];
-//     const currentRejections = userData?.rejected_by || [];
-//     const updatedRejections = currentRejections.filter(
-//       (code) => code !== currentCollege?.college_code,
-//     );
-
-//     const { error } = await supabase
-//       .from("profiles")
-//       .update({
-//         approved_by: updatedApprovals ,
-//         rejected_by: updatedRejections.length > 0 ? updatedRejections : null,
-//       })
-//       .eq("id", userData.id);
-
-//     if (error) {
-//       console.error("Error while updating user profile: ", error.message);
-//       return;
-//     }
-//   } catch (error: any) {
-//     console.error(
-//       "Unexpected error while approving user profile: ",
-//       error.message,
-//     );
-//   }
-// };
-
-// export const onReject = async (userData: UserProfileProps) => {
-//   try {
-//     const { currentCollege } = useCollegeInfo() || "";
-//     const currentRejections = userData?.rejected_by || [];
-//     const updatedRejections = [
-//       ...new Set([...currentRejections, currentCollege?.college_code]),
-//     ];
-//     const currentApprovals = userData?.approved_by || [];
-//     const updatedApprovals = currentApprovals.filter(
-//       (code) => code !== currentCollege?.college_code,
-//     );
-//     const { error } = await supabase
-//       .from("profiles")
-//       .update({
-//         rejected_by: updatedRejections,
-//         approved_by: updatedApprovals.length > 0 ? updatedApprovals : null,
-//       })
-//       .eq("id", userData.id);
-
-//     if (error) {
-//       console.error("Error while updating user profile: ", error.message);
-//       return;
-//     }
-//   } catch (error: any) {
-//     console.error(
-//       "Unexpected error while approving user profile: ",
-//       error.message,
-//     );
-//   }
-// };
-
-// export const onClear = async (userData: UserProfileProps) => {
-//   try {
-//     const { currentCollege } = useCollegeInfo() || "";
-//     const currentRejections = userData?.rejected_by || [];
-//     const updatedRejections = currentRejections.filter(
-//       (code) => code !== currentCollege?.college_code,
-//     );
-//     const currentApprovals = userData?.approved_by || [];
-//     const updatedApprovals = currentApprovals.filter(
-//       (code) => code !== currentCollege?.college_code,
-//     );
-//     const { error } = await supabase
-//       .from("profiles")
-//       .update({
-//         rejected_by: updatedRejections.length > 0 ? updatedRejections : null,
-//         approved_by: updatedApprovals.length > 0 ? updatedApprovals : null,
-//       })
-//       .eq("id", userData.id);
-
-//     if (error) {
-//       console.error("Error while updating user profile: ", error.message);
-//       return;
-//     }
-//   } catch (error: any) {
-//     console.error(
-//       "Unexpected error while approving user profile: ",
-//       error.message,
-//     );
-//   }
-// };

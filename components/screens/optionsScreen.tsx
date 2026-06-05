@@ -25,8 +25,6 @@ const OptionsScreen = ({ type }: { type?: "admin" | "user" }) => {
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error("Error logging out: ", error.message);
-      } else {
-        console.log("Logged out successfully");
       }
     } catch (error) {
       console.error("Unexpected error while logging out: ", error);
@@ -44,12 +42,14 @@ const OptionsScreen = ({ type }: { type?: "admin" | "user" }) => {
         Icon={DarkModeIcon}
         label={"Dark Mode"}
       />
-      <ThemedOptionsCard
-        Icon={DegreeIcon}
-        label="Selected Degrees"
-        onPress={() => setModalVisible(true)}
-        description={`${settings.shownDegrees.length > 0 ? settings.shownDegrees.join(", ") : "All"}`}
-      />
+      {type === "admin" && (
+        <ThemedOptionsCard
+          Icon={DegreeIcon}
+          label="Selected Degrees"
+          onPress={() => setModalVisible(true)}
+          description={`${settings.shownDegrees.length > 0 ? settings.shownDegrees.join(", ") : "All"}`}
+        />
+      )}
 
       <CustomModal
         modalVisible={modalVisible}
