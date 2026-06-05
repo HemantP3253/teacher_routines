@@ -22,11 +22,10 @@ export default class Profile extends Model {
   @field("is_admin") is_admin!: boolean;
   @text("address") address?: string;
 
-  // 🟢 Array-to-JSON fields
   @json("colleges", sanitizeArray) colleges!: string[];
   @json("approved_by", sanitizeArray) approved_by!: string[];
   @json("rejected_by", sanitizeArray) rejected_by!: string[];
 
-  @readonly @date("created_at") created_at!: number;
-  @readonly @date("updated_at") updated_at!: number;
+  @readonly @date("created_at") created_at!: Date;
+  @readonly @date("updated_at") updated_at!: Date;
 }
