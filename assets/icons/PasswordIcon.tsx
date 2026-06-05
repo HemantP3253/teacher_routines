@@ -1,0 +1,9 @@
+import Svg, { Path, SvgProps } from "react-native-svg";
+
+const PasswordIcon = (props: SvgProps) => (
+  <Svg width={24} height={24} viewBox="0 -960 960 960" {...props}>
+    <Path d="M160-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM80-200v-80h800v80H80Zm315-275q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm320 0q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Z" />
+  </Svg>
+);
+
+export default PasswordIcon;
