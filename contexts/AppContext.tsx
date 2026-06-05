@@ -1,13 +1,7 @@
 import { getAllDegreeNames } from "@/data/degreeDataTU";
 import { DynamicRoutineDetails } from "@/interfaces/interfaces";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { AppStorage } from "@/utils/storage"; // Import your typed MMKV helper
+import { createContext, ReactNode, useContext, useState } from "react";
 
 interface AppSettings {
   shownDegrees: string[];
@@ -42,69 +36,56 @@ const DEFAULT_SETTINGS: AppSettings = {
   userRole: "user",
 };
 
-const STORAGE_KEY = "@app_global_settings";
+// 1. Define a clean key name matching your AppStorage typing if needed
+const STORAGE_KEY = "user_theme_preference"; // Or add a generic 'app_settings' key to your StorageKeys type
 
 interface AppContextType {
   settings: AppSettings;
   updateSetting: <K extends keyof AppSettings>(
     key: K,
     value: AppSettings[K],
-  ) => Promise<void>;
+  ) => void; // Changed from Promise<void> to void because MMKV is synchronous
   allAvailableDegrees: string[];
-  isLoading: boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  // 2. Load settings SYNCHRONOUSLY directly inside the initial state initializer.
+  // There is zero layout pop or waiting for loading states!
+  const [settings, setSettings] = useState<AppSettings>(() => {
+    // We reuse our setObject/getObject implementation logic using our raw key string
+    const cached = AppStorage.getObject<Partial<AppSettings>>(
+      "user_theme_preference" as any,
+    );
+    if (cached) {
+      return {
+        ...DEFAULT_SETTINGS,
+        ...cached,
+        routineTimeOptions:
+          cached.routineTimeOptions || DEFAULT_SETTINGS.routineTimeOptions,
+        shownDegrees: cached.shownDegrees || DEFAULT_SETTINGS.shownDegrees,
+      };
+    }
+    return DEFAULT_SETTINGS;
+  });
+
   const allAvailableDegrees = getAllDegreeNames();
 
-  useEffect(() => {
-    const bootstrapSettings = async () => {
-      try {
-        const rawJson = await AsyncStorage.getItem(STORAGE_KEY);
-        if (rawJson) {
-          const parsed = JSON.parse(rawJson);
-
-          setSettings((prev) => ({
-            ...prev,
-            ...parsed,
-            routineTimeOptions:
-              parsed.routineTimeOptions || prev.routineTimeOptions,
-            shownDegrees: parsed.shownDegrees || prev.shownDegrees,
-          }));
-        }
-      } catch (error: any) {
-        console.error("Failed to load app settings from disk: ", error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    bootstrapSettings();
-  }, []);
-
-  const updateSetting = async <K extends keyof AppSettings>(
+  // 3. Update settings synchronously
+  const updateSetting = <K extends keyof AppSettings>(
     key: K,
     value: AppSettings[K],
   ) => {
-    try {
-      const updatedSettings = {
-        ...settings,
-        [key]: value,
-      };
+    const updatedSettings = {
+      ...settings,
+      [key]: value,
+    };
 
-      setSettings(updatedSettings);
+    setSettings(updatedSettings);
 
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSettings));
-    } catch (error: any) {
-      console.error(
-        `Failed to persist setting updates for key: ${key} `,
-        error.message,
-      );
-    }
+    // Save to MMKV completely synchronously
+    AppStorage.setObject("user_theme_preference" as any, updatedSettings);
   };
 
   return (
@@ -113,7 +94,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         settings,
         updateSetting,
         allAvailableDegrees,
-        isLoading,
       }}
     >
       {children}
