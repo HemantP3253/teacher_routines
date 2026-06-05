@@ -5,13 +5,7 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "env": {
-        "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
-      },
-      "android": {
-        "gradleCommand": ":app:assembleDevelopmentDebug"
-      }
+      "distribution": "internal"
     },
     "preview": {
       "distribution": "internal"
