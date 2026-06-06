@@ -351,6 +351,16 @@ interface ThemedCheckboxProps<T> {
   title?: string;
   data: T[];
   initialSelection?: string[];
+  onSelect?: (selected: string) => void;
+  getId: (item: T) => string;
+  getLabel: (item: T) => string;
+  getSubLabel?: (item: T) => string | undefined;
+}
+
+interface ThemedCheckboxProps<T> {
+  title?: string;
+  data: T[];
+  initialSelection?: string[];
   minSelection?: number;
   onSubmit?: (selected: string[]) => void;
   getId: (item: T) => string;

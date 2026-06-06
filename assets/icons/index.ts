@@ -29,6 +29,8 @@ export { default as NameIcon } from "./NameIcon";
 export { default as OptionsIcon } from "./OptionsIcon";
 export { default as PasswordIcon } from "./PasswordIcon";
 export { default as PhoneIcon } from "./PhoneIcon";
+export { default as RadioButtonCheckedIcon } from "./RadioButtonCheckedIcon";
+export { default as RadioButtonUncheckedIcon } from "./RadioButtonUncheckedIcon";
 export { default as RejectIcon } from "./RejectIcon";
 export { default as RoutinesIcon } from "./RoutinesIcon";
 export { default as ScheduleIcon } from "./ScheduleIcon";
