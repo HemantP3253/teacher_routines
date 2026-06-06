@@ -347,14 +347,15 @@ interface CollegeData {
   available_faculties?: string[];
 }
 
-interface ThemedCheckboxProps<T> {
+interface ThemedRadioButtonMenuProps<T> {
   title?: string;
   data: T[];
-  initialSelection?: string[];
-  onSelect?: (selected: string) => void;
+  initialSelection?: string;
+  onSelect?: (selectedId: any) => void;
   getId: (item: T) => string;
   getLabel: (item: T) => string;
   getSubLabel?: (item: T) => string | undefined;
+  sortList?: boolean;
 }
 
 interface ThemedCheckboxProps<T> {

@@ -1,7 +1,2 @@
-import OptionsScreen from "@/components/screens/optionsScreen";
+export { default } from "../(misc)/options";
 
-const UserOptionsScreen = () => {
-  return <OptionsScreen type="admin" />;
-};
-
-export default UserOptionsScreen;
