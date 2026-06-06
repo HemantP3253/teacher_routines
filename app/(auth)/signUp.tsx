@@ -16,7 +16,7 @@ import {
   ThemedTextInput,
   ThemedView,
 } from "@/components/themed";
-import ThemedCheckbox from "@/components/themed/ThemedCheckbox";
+import { ThemedCheckbox } from "@/components/themed/";
 import { useSignUpForm } from "@/hooks/useSignUpForm";
 import { supabase } from "@/services/supabase";
 import { isSignUpFormValid } from "@/utils/validationUtils";

@@ -4,21 +4,25 @@ import {
   ThemedPressable,
   ThemedStatusBar,
   ThemedText,
-  ThemedView,
+  ThemedView
 } from "@/components/themed";
 import { useApp } from "@/contexts/AppContext";
 import { supabase } from "@/services/supabase";
 import { useState } from "react";
 import { StatusBar } from "react-native";
-import { UnistylesRuntime, useUnistyles } from "react-native-unistyles";
+import {
+  useUnistyles
+} from "react-native-unistyles";
 import { CustomModal, Spacer } from "../common";
-import ThemedCheckbox from "../themed/ThemedCheckbox";
+import { ThemedCheckbox } from "../themed/";
 
 const OptionsScreen = ({ type }: { type?: "admin" | "user" }) => {
   const { theme, rt } = useUnistyles();
   const { settings, updateSetting, allAvailableDegrees } = useApp();
   const colors = theme.colors;
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [degreesModalVisible, setDegreesModalVisible] =
+    useState<boolean>(false);
+  const [themeModalVisible, setThemeModalVisible] = useState<boolean>(false);
 
   const handleLogout = async () => {
     try {
@@ -37,28 +41,29 @@ const OptionsScreen = ({ type }: { type?: "admin" | "user" }) => {
     >
       <ThemedStatusBar />
       <ThemedOptionsCard
-        switchValue={rt.themeName === "dark"}
-        switchOnValueChange={() => {
-          UnistylesRuntime.setAdaptiveThemes(false);
-          rt.themeName === "dark"
-            ? UnistylesRuntime.setTheme("light")
-            : UnistylesRuntime.setTheme("dark");
-        }}
         Icon={DarkModeIcon}
-        label={"Dark Mode"}
+        label={"Select Theme"}
+        onPress={() => setThemeModalVisible(true)}
       />
+
       {type === "admin" && (
         <ThemedOptionsCard
           Icon={DegreeIcon}
           label="Selected Degrees"
-          onPress={() => setModalVisible(true)}
+          onPress={() => setDegreesModalVisible(true)}
           description={`${settings.shownDegrees.length > 0 ? settings.shownDegrees.join(", ") : "All"}`}
         />
       )}
 
       <CustomModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
+        modalVisible={themeModalVisible}
+        setModalVisible={setThemeModalVisible}
+      >
+        {}
+      </CustomModal>
+      <CustomModal
+        modalVisible={degreesModalVisible}
+        setModalVisible={setDegreesModalVisible}
       >
         <ThemedCheckbox
           data={allAvailableDegrees}
@@ -67,7 +72,7 @@ const OptionsScreen = ({ type }: { type?: "admin" | "user" }) => {
           title="Select Available Degrees"
           getLabel={(item: string) => item}
           onSubmit={(degreeNames: string[]) => {
-            setModalVisible(false);
+            setDegreesModalVisible(false);
             updateSetting("shownDegrees", degreeNames);
           }}
         />

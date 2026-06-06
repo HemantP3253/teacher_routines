@@ -1,3 +1,8 @@
+import "../styles/unistyles";
+
+// This stops VSCode from reorganizing imports as unistyles is required on the first line.
+void null;
+
 import { AppProvider } from "@/contexts/AppContext";
 import { CollegeInfoProvider } from "@/contexts/CollegeInfoContext";
 import { UserInfoProvider, useUserInfo } from "@/contexts/UserInfoContext";
@@ -6,7 +11,6 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import "../styles/unistyles";
 
 interface ScreenStackProps {
   colors: any;

@@ -89,6 +89,11 @@ const darkTheme = {
   },
 } as const;
 
+const appThemes = {
+  light: lightTheme,
+  dark: darkTheme,
+};
+
 // 4. Extract TypeScript types automatically from your configuration
 type AppBreakpoints = typeof breakpoints;
 type AppThemes = {
@@ -104,10 +109,7 @@ declare module "react-native-unistyles" {
 // 5. Register everything into the Unistyles C++ Core engine
 StyleSheet.configure({
   breakpoints,
-  themes: {
-    light: lightTheme,
-    dark: darkTheme,
-  },
+  themes: appThemes,
   settings: {
     adaptiveThemes: true,
   },
