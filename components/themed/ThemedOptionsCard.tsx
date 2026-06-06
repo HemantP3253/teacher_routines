@@ -18,7 +18,7 @@ const ThemedOptionsCard = ({
   return (
     <Pressable
       onPress={onPress ? onPress : switchOnValueChange}
-      style={{ flexDirection: "row", alignItems: "center" }}
+      style={{ flexDirection: "row", alignItems: "center", minHeight: 32 }}
     >
       {Icon && (
         <ThemedView style={{ marginLeft: 8 }}>
