@@ -68,8 +68,8 @@ const home = () => {
         ) : (
           unapprovedUsers
             ?.sort((a, b) => {
-              if (a.created_at < b.created_at) return 1;
-              if (a.created_at > b.created_at) return -1;
+              if (a < b) return 1;
+              if (a > b) return -1;
               return 0;
             })
             .slice(0, 3)
