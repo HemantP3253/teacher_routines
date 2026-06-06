@@ -11,12 +11,12 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/themed";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { getCurriculumData } from "@/data/degreeDataTU";
 import { degreeQuery, SubjectData } from "@/interfaces/interfaces";
 import { addSpacesAfterUppercase } from "@/utils/stringUtils";
 import { useEffect, useMemo, useState } from "react";
 import { FlatList, StatusBar, StyleSheet, View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 type degreeCriteria =
   | "Faculty"
@@ -61,7 +61,7 @@ const criteriaMap: Record<
 };
 
 const routines = () => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   const [degreeData, setDegreeData] = useState<degreeQuery>({

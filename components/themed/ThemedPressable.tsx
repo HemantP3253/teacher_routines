@@ -1,7 +1,7 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedPressableProps } from "@/interfaces/interfaces";
 import { useState } from "react";
 import { Pressable } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 const ThemedPressable = ({
   style,
@@ -10,7 +10,7 @@ const ThemedPressable = ({
   ...otherProps
 }: ThemedPressableProps) => {
   const [pressed, setPressed] = useState<boolean>(false);
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   return (

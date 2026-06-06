@@ -1,8 +1,8 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { useAssignTimeModal } from "@/hooks/useAssignTimeModal";
 import { ChooseTimeComponentProps } from "@/interfaces/interfaces";
 import { formatNumberInput } from "@/utils/formatters";
 import { View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import {
   ThemedPressable,
   ThemedText,
@@ -19,7 +19,7 @@ const ChooseTimeComponent = ({
   onSubmit,
   backgroundColor,
 }: ChooseTimeComponentProps) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   const { handleTimeInputChange } = useAssignTimeModal();
 

@@ -1,9 +1,9 @@
 import { AssignmentIcon, ScheduleIcon } from "@/assets/icons";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { SubjectData } from "@/interfaces/interfaces";
 import { calculateFullPeriodTime } from "@/utils/dateUtils";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import { ThemedText, ThemedView } from "../themed";
 import AssignTeacherModal from "./AssignTeacherModal";
 import AssignTimeModal from "./AssignTimeModal";
@@ -33,7 +33,7 @@ const SubjectCard = ({
     if (initialData) setSubjectData(initialData);
   }, [initialData]);
 
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   const [visible, setVisible] = useState<{
     timeModal: boolean;

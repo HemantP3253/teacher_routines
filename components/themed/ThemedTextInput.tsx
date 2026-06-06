@@ -4,7 +4,6 @@ import {
   ScheduleIcon,
   SuccessIcon,
 } from "@/assets/icons";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedTextInputProps } from "@/interfaces/interfaces";
 import { dateTimePicker } from "@/utils/pickerUtils";
 import React, { useEffect, useRef, useState } from "react";
@@ -16,6 +15,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import ErrorCard from "../common/ErrorCard";
 import InfoCard from "../common/InfoCard";
 import ThemedView from "./ThemedView";
@@ -36,7 +36,7 @@ const ThemedTextInput = ({
   timeValues,
   ...otherProps
 }: ThemedTextInputProps) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   const styles = createStyles(colors);
   const [isFocused, setIsFocused] = useState<boolean>(false);

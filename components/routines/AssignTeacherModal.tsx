@@ -1,10 +1,10 @@
 import { SearchIcon } from "@/assets/icons";
 import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { AssignTeacherModalProps } from "@/interfaces/interfaces";
 import { useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import { CustomModal, Spacer } from "../common";
 import { ThemedText, ThemedTextInput, ThemedView } from "../themed";
 import UserActionCard from "./UserActionCard";
@@ -16,7 +16,7 @@ const AssignTeacherModal = ({
 }: AssignTeacherModalProps) => {
   const { cachedUsers, isLoading } = useUserSearch();
   const { currentCollege } = useCollegeInfo();
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   const [searchText, setSearchText] = useState<string>("");

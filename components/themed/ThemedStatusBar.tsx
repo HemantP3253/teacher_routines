@@ -1,12 +1,12 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedStatusBarProps } from "@/interfaces/interfaces";
 import { StatusBar } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 const ThemedStatusBar = ({ ...props }: ThemedStatusBarProps) => {
-  const { isDark, theme } = useAppTheme();
+  const { theme, rt } = useUnistyles();
   return (
     <StatusBar
-      barStyle={isDark ? "light-content" : "dark-content"}
+      barStyle={rt.themeName === "dark" ? "light-content" : "dark-content"}
       backgroundColor={theme.colors.base200}
       animated
       {...props}

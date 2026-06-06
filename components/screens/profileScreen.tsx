@@ -9,7 +9,6 @@ import {
   UsernameIcon,
 } from "@/assets/icons";
 import { ThemedStatusBar, ThemedText, ThemedView } from "@/components/themed";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { useUserInfo } from "@/contexts/UserInfoContext";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
 import { useRouter } from "expo-router";
@@ -20,10 +19,11 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 const UserProfileScreen = () => {
-  const { userInfo, isLoading, refreshUser } = useUserInfo();
-  const { theme } = useAppTheme();
+  const { userInfo, isLoading } = useUserInfo();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   const router = useRouter();
 

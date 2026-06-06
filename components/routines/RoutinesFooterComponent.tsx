@@ -1,9 +1,9 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import { ThemedPressable, ThemedText } from "../themed";
 
 const RoutinesFooterComponent = () => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   return (

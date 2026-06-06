@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/themed";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { TagChipProps } from "@/interfaces/interfaces";
 import { Pressable, StyleSheet, View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 const TagChip = ({
   label = "Hello",
@@ -11,7 +11,7 @@ const TagChip = ({
   Icon,
   dottedBorder,
 }: TagChipProps) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   const getColors = () => {

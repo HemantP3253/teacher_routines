@@ -1,7 +1,7 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedAlertWindowProps } from "@/interfaces/interfaces";
 import React from "react";
 import { View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import { Spacer } from "../common";
 import CustomModal from "../common/CustomModal";
 import ThemedPressable from "./ThemedPressable";
@@ -26,7 +26,7 @@ const ThemedAlertWindow = ({
     if (onClose) onClose();
   };
 
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   return (

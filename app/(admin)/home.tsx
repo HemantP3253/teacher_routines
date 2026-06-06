@@ -2,15 +2,15 @@ import { ArrowForwardIcon } from "@/assets/icons";
 import { ActionableHeaderCard, UserActionCard } from "@/components/routines";
 import { ThemedStatusBar, ThemedText, ThemedView } from "@/components/themed";
 import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { getGreeting } from "@/utils/stringUtils";
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
-import { StatusBar, StyleSheet } from "react-native";
+import { Pressable, StatusBar } from "react-native";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 const home = () => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   const router = useRouter();
   const { currentCollege } = useCollegeInfo();
@@ -75,12 +75,17 @@ const home = () => {
             .slice(0, 3)
             .map((user) => <UserActionCard userData={user} key={user.id} />)
         )}
+        {unapprovedUsers && unapprovedUsers?.length > 3 && (
+          <Pressable onPress={() => null}>
+            <ThemedText>+{unapprovedUsers?.length - 3} more</ThemedText>
+          </Pressable>
+        )}
       </ActionableHeaderCard>
     </ThemedView>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme) => ({
   rootContainer: {
     paddingTop: StatusBar.currentHeight ?? 0,
     height: "100%",
@@ -100,6 +105,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
-});
+}));
 
 export default home;

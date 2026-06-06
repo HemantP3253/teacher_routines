@@ -1,6 +1,6 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedOptionsCardProps } from "@/interfaces/interfaces";
 import { Pressable, Switch } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import ThemedText from "./ThemedText";
 import ThemedView from "./ThemedView";
 
@@ -12,7 +12,7 @@ const ThemedOptionsCard = ({
   onPress,
   label,
 }: ThemedOptionsCardProps) => {
-  const { theme, isDark } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   return (

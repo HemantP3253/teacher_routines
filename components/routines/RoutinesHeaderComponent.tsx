@@ -8,10 +8,10 @@ import {
   RoutinesIcon,
 } from "@/assets/icons";
 import { useApp } from "@/contexts/AppContext";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { getCurriculumData } from "@/data/degreeDataTU";
 import { level, RoutinesHeaderProps } from "@/interfaces/interfaces";
 import { useMemo, useState } from "react";
+import { useUnistyles } from "react-native-unistyles";
 import { Spacer } from "../common";
 import DynamicTagSelect from "../common/DynamicTagSelect";
 import { ThemedModalMenu, ThemedText, ThemedView } from "../themed";
@@ -31,7 +31,7 @@ const RoutinesHeaderComponent = ({
   setData,
   currentQueryContext,
 }: RoutinesHeaderProps) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const { allAvailableDegrees, settings } = useApp();
   const colors = theme.colors;
   const activeMenuSteps: StepType[] = [
