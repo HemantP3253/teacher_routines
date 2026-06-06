@@ -1,8 +1,8 @@
 import { ErrorIcon, SuccessIcon } from "@/assets/icons";
 import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedModalMenuProps } from "@/interfaces/interfaces";
-import { useCallback, useMemo, useState } from "react";
-import { FlatList, Pressable, View, ViewStyle } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { Dimensions, FlatList, Pressable, View, ViewStyle } from "react-native";
 import { ErrorCard, Spacer } from "../common";
 import CustomModal from "../common/CustomModal";
 import ThemedAlertWindow from "./ThemedAlertWindow";
@@ -25,9 +25,10 @@ const ThemedModalMenu = ({
   hideItemType,
   pressableStyle,
   iconProperties,
-  addSearchBar,
+  addSearchBar = false,
   ...props
 }: ThemedModalMenuProps) => {
+  const MODAL_HEIGHT = Dimensions.get("window").height * 0.6;
   const [modalVisible, setModalVisible] = useState<{
     alert: boolean;
     mainModal: boolean;
@@ -36,33 +37,46 @@ const ThemedModalMenu = ({
 
   const { theme } = useAppTheme();
   const colors = theme.colors;
-  const error: boolean =
-    errorText === undefined
-      ? false
-      : errorText !== "" && errorText !== "Success!";
-  const success: boolean =
-    errorText === undefined ? false : errorText === "Success!";
-  const dynamicColorText = error
-    ? colors.error
-    : success
-      ? colors.success
-      : noFill
-        ? colors.primary
-        : colors.base300;
+
+  const { error, success, dynamicColorText } = useMemo(() => {
+    const success = errorText === "Success!";
+    const error: boolean =
+      errorText !== undefined && errorText !== "" && errorText !== "Success!";
+    return {
+      success,
+      error,
+      dynamicColorText: error
+        ? colors.error
+        : success
+          ? colors.success
+          : noFill
+            ? colors.primary
+            : colors.base300,
+    };
+  }, [errorText, colors, noFill]);
 
   const statusIconStyle: ViewStyle = {
     alignSelf: "center" as const,
     marginHorizontal: 4,
   };
 
+  const openModal = useCallback(() => {
+    if (alertCondition?.visible) {
+      setModalVisible((prev) => ({ ...prev, alert: true }));
+    } else {
+      setModalVisible((prev) => ({ ...prev, mainModal: true }));
+    }
+  }, [alertCondition?.visible]);
+
+  const sortedData = useMemo(() => {
+    return [...data].sort((a, b) => a.toString().localeCompare(b.toString()));
+  }, [data]);
+
   const filteredResults = useMemo(() => {
-    if (!data) return [];
-    return data
-      .filter((value) =>
-        value.toString().toLowerCase().includes(searchText.toLowerCase()),
-      )
-      .sort((a, b) => a.toString().localeCompare(b.toString()));
-  }, [data, searchText]);
+    return sortedData.filter((value) =>
+      value.toString().toLowerCase().includes(searchText.toLowerCase()),
+    );
+  }, [sortedData, searchText]);
 
   const renderItem = useCallback(
     ({ item }: { item: string }) => (
@@ -94,11 +108,7 @@ const ThemedModalMenu = ({
         {iconProperties?.showIconOnly ? (
           <Pressable
             style={[{ alignSelf: "center" }, pressableStyle]}
-            onPress={() => {
-              alertCondition?.visible
-                ? setModalVisible((prev) => ({ ...prev, alert: true }))
-                : setModalVisible((prev) => ({ ...prev, mainModal: true }));
-            }}
+            onPress={openModal}
           >
             {Icon && (
               <Icon
@@ -120,11 +130,7 @@ const ThemedModalMenu = ({
         ) : (
           <ThemedPressable
             noFill={noFill}
-            onPress={() => {
-              alertCondition?.visible
-                ? setModalVisible((prev) => ({ ...prev, alert: true }))
-                : setModalVisible((prev) => ({ ...prev, mainModal: true }));
-            }}
+            onPress={openModal}
             style={(state) => [
               {
                 height: 52,
@@ -232,13 +238,15 @@ const ThemedModalMenu = ({
             <FlatList
               data={filteredResults}
               keyExtractor={(item) => item.toString()}
-              ListHeaderComponent={
-                <ThemedTextInput
-                  title="Type to Search"
-                  value={searchText}
-                  onChangeText={setSearchText}
-                  blendColor={colors.base300}
-                />
+              ListHeaderComponent={() =>
+                addSearchBar && (
+                  <ThemedTextInput
+                    title="Type to Search"
+                    value={searchText}
+                    onChangeText={setSearchText}
+                    blendColor={colors.base300}
+                  />
+                )
               }
               ListHeaderComponentStyle={{ backgroundColor: colors.base300 }}
               renderItem={renderItem}
@@ -246,14 +254,14 @@ const ThemedModalMenu = ({
                 <ThemedText
                   style={{
                     backgroundColor: colors.base300,
-                    paddingHorizontal: 12,
+                    padding: 12,
                     fontWeight: "700",
                     opacity: 0.9,
                   }}
                 >
-                  {filteredResults.length === 0
+                  {filteredResults.length === 0 && addSearchBar
                     ? `No results found for "${searchText}"`
-                    : "A"}
+                    : "No items available"}
                 </ThemedText>
               }
             />

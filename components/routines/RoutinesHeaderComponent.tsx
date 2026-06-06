@@ -170,6 +170,7 @@ const RoutinesHeaderComponent = ({
 
               return (
                 <ThemedModalMenu
+                  addSearchBar={stepName === "Degree Name"}
                   key={stepName}
                   data={pickerData}
                   pressableStyle={{ backgroundColor: colors.base300 }}

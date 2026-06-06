@@ -22,7 +22,7 @@ const ThemedOptionsCard = ({
     >
       {Icon && (
         <ThemedView style={{ marginLeft: 8 }}>
-          <Icon height={24} width={24} fill={isDark ? "white" : "black"} />
+          <Icon height={24} width={24} fill={colors.primary} />
         </ThemedView>
       )}
       <ThemedView style={{ flex: 1, marginLeft: 8 }}>

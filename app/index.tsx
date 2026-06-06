@@ -1,22 +1,16 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { useUserInfo } from "@/contexts/UserInfoContext";
+import { Redirect } from "expo-router";
 
 export default function EntryPoint() {
-  const { theme } = useAppTheme();
+  const { userInfo, isLoading } = useUserInfo();
 
-  // This renders a native background matching your active theme
-  // while the root layout's useEffect auth hook routes the user.
+  if (isLoading) return null;
+
+  if (!userInfo) {
+    return <Redirect href="/(auth)/login" />;
+  }
+
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.base100 }]}>
-      <ActivityIndicator size="large" color={theme.colors.primary} />
-    </View>
+    <Redirect href={userInfo.is_admin ? "/(admin)/home" : "/(user)/home"} />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
