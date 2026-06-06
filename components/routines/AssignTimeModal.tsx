@@ -1,8 +1,8 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { useAssignTimeModal } from "@/hooks/useAssignTimeModal";
 import { AssignTimeModalProps } from "@/interfaces/interfaces";
 import { formatNumberInput } from "@/utils/formatters";
 import { View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import { CustomModal } from "../common";
 import {
   ThemedPressable,
@@ -17,7 +17,7 @@ const AssignTimeModal = ({
   title,
   onSubmit,
 }: AssignTimeModalProps) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   const {
     date,

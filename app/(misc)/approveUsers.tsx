@@ -1,17 +1,17 @@
 import { ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
 import { ActionableHeaderCard, UserActionCard } from "@/components/routines";
 import { ThemedText, ThemedView } from "@/components/themed";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { getCurrentAdminCollege } from "@/services/collegeService";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView, StatusBar, StyleSheet } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 type UserStatus = "Pending" | "Approved" | "Rejected" | "All";
 
 const approveUsers = () => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const { cachedUsers, isLoading } = useUserSearch();
   const colors = theme.colors;
   const router = useRouter();

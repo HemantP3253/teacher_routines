@@ -1,6 +1,6 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { SpacerProps } from "@/interfaces/interfaces";
 import { View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 const Spacer = ({
   lineVisible,
@@ -11,7 +11,7 @@ const Spacer = ({
   lineColor,
   ...otherProps
 }: SpacerProps) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   const containerStyle = [

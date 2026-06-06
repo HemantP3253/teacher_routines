@@ -1,6 +1,6 @@
 import { InfoIcon } from "@/assets/icons";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import ThemedText from "../themed/ThemedText";
 import ThemedView from "../themed/ThemedView";
 
@@ -15,7 +15,7 @@ const InfoCard = ({
   iconStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
 }) => {
-  const { colors } = useAppTheme().theme;
+  const { colors } = useUnistyles().theme;
   if (!infoText) return null;
 
   return (

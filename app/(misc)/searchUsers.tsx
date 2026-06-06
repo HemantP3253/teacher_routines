@@ -3,7 +3,6 @@ import TagChip from "@/components/common/DynamicTagSelect/TagChip";
 import { UserActionCard } from "@/components/routines";
 import { ThemedText, ThemedTextInput, ThemedView } from "@/components/themed";
 import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
@@ -16,13 +15,14 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 type searchType = "Name" | "Username" | "Phone";
 
 const searchUsers = () => {
   const { title } = useLocalSearchParams();
   const { cachedUsers, isLoading } = useUserSearch();
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   const { currentCollege } = useCollegeInfo();
 

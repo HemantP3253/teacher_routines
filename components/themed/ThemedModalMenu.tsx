@@ -1,8 +1,8 @@
 import { ErrorIcon, SuccessIcon } from "@/assets/icons";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedModalMenuProps } from "@/interfaces/interfaces";
 import React, { useCallback, useMemo, useState } from "react";
 import { Dimensions, FlatList, Pressable, View, ViewStyle } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import { ErrorCard, Spacer } from "../common";
 import CustomModal from "../common/CustomModal";
 import ThemedAlertWindow from "./ThemedAlertWindow";
@@ -35,7 +35,7 @@ const ThemedModalMenu = ({
   }>({ alert: false, mainModal: false });
   const [searchText, setSearchText] = useState<string>("");
 
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   const { error, success, dynamicColorText } = useMemo(() => {

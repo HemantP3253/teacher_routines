@@ -1,12 +1,12 @@
 import { HomeIcon, OptionsIcon, RoutinesIcon } from "@/assets/icons";
 import { ThemedText, ThemedView } from "@/components/themed";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { TabIconProps } from "@/interfaces/interfaces";
 import { Tabs } from "expo-router";
 import { StyleSheet } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 const TabIcon = ({ focused, Icon, title }: TabIconProps) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   const tabItemColor = colors.primary;
 
@@ -37,7 +37,7 @@ const TabIcon = ({ focused, Icon, title }: TabIconProps) => {
 };
 
 const _Layout = () => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   return (

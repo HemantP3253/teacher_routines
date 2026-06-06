@@ -1,11 +1,12 @@
 import { AppProvider } from "@/contexts/AppContext";
 import { CollegeInfoProvider } from "@/contexts/CollegeInfoContext";
-import { ThemeProvider, useAppTheme } from "@/contexts/ThemeContext";
 import { UserInfoProvider, useUserInfo } from "@/contexts/UserInfoContext";
 import { UserSearchProvider } from "@/contexts/UserSearchContext";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
+import "../styles/unistyles";
 
 interface ScreenStackProps {
   colors: any;
@@ -40,7 +41,7 @@ const ScreenStack = ({ colors }: ScreenStackProps) => {
 
 const AppNavigationLayout = () => {
   const { userInfo, isLoading } = useUserInfo();
-  const colors = useAppTheme().theme.colors;
+  const colors = useUnistyles().theme.colors;
   const router = useRouter();
   const segments = useSegments();
 
@@ -80,15 +81,13 @@ const AppNavigationLayout = () => {
 
 const RootLayout = () => {
   return (
-    <ThemeProvider>
-      <UserInfoProvider>
-        <CollegeInfoProvider>
-          <AppProvider>
-            <AppNavigationLayout />
-          </AppProvider>
-        </CollegeInfoProvider>
-      </UserInfoProvider>
-    </ThemeProvider>
+    <UserInfoProvider>
+      <CollegeInfoProvider>
+        <AppProvider>
+          <AppNavigationLayout />
+        </AppProvider>
+      </CollegeInfoProvider>
+    </UserInfoProvider>
   );
 };
 

@@ -1,9 +1,9 @@
 import { AddIcon, ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
 import { ActionableHeaderCard } from "@/components/routines";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { DynamicTagSelectProps } from "@/interfaces/interfaces";
 import { useState } from "react";
 import { View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import TagChip from "./TagChip";
 
 const DynamicTagSelect = <T,>({
@@ -14,7 +14,7 @@ const DynamicTagSelect = <T,>({
   Icon,
   getLabel,
 }: DynamicTagSelectProps<T>) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   const [isExpanded, setIsExpanded] = useState<boolean>(
     showDropDown ? false : true,

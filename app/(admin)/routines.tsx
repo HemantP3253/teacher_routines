@@ -1,7 +1,6 @@
 import { RoutinesFooterComponent, SubjectCard } from "@/components/routines";
 import RoutinesHeaderComponent from "@/components/routines/RoutinesHeaderComponent";
 import { ThemedText } from "@/components/themed";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { getCurriculumData, searchByDegreeName } from "@/data/degreeDataTU";
 import {
   DynamicRoutineDetails,
@@ -11,9 +10,10 @@ import {
 } from "@/interfaces/interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, StatusBar } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 const routines = () => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   const [routineData, setRoutineData] = useState<RoutineData>({

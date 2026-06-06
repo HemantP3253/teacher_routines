@@ -1,9 +1,9 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedViewProps } from "@/interfaces/interfaces";
 import { View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 const ThemedView = ({ style, ...otherProps }: ThemedViewProps) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   return (

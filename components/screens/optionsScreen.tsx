@@ -7,15 +7,15 @@ import {
   ThemedView,
 } from "@/components/themed";
 import { useApp } from "@/contexts/AppContext";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/services/supabase";
 import { useState } from "react";
 import { StatusBar } from "react-native";
+import { UnistylesRuntime, useUnistyles } from "react-native-unistyles";
 import { CustomModal, Spacer } from "../common";
 import ThemedCheckbox from "../themed/ThemedCheckbox";
 
 const OptionsScreen = ({ type }: { type?: "admin" | "user" }) => {
-  const { theme, toggleTheme, isDark } = useAppTheme();
+  const { theme, rt } = useUnistyles();
   const { settings, updateSetting, allAvailableDegrees } = useApp();
   const colors = theme.colors;
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -37,8 +37,13 @@ const OptionsScreen = ({ type }: { type?: "admin" | "user" }) => {
     >
       <ThemedStatusBar />
       <ThemedOptionsCard
-        switchValue={isDark}
-        switchOnValueChange={toggleTheme}
+        switchValue={rt.themeName === "dark"}
+        switchOnValueChange={() => {
+          UnistylesRuntime.setAdaptiveThemes(false);
+          rt.themeName === "dark"
+            ? UnistylesRuntime.setTheme("light")
+            : UnistylesRuntime.setTheme("dark");
+        }}
         Icon={DarkModeIcon}
         label={"Dark Mode"}
       />

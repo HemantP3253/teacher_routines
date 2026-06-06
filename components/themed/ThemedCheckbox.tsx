@@ -3,10 +3,10 @@ import SelectedCheckBox from "@/assets/icons/CheckedCheckBox";
 import IndeterminateCheckBoxIcon from "@/assets/icons/IndeterminateCheckBoxIcon";
 import SelectAllIcon from "@/assets/icons/SelectAllIcon";
 import UncheckedCheckBoxIcon from "@/assets/icons/UncheckedCheckBoxIcon";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedCheckboxProps } from "@/interfaces/interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import { Spacer } from "../common";
 import ThemedPressable from "./ThemedPressable";
 import ThemedText from "./ThemedText";
@@ -22,7 +22,7 @@ const ThemedCheckbox = <T,>({
   getLabel,
   getSubLabel,
 }: ThemedCheckboxProps<T>) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);

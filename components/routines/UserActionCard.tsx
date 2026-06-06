@@ -13,12 +13,12 @@ import {
   UsernameIcon,
 } from "@/assets/icons";
 import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { UserActionCardProps } from "@/interfaces/interfaces";
 import { userAction } from "@/services/userActionService";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import { ThemedText } from "../themed";
 
 type CardType = "Pending" | "Approved" | "Rejected";
@@ -29,7 +29,7 @@ const UserActionCard = ({
   hideIcons,
   keepExpanded,
 }: UserActionCardProps) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const { currentCollege } = useCollegeInfo();
   const collegeCode: string = currentCollege?.college_code || "";
   const colors = theme.colors;

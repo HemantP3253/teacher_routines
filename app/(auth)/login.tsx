@@ -7,7 +7,6 @@ import {
   ThemedTextInput,
   ThemedView,
 } from "@/components/themed";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { useLogInForm } from "@/hooks/useLogInForm";
 import { supabase } from "@/services/supabase";
 import { checkLogInFormValidity } from "@/utils/validationUtils";
@@ -21,6 +20,7 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 
 const landing = () => {
   const {
@@ -30,7 +30,7 @@ const landing = () => {
     logInError,
     handleInputChange,
   } = useLogInForm();
-  const { colors } = useAppTheme().theme;
+  const { colors } = useUnistyles().theme;
   const passwordRef = useRef<TextInput>(null);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);

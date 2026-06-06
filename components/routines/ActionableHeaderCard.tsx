@@ -1,7 +1,7 @@
 import { SearchIcon } from "@/assets/icons";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ActionableHeaderCardProps } from "@/interfaces/interfaces";
 import { ActivityIndicator, Pressable, View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import { ThemedText, ThemedView } from "../themed";
 
 const ActionableHeaderCard = ({
@@ -14,7 +14,7 @@ const ActionableHeaderCard = ({
   IconBeforeText,
 }: ActionableHeaderCardProps) => {
   const { Icon, onPress, height, width } = iconProperties;
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   return (
     <ThemedView
@@ -77,6 +77,7 @@ const ActionableHeaderCard = ({
         ></View>
       )}
       {isDataLoading ? <ActivityIndicator size={"large"} /> : children}
+      {}
     </ThemedView>
   );
 };

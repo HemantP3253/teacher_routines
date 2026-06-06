@@ -1,13 +1,13 @@
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedClassCardProps } from "@/interfaces/interfaces";
 import { calculateFullPeriodTime } from "@/utils/dateUtils";
 import { termToFormattedString } from "@/utils/stringUtils";
 import { View } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import ThemedText from "./ThemedText";
 import ThemedView from "./ThemedView";
 
 const ThemedClassCard = ({ ...props }: ThemedClassCardProps) => {
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   return (
     <ThemedView>

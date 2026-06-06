@@ -1,8 +1,8 @@
 import { ErrorIcon, SuccessIcon } from "@/assets/icons";
-import { useAppTheme } from "@/contexts/ThemeContext";
 import { ThemedModalInputProps } from "@/interfaces/interfaces";
 import { useState } from "react";
 import { FlatList, Pressable, View, ViewStyle } from "react-native";
+import { useUnistyles } from "react-native-unistyles";
 import { ErrorCard, Spacer } from "../common";
 import CustomModal from "../common/CustomModal";
 import ThemedAlertWindow from "./ThemedAlertWindow";
@@ -27,7 +27,7 @@ const ThemedModalInput = ({
   ...props
 }: ThemedModalInputProps) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const { theme } = useAppTheme();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
   const error: boolean =
     errorText === undefined
