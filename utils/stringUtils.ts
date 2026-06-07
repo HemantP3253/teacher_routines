@@ -1,3 +1,4 @@
+import { searchByDegreeName } from "@/data/degreeDataTU";
 import { degreeQuery } from "@/interfaces/interfaces";
 
 export const getGreeting = () => {
@@ -81,120 +82,28 @@ export function addSpacesAfterUppercase(
   return text.replace(/([A-Z])/g, " $1").trim();
 }
 
-export const facultyNameToShortCode = (facultyName: string): string => {
-  let shortCode: string, uppercaseMatches: string;
-  const matchPattern = /[A-Z]/g;
-  shortCode = facultyName.replace("And", "").replace("Of", "OF");
-  uppercaseMatches = (shortCode.match(matchPattern)?.join("") || "").replace(
-    "OF",
-    "o",
-  );
-  if (uppercaseMatches.substring(2) === "AAS") uppercaseMatches = "IAAS";
-
-  return uppercaseMatches;
-};
-
-export const shortCodeToFacultyName = (facultyCode: string): string => {
-  if (facultyCode.length < 3) return "";
-
-  const isFacultyType = facultyCode.charAt(0) === "F";
-  const facultyDict = {
-    E: "Education",
-    HSS: "HumanitiesAndSocialSciences ",
-    L: "Law",
-    M: "Management",
-  };
-  const instituteDict = {
-    AAS: "AgricultureAndAnimalScience",
-    E: "Engineering",
-    F: "Forestry",
-    M: "Medicine",
-    ST: "ScienceAndTechnology",
-  };
-  let prefix = isFacultyType ? "FacultyOf" : "InstituteOf";
-  let postfix;
-  const returnString = `${prefix}${postfix}`;
-
-  if (isFacultyType)
-    if (facultyCode.substring(2) in facultyDict) {
-      postfix =
-        facultyDict[facultyCode.substring(2) as keyof typeof facultyDict];
-      return returnString;
-    }
-
-  if (facultyCode.includes("AAS")) {
-    postfix = instituteDict.AAS;
-    return returnString;
-  }
-  if (facultyCode.substring(2) in instituteDict) {
-    postfix =
-      instituteDict[facultyCode.substring(2) as keyof typeof instituteDict];
-    return returnString;
-  }
-
-  return "";
-};
-
-export const degreeTypeToShortCode = (degreeType: string): string => {
-  const degreeTypeDict = {
-    Bachelors: "B",
-    Masters: "M",
-    MasterOfPhilosophy: "MP",
-    DoctorOfPhilosophy: "PHD",
-    PostgraduateDiplomas: "PGD",
-  };
-  const shortCode = degreeTypeDict[degreeType as keyof typeof degreeTypeDict];
-
-  if (shortCode) return shortCode;
-  return "";
-};
-
-export const shortCodeToDegreeType = (degreeType: string): string => {
-  const degreeTypeDict = {
-    B: "Bachelors",
-    M: "Masters",
-    MP: "MasterOfPhilosophy",
-    PHD: "DoctorOfPhilosophy",
-    PGD: "PostgraduateDiplomas",
-  };
-  const convertedDegreeType =
-    degreeTypeDict[degreeType as keyof typeof degreeTypeDict];
-
-  if (convertedDegreeType) return convertedDegreeType;
-  return "";
-};
-
 export const formatSubjectCode = (degreeInfo: degreeQuery): string => {
-  if (
-    !degreeInfo.faculty ||
-    !degreeInfo.degreeType ||
-    !degreeInfo.degreeName ||
-    !degreeInfo.term ||
-    !degreeInfo.subjects
-  )
+  if (!degreeInfo.degreeName || !degreeInfo.term || !degreeInfo.subjects)
     return "";
-  const faculty = facultyNameToShortCode(degreeInfo.faculty);
-  const degreeType = degreeTypeToShortCode(degreeInfo.degreeType);
   const degreeName = degreeInfo.degreeName;
   const branch = degreeInfo.branch;
   const term = degreeInfo.term;
   const subject = degreeInfo.subjects.split(":")[0];
 
-  if (branch)
-    return `${faculty}_${degreeType}_${degreeName}_${branch}_${term}_${subject}`;
-  else if (subject !== "")
-    return `${faculty}_${degreeType}_${degreeName}_${term}_${subject}`;
+  if (branch) return `${degreeName}_${branch}_${term}_${subject}`;
+  else if (subject !== "") return `${degreeName}_${term}_${subject}`;
   else return "";
 };
 
 export const formattedSubjectCodeToObject = (subjectCode: string): Object => {
   const shortCodes = subjectCode.split("_");
   const hasBranches = shortCodes.length === 6;
+  const { faculty, degreeType } = searchByDegreeName(shortCodes[2]);
 
   let degreeInfo: degreeQuery = {
     level: "subjects",
-    faculty: shortCodeToFacultyName(shortCodes[0]),
-    degreeType: shortCodeToDegreeType(shortCodes[1]),
+    faculty: faculty,
+    degreeType: degreeType,
     degreeName: shortCodes[2],
     branch: hasBranches ? shortCodes[3] : undefined, // Add shortCodeToBranchName
     term: hasBranches ? shortCodes[4] : shortCodes[3],
@@ -202,12 +111,4 @@ export const formattedSubjectCodeToObject = (subjectCode: string): Object => {
   };
 
   return degreeInfo;
-};
-
-export const RangeToSubjectTime = (
-  startTime: string,
-  endTime: string,
-  maxDuration: string,
-) => {
-  let hours = Number(endTime) - Number(startTime);
 };
