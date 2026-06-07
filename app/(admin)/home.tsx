@@ -9,7 +9,6 @@ import React, { useMemo } from "react";
 import { Pressable, StatusBar } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-// 1. FIX: Capitalize to "Home" so Expo Router detects the valid component layout
 const Home = () => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
@@ -17,7 +16,6 @@ const Home = () => {
   const { currentCollege } = useCollegeInfo();
   const { cachedUsers, isLoading } = useUserSearch();
 
-  // 2. FIX: Remove the function reference from the dependency array
   const greeting = useMemo(() => {
     return getGreeting();
   }, []);
@@ -79,8 +77,13 @@ const Home = () => {
             .map((user) => <UserActionCard userData={user} key={user.id} />)
         )}
         {unapprovedUsers && unapprovedUsers?.length > 3 && (
-          <Pressable onPress={() => null}>
-            <ThemedText>+{unapprovedUsers?.length - 3} more</ThemedText>
+          <Pressable
+            onPress={() => router.push("/(misc)/approveUsers")}
+            style={{ alignItems: "flex-end", padding: 8 }}
+          >
+            <ThemedText style={{ fontWeight: "600", fontSize: 16 }}>
+              + {unapprovedUsers?.length - 3} more
+            </ThemedText>
           </Pressable>
         )}
       </ActionableHeaderCard>
@@ -110,5 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-// 3. FIX: Export your capitalized component
 export default Home;
