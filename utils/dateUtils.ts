@@ -109,15 +109,13 @@ export const doesRoutineCollide = ({
   const end1 = minutes1 + duration1;
   const end2 = minutes2 + duration2;
 
-  // 1. Check if they completely clear each other
   const routine2EndsBeforeRoutine1Starts = end2 <= minutes1;
   const routine1EndsBeforeRoutine2Starts = end1 <= minutes2;
 
   if (routine2EndsBeforeRoutine1Starts || routine1EndsBeforeRoutine2Starts) {
-    return false; // Safely separated!
+    return false;
   }
 
-  // 2. Otherwise, they are overlapping (even at midnight!)
   return true;
 };
 
