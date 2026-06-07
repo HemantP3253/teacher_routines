@@ -39,7 +39,7 @@ export const calculateFullPeriodTime = (
 export const changeTimeMode = (
   time: string,
   currentMode: "24-hour" | "12-hour",
-  hideSeconds: boolean,
+  hideSeconds: boolean = false,
 ) => {
   if (!time) return "";
 
@@ -91,6 +91,34 @@ export const minutesToHours = (minutes: number) => {
     .padStart(2, "0");
   const minutesString = (minutes % 60).toString().padStart(2, "0");
   return `${hoursString}:${minutesString}`;
+};
+
+export const doesRoutineCollide = ({
+  time1,
+  time2,
+}: {
+  time1: { startTime: string; duration: string };
+  time2: { startTime: string; duration: string };
+}) => {
+  const duration1 = Number(time1.duration);
+  const duration2 = Number(time2.duration);
+
+  const minutes1 = hoursToMinutes(changeTimeMode(time1.startTime, "12-hour"));
+  const minutes2 = hoursToMinutes(changeTimeMode(time2.startTime, "12-hour"));
+
+  const end1 = minutes1 + duration1;
+  const end2 = minutes2 + duration2;
+
+  // 1. Check if they completely clear each other
+  const routine2EndsBeforeRoutine1Starts = end2 <= minutes1;
+  const routine1EndsBeforeRoutine2Starts = end1 <= minutes2;
+
+  if (routine2EndsBeforeRoutine1Starts || routine1EndsBeforeRoutine2Starts) {
+    return false; // Safely separated!
+  }
+
+  // 2. Otherwise, they are overlapping (even at midnight!)
+  return true;
 };
 
 export const RangeToSubjectTime = (
