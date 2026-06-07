@@ -381,6 +381,7 @@ interface RoutineData {
   branch?: string;
   term: string;
   batchAndSection: string;
+  dayOfWeek: string;
 }
 
 interface QueryContext {
@@ -396,7 +397,7 @@ interface RoutinesHeaderProps {
   data: RoutineData;
   setData: React.Dispatch<React.SetStateAction<RoutineData>>;
   currentQueryContext: QueryContext;
-  onDynamicRoutineSelect: (item: DynamicRoutineDetails) => void;
+  onDynamicRoutineSelect: (id: number) => void;
 }
 
 interface TagChipProps {
@@ -415,12 +416,15 @@ interface DynamicTagSelectProps<T> {
   showAddButton?: boolean;
   showDropDown?: boolean;
   title: string;
-  Icon?: FC<SvgProps>
+  Icon?: FC<SvgProps>;
+  onSelect?: Function;
 }
 
 interface DynamicRoutineDetails {
+  id: number;
   label: string;
   startTime: string;
   endTime: string;
   duration: string;
+  activeDays: string;
 }

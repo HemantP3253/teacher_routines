@@ -13,6 +13,7 @@ const DynamicTagSelect = <T,>({
   showDropDown = true,
   Icon,
   getLabel,
+  onSelect,
 }: DynamicTagSelectProps<T>) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
@@ -33,6 +34,7 @@ const DynamicTagSelect = <T,>({
       }}
       isDataLoading={false}
       showBottomBorder={isExpanded}
+      summaryText={!isExpanded ? getLabel(data[selectedTag]) : undefined}
     >
       {isExpanded && (
         <>
@@ -53,7 +55,10 @@ const DynamicTagSelect = <T,>({
                 <TagChip
                   key={index}
                   label={label}
-                  onPress={() => setSelectedTag(index)}
+                  onPress={() => {
+                    onSelect?.(index);
+                    setSelectedTag(index);
+                  }}
                   selected={selectedTag === index}
                 />
               );

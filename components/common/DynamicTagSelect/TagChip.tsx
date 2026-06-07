@@ -68,9 +68,9 @@ const TagChip = ({
 
 const styles = StyleSheet.create({
   chipBase: {
+    height: 40,
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderRadius: 100,
     flexDirection: "row",
     justifyContent: "center",
@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 14,
     textAlign: "center",
-    verticalAlign: "middle",
     includeFontPadding: false,
+    textAlignVertical: "center",
   },
 });
 

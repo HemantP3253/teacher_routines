@@ -30,6 +30,7 @@ const RoutinesHeaderComponent = ({
   data,
   setData,
   currentQueryContext,
+  onDynamicRoutineSelect,
 }: RoutinesHeaderProps) => {
   const { theme } = useUnistyles();
   const { allAvailableDegrees, settings } = useApp();
@@ -123,22 +124,13 @@ const RoutinesHeaderComponent = ({
           onPress: () => setIsExpanded(!isExpanded),
         }}
         isDataLoading={false}
+        summaryText={
+          data.degreeName && data.term && !isExpanded
+            ? displaySummaryString
+            : undefined
+        }
       >
         {isExpanded && <Spacer style={{ margin: 8 }} lineVisible />}
-
-        {data.degreeName && data.term && !isExpanded && (
-          <ThemedText
-            style={{
-              fontSize: 14,
-              paddingHorizontal: 8,
-              opacity: 0.7,
-              fontWeight: "500",
-              color: colors.baseContent,
-            }}
-          >
-            {displaySummaryString}
-          </ThemedText>
-        )}
         {isExpanded && (
           <>
             {activeMenuSteps.map((stepName) => {
@@ -197,6 +189,7 @@ const RoutinesHeaderComponent = ({
         getLabel={(item) => item.label}
         showAddButton
         title="Select Routine"
+        onSelect={(index: number) => onDynamicRoutineSelect(index)}
       />
     </ThemedView>
   );

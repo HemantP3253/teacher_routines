@@ -8,32 +8,40 @@ interface AppSettings {
   routineTimeOptions: DynamicRoutineDetails[];
   isDark: boolean;
   userRole?: "admin" | "user";
+  updatedAt: number;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
   shownDegrees: getAllDegreeNames(),
   routineTimeOptions: [
     {
+      id: 1,
       label: "Short morning routine",
       startTime: "06:00 AM",
       endTime: "09:00 AM",
       duration: "40",
+      activeDays: "Mon, Tue, Wed, Thu, Fri",
     },
     {
+      id: 2,
       label: "Full morning routine",
       startTime: "06:00 AM",
       endTime: "12:00 AM",
       duration: "60",
+      activeDays: "Mon, Tue, Wed, Thu, Fri",
     },
     {
+      id: 3,
       label: "Day routine",
       startTime: "11:00 AM",
       endTime: "04:00 AM",
       duration: "60",
+      activeDays: "Mon, Tue, Wed, Thu, Fri",
     },
   ],
   isDark: false,
   userRole: "user",
+  updatedAt: Date.now(),
 };
 
 // 1. Define a clean key name matching your storage typing if needed

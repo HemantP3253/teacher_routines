@@ -2,12 +2,7 @@ import { RoutinesFooterComponent, SubjectCard } from "@/components/routines";
 import RoutinesHeaderComponent from "@/components/routines/RoutinesHeaderComponent";
 import { ThemedText } from "@/components/themed";
 import { getCurriculumData, searchByDegreeName } from "@/data/degreeDataTU";
-import {
-  DynamicRoutineDetails,
-  level,
-  RoutineData,
-  SubjectData,
-} from "@/interfaces/interfaces";
+import { level, RoutineData, SubjectData } from "@/interfaces/interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, StatusBar } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
@@ -21,10 +16,10 @@ const routines = () => {
     term: "",
     branch: "",
     batchAndSection: "",
+    dayOfWeek: "",
   });
 
-  const [dynamicRoutineDetails, setDynamicRoutineDetails] =
-    useState<DynamicRoutineDetails>();
+  const [selectedRoutineId, setSelectedRoutineId] = useState<number>();
 
   const degreeMetadata = useMemo(() => {
     return searchByDegreeName(routineData.degreeName);
@@ -114,7 +109,7 @@ const routines = () => {
           data={routineData}
           setData={setRoutineData}
           currentQueryContext={currentQueryContext}
-          onDynamicRoutineSelect={setDynamicRoutineDetails}
+          onDynamicRoutineSelect={setSelectedRoutineId}
         />
       }
       renderItem={renderSubjectCard}
