@@ -1,14 +1,17 @@
 import { RoutinesFooterComponent, SubjectCard } from "@/components/routines";
 import RoutinesHeaderComponent from "@/components/routines/RoutinesHeaderComponent";
 import { ThemedText } from "@/components/themed";
+import { useApp } from "@/contexts/AppContext";
 import { getCurriculumData, searchByDegreeName } from "@/data/degreeDataTU";
 import { level, RoutineData, SubjectData } from "@/interfaces/interfaces";
+import { RangeToSubjectTime } from "@/utils/dateUtils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, StatusBar } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
 const routines = () => {
   const { theme } = useUnistyles();
+  const { settings } = useApp();
   const colors = theme.colors;
 
   const [routineData, setRoutineData] = useState<RoutineData>({
@@ -19,7 +22,7 @@ const routines = () => {
     dayOfWeek: "",
   });
 
-  const [selectedRoutineId, setSelectedRoutineId] = useState<number>();
+  const [selectedRoutineId, setSelectedRoutineId] = useState<number>(0);
 
   const degreeMetadata = useMemo(() => {
     return searchByDegreeName(routineData.degreeName);
@@ -37,6 +40,9 @@ const routines = () => {
   }, [routineData, degreeMetadata]);
 
   const [subjectList, setSubjectsList] = useState<SubjectData[]>([]);
+  const [activeSubjects, setActiveSubjects] = useState<
+    { id: number; teacherId: string }[]
+  >([]);
 
   useEffect(() => {
     if (!routineData.degreeName || !routineData.term) {
@@ -78,21 +84,49 @@ const routines = () => {
     ({ item, index }: { item: SubjectData; index: number }) => (
       <SubjectCard
         subjectName={item.subjectCode}
+        startTime={item.startTime}
+        duration={item.duration}
+        teacherId={item.teacherId}
+        teacherName={item.teacherName}
         onTimeChange={(startTime, duration) =>
           handleUpdateSubjectCard(index, {
             startTime: startTime,
             duration: duration,
           })
         }
-        onTeacherChange={(teacherId, teacherName) =>
+        onTeacherChange={(teacherId, teacherName) => {
+          const routineOption = settings.routineTimeOptions[selectedRoutineId];
+
+          let timeFields: Partial<SubjectData> = {};
+
+          if (routineOption) {
+            const calculatedTimeRange = RangeToSubjectTime(
+              routineOption.startTime,
+              routineOption.endTime,
+              routineOption.duration,
+              index,
+            );
+
+            if (
+              Array.isArray(calculatedTimeRange) &&
+              calculatedTimeRange.length >= 2
+            ) {
+              timeFields = {
+                startTime: calculatedTimeRange[0],
+                duration: calculatedTimeRange[1],
+              };
+            }
+          }
+
           handleUpdateSubjectCard(index, {
             teacherId: teacherId,
             teacherName: teacherName,
-          })
-        }
+            ...timeFields,
+          });
+        }}
       />
     ),
-    [],
+    [settings.routineTimeOptions, selectedRoutineId, handleUpdateSubjectCard],
   );
 
   return (

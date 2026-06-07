@@ -428,3 +428,13 @@ interface DynamicRoutineDetails {
   duration: string;
   activeDays: string;
 }
+
+interface SubjectCardProps {
+  subjectName: string;
+  startTime: string;
+  duration: string;
+  teacherId: string;
+  teacherName: string;
+  onTimeChange: (startTime: string, duration: string) => void;
+  onTeacherChange: (teacherId: string, teacherName: string) => void;
+}

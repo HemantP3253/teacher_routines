@@ -1,7 +1,7 @@
 import { AssignmentIcon, ScheduleIcon } from "@/assets/icons";
-import { SubjectData } from "@/interfaces/interfaces";
+import { SubjectCardProps } from "@/interfaces/interfaces";
 import { calculateFullPeriodTime } from "@/utils/dateUtils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { ThemedText, ThemedView } from "../themed";
@@ -10,35 +10,26 @@ import AssignTimeModal from "./AssignTimeModal";
 
 const SubjectCard = ({
   subjectName,
+  startTime,
+  duration,
+  teacherId,
+  teacherName,
   onTimeChange,
   onTeacherChange,
-  initialData,
-}: {
-  subjectName: string;
-  onTimeChange: (startTime: string, duration: string) => void;
-  onTeacherChange: (teacherId: string, teacherName: string) => void;
-  initialData?: SubjectData;
-}) => {
-  const [subjectData, setSubjectData] = useState<SubjectData>(
-    initialData || {
-      subjectCode: "",
-      teacherId: "",
-      startTime: "",
-      teacherName: "",
-      duration: "",
-    },
-  );
-
-  useEffect(() => {
-    if (initialData) setSubjectData(initialData);
-  }, [initialData]);
-
+}: SubjectCardProps) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
+
   const [visible, setVisible] = useState<{
     timeModal: boolean;
     teacherModal: boolean;
   }>({ timeModal: false, teacherModal: false });
+
+  const nameSegments = subjectName.includes(":")
+    ? subjectName.split(":")
+    : [subjectName, ""];
+  const courseCode = nameSegments[0].trim();
+  const courseTitle = nameSegments[1].trim() || courseCode;
 
   return (
     <ThemedView
@@ -60,31 +51,27 @@ const SubjectCard = ({
             color: colors.primary,
           }}
         >
-          {subjectData.startTime === "" || subjectData.duration === ""
+          {!startTime || !duration
             ? "Time not selected"
-            : calculateFullPeriodTime(
-                subjectData.startTime,
-                Number(subjectData.duration),
-                false,
-              )}
+            : calculateFullPeriodTime(startTime, Number(duration), false)}
         </ThemedText>
 
         {/*  Subject Name */}
         <ThemedText style={{ fontWeight: "600", fontSize: 14, opacity: 0.9 }}>
-          {subjectName.split(":")[1].trim()}
+          {courseTitle}
         </ThemedText>
 
         {/*  Subject Code */}
         <ThemedText style={{ fontWeight: "400", fontSize: 14, opacity: 0.8 }}>
-          {subjectName.split(":")[0].trim()}
+          {courseCode}
         </ThemedText>
 
         {/* Assigned Status  */}
         <ThemedText
           style={{ fontSize: 12, color: colors.primary, marginTop: 4 }}
         >
-          {subjectData?.teacherId !== "" && subjectData?.teacherName !== ""
-            ? `Teacher: ${subjectData.teacherName}`
+          {teacherId !== "" && teacherName !== ""
+            ? `Teacher: ${teacherName}`
             : "Not assigned"}
         </ThemedText>
       </View>
@@ -92,7 +79,7 @@ const SubjectCard = ({
         style={{
           alignItems: "center",
           justifyContent: "flex-end",
-          gap: 0,
+          gap: 12,
           minWidth: 80,
           flexDirection: "row",
         }}
@@ -100,11 +87,7 @@ const SubjectCard = ({
         <ScheduleIcon
           height={28}
           width={28}
-          fillItem={
-            subjectData?.startTime !== "" && subjectData?.duration !== ""
-              ? true
-              : false
-          }
+          fillItem={!!(startTime && duration)}
           fill={colors.secondary}
           onPress={() => setVisible((prev) => ({ ...prev, timeModal: true }))}
         />
@@ -113,20 +96,14 @@ const SubjectCard = ({
           visible={visible.timeModal}
           onClose={() => setVisible((prev) => ({ ...prev, timeModal: false }))}
           onSubmit={(time, duration) => {
-            const updatedData: SubjectData = {
-              ...subjectData,
-              startTime: time,
-              duration: duration,
-            };
-
-            setSubjectData(updatedData);
-            onTimeChange(updatedData.startTime, updatedData.duration);
+            onTimeChange(time, duration);
+            setVisible((prev) => ({ ...prev, timeModal: false }));
           }}
         />
         <AssignmentIcon
           height={28}
           width={28}
-          fillItem={subjectData?.teacherId !== "" ? true : false}
+          fillItem={!!teacherId}
           fill={colors.secondary}
           onPress={() =>
             setVisible((prev) => ({ ...prev, teacherModal: true }))
@@ -138,14 +115,7 @@ const SubjectCard = ({
             setVisible((prev) => ({ ...prev, teacherModal: false }))
           }
           onSelectTeacher={(selectedTeacherId, selectedTeacherName) => {
-            const updatedData = {
-              ...subjectData,
-              teacherId: selectedTeacherId,
-              teacherName: selectedTeacherName,
-            };
-            setSubjectData(updatedData);
-            onTeacherChange(updatedData.teacherId, updatedData.teacherName);
-
+            onTeacherChange(selectedTeacherId, selectedTeacherName);
             setVisible((prev) => ({ ...prev, teacherModal: false }));
           }}
         />
