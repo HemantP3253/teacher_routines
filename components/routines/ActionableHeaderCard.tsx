@@ -2,7 +2,7 @@ import { SearchIcon } from "@/assets/icons";
 import { ActionableHeaderCardProps } from "@/interfaces/interfaces";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import { ThemedText, ThemedView } from "../themed";
+import { ThemedText } from "../themed";
 
 const ActionableHeaderCard = ({
   title,
@@ -12,12 +12,13 @@ const ActionableHeaderCard = ({
   searchButtonProperties,
   children,
   IconBeforeText,
+  summaryText,
 }: ActionableHeaderCardProps) => {
   const { Icon, onPress, height, width } = iconProperties;
   const { theme } = useUnistyles();
   const colors = theme.colors;
   return (
-    <ThemedView
+    <Pressable
       style={{
         gap: 4,
         borderWidth: 1,
@@ -27,14 +28,14 @@ const ActionableHeaderCard = ({
         borderColor: colors.primary,
         backgroundColor: colors.base200,
       }}
+      onPress={onPress}
     >
-      <Pressable
+      <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
         }}
-        onPress={onPress}
       >
         <View
           style={{
@@ -70,15 +71,27 @@ const ActionableHeaderCard = ({
             fill={colors.primary}
           />
         </View>
-      </Pressable>
+      </View>
       {showBottomBorder && (
         <View
           style={{ borderWidth: 1, borderColor: colors.accent, margin: 4 }}
         ></View>
       )}
       {isDataLoading ? <ActivityIndicator size={"large"} /> : children}
-      {}
-    </ThemedView>
+      {summaryText && (
+        <ThemedText
+          style={{
+            fontSize: 14,
+            paddingHorizontal: 8,
+            opacity: 0.7,
+            fontWeight: "500",
+            color: colors.baseContent,
+          }}
+        >
+          {summaryText}
+        </ThemedText>
+      )}
+    </Pressable>
   );
 };
 
