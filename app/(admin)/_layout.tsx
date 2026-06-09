@@ -1,20 +1,20 @@
 import { HomeIcon, OptionsIcon, RoutinesIcon } from "@/assets/icons";
-import { ThemedText, ThemedView } from "@/components/themed";
+import { ThemedText } from "@/components/themed";
 import { TabIconProps } from "@/interfaces/interfaces";
 import { Tabs } from "expo-router";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
 const TabIcon = ({ focused, Icon, title }: TabIconProps) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
-  const tabItemColor = colors.primary;
+  const tabItemColor = focused ? colors.primaryContent : colors.primary;
 
   return (
-    <ThemedView
+    <View
       style={[
         styles.tabContainer,
-        { backgroundColor: focused ? colors.primary + 20 : "transparent" },
+        { backgroundColor: focused ? colors.primary : "transparent" },
       ]}
     >
       <Icon
@@ -27,12 +27,12 @@ const TabIcon = ({ focused, Icon, title }: TabIconProps) => {
       {focused && (
         <ThemedText
           numberOfLines={1}
-          style={[styles.focusedText, { color: colors.primary }]}
+          style={[styles.focusedText, { color: tabItemColor }]}
         >
           {title}
         </ThemedText>
       )}
-    </ThemedView>
+    </View>
   );
 };
 
@@ -44,23 +44,7 @@ const _Layout = () => {
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
-        tabBarItemStyle: {
-          flexDirection: "row",
-          width: "100%",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        tabBarStyle: {
-          backgroundColor: colors.base200,
-          borderRadius: 8,
-          padding: 8,
-          height: 64,
-          position: "absolute",
-          overflow: "hidden",
-          borderWidth: 1,
-          borderColor: "#000000",
-        },
+        tabBarStyle: { display: "none" },
       }}
     >
       <Tabs.Screen

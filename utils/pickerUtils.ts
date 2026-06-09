@@ -1,22 +1,45 @@
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import { useState } from "react";
+import { AdToBs, BsToAd, NepaliToday } from "react-native-nepali-picker";
 
-export const dateTimePicker = (
-  currentMode: "date" | "time",
-  date: Date,
-  setDate: (date: Date) => void,
-  use24Hours?: boolean,
-) => {
-  const today = new Date();
+interface UseAppDatePickerProps {
+  selectedDate: Date;
+  onDateChange: (date: Date) => void;
+}
 
-  DateTimePickerAndroid.open({
-    value: date,
-    onChange: (event, date?: Date) => {
-      if (!date || event.type === "dismissed") return;
-      if (event.type === "set") setDate(date);
-    },
-    mode: currentMode,
-    is24Hour: use24Hours ?? false,
-    design: "material",
-    maximumDate: today,
-  });
+export const useAppDatePicker = ({
+  selectedDate,
+  onDateChange,
+}: UseAppDatePickerProps) => {
+  const [visible, setVisible] = useState(false);
+
+  const openPicker = () => setVisible(true);
+
+  const closePicker = () => setVisible(false);
+
+  const getInitialBsValue = () => {
+    try {
+      return AdToBs(
+        [
+          selectedDate.getFullYear(),
+          String(selectedDate.getMonth() + 1).padStart(2, "0"),
+          String(selectedDate.getDate()).padStart(2, "0"),
+        ].join("-"),
+      );
+    } catch {
+      return NepaliToday();
+    }
+  };
+
+  const handleNepaliDateSelect = (bsDate: string) => {
+    closePicker();
+    onDateChange(new Date(BsToAd(bsDate)));
+  };
+
+  return {
+    visible,
+    openPicker,
+    closePicker,
+    getInitialBsValue,
+    handleNepaliDateSelect,
+  };
 };

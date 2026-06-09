@@ -12,11 +12,11 @@ const home = () => {
   return (
     <ThemedView style={styles.rootContainer}>
       <ThemedStatusBar />
-      <ThemedText type="baseContent" style={styles.headingText}>
+      <ThemedText type="text" style={styles.headingText}>
         {greeting} {/* Add name for greeting, as well */}
       </ThemedText>
       <ThemedView style={styles.infoContainer}>
-        <ThemedText type="baseContent" style={styles.infoText}>
+        <ThemedText type="text" style={styles.infoText}>
           You have 5 classes today!
         </ThemedText>
       </ThemedView>

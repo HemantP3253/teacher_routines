@@ -165,7 +165,7 @@ const RoutinesHeaderComponent = ({
                   addSearchBar={stepName === "Degree Name"}
                   key={stepName}
                   data={pickerData}
-                  pressableStyle={{ backgroundColor: colors.base300 }}
+                  pressableStyle={{ backgroundColor: colors.surfaceElevated }}
                   title={`Select ${stepName}`}
                   type={stepName}
                   Icon={getIcon(stepName)}

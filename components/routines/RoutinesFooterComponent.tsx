@@ -26,13 +26,13 @@ const RoutinesFooterComponent = () => {
       <View
         style={{
           borderWidth: 1,
-          borderColor: colors.base100,
+          borderColor: colors.background,
           borderBottomColor: colors.primary,
           borderTopColor: colors.primary,
           alignItems: "center",
         }}
       >
-        <ThemedText type="baseContent" style={{ padding: 4 }}>
+        <ThemedText type="text" style={{ padding: 4 }}>
           ~End of list~
         </ThemedText>
       </View>

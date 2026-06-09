@@ -34,7 +34,6 @@ export const useAssignTimeModal = () => {
 
   useEffect(() => {
     if (date) {
-      // Convert the Date object from the picker into your HH:MM string format
       let hours = date.getHours();
       const dayPeriod = hours > 12 ? "PM" : "AM";
       hours -= hours > 12 ? 12 : 0;

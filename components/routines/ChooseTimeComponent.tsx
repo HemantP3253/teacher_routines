@@ -32,7 +32,9 @@ const ChooseTimeComponent = ({
     timeValues.endTime.length >= 5 &&
     timeValues.maxDuration !== "";
   return (
-    <ThemedView style={{ backgroundColor: backgroundColor || colors.base300 }}>
+    <ThemedView
+      style={{ backgroundColor: backgroundColor || colors.surfaceElevated }}
+    >
       <View>
         <ThemedTextInput
           title="Start Time"
@@ -41,7 +43,7 @@ const ChooseTimeComponent = ({
           placeholder="HH:MM"
           onChangeText={(text) => handleTimeInputChange(text)}
           returnKeyType="default"
-          blendColor={colors.base300}
+          blendColor={colors.surfaceElevated}
           timeValues={{
             time: date,
             setTime: setDate,
@@ -54,7 +56,7 @@ const ChooseTimeComponent = ({
           placeholder="HH:MM"
           onChangeText={(text) => handleTimeInputChange(text)}
           returnKeyType="default"
-          blendColor={colors.base300}
+          blendColor={colors.surfaceElevated}
           timeValues={{
             time: date,
             setTime: setDate,
@@ -74,7 +76,7 @@ const ChooseTimeComponent = ({
             }));
           }}
           returnKeyType="default"
-          blendColor={colors.base300}
+          blendColor={colors.surfaceElevated}
           keyboardType="numeric"
           maxLength={3}
         />
@@ -97,7 +99,7 @@ const ChooseTimeComponent = ({
             {
               width: "28%",
               alignItems: "center",
-              backgroundColor: colors.base200,
+              backgroundColor: colors.surface,
             },
             isClearable
               ? { borderColor: colors.primary }
@@ -130,7 +132,7 @@ const ChooseTimeComponent = ({
             {
               width: "28%",
               alignItems: "center",
-              backgroundColor: colors.base200,
+              backgroundColor: colors.surface,
             },
             isSubmittable
               ? { backgroundColor: colors.primary }

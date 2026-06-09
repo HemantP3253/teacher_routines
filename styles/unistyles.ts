@@ -9,83 +9,203 @@ const breakpoints = {
   xl: 1200,
 } as const;
 
-// 2. Define your Light Theme tokens
 const lightTheme = {
   colors: {
-    // Base Colors (Light Backgrounds & Surfaces)
-    base100: "#f8fafc", // Clean, slightly cool off-white
-    base200: "#edf2f7", // Light gray-blue for cards/sections
-    base300: "#e2e8f0", // Borders/Dividers
-    baseContent: "#1a2a38", // Deep Navy text (High contrast)
+    // Surfaces
+    background: "rgb(248, 251, 249)",
+    surface: "rgb(240, 245, 242)",
+    surfaceElevated: "rgb(231, 236, 233)",
+    surfacePressed: "rgb(220, 226, 222)",
 
-    // Brand Colors (Slightly more saturated for white backgrounds)
-    primary: "#76a831", // Deepened version of your lime
-    primaryContent: "#ffffff",
-    secondary: "#d97d7f", // Deepened version of your coral
-    secondaryContent: "#ffffff",
-    accent: "#b5a61d", // Deepened version of your yellow/accent
-    accentContent: "#ffffff",
+    // Text
+    text: "rgb(27, 38, 33)",
+    textSecondary: "rgb(98, 114, 106)",
+    textDisabled: "rgb(166, 176, 170)",
 
-    // Status Colors
-    neutral: "#1e3540",
-    neutralContent: "#e9f5f8",
-    info: "#0062ff",
-    infoContent: "#ffffff",
-    success: "#16a34a",
-    successContent: "#ffffff",
-    warning: "#ca8a04",
-    warningContent: "#ffffff",
-    error: "#e11d48",
-    errorContent: "#ffffff",
+    // Borders
+    border: "rgb(207, 216, 211)",
+    borderMuted: "rgb(227, 233, 229)",
 
-    // Unavailable Content Colors
-    disabled: "#cbd5e1",
-    disabledContent: "#94a3b8",
+    // Interactive
+    primary: "rgb(74, 152, 118)",
+    primaryContent: "rgb(248, 251, 249)",
+
+    secondary: "rgb(179, 103, 169)",
+    secondaryContent: "rgb(248, 251, 249)",
+
+    accent: "rgb(175, 174, 58)",
+    accentContent: "rgb(27, 38, 33)",
+
+    // Status
+    success: "rgb(52, 170, 112)",
+    successContent: "rgb(248, 251, 249)",
+
+    warning: "rgb(188, 177, 49)",
+    warningContent: "rgb(27, 38, 33)",
+
+    error: "rgb(195, 91, 75)",
+    errorContent: "rgb(248, 251, 249)",
+
+    info: "rgb(79, 120, 213)",
+    infoContent: "rgb(248, 251, 249)",
+
+    // Disabled
+    disabled: "rgb(220, 226, 222)",
+    disabledContent: "rgb(145, 154, 148)",
+
+    // Neutral palette
+    neutral100: "rgb(246, 248, 247)",
+    neutral200: "rgb(234, 238, 236)",
+    neutral300: "rgb(214, 220, 216)",
+    neutral400: "rgb(186, 194, 189)",
+    neutral500: "rgb(150, 160, 154)",
+    neutral600: "rgb(116, 126, 121)",
+    neutral700: "rgb(84, 94, 89)",
+    neutral800: "rgb(58, 66, 62)",
+    neutral900: "rgb(36, 42, 39)",
+
+    // Overlay
+    overlay: "rgba(0,0,0,0.40)",
   },
-  margins: {
+
+  spacing: {
+    xs: 4,
     sm: 8,
-    md: 16,
-    lg: 24,
+    md: 12,
+    lg: 16,
+    xl: 24,
+    "2xl": 32,
+  },
+
+  radius: {
+    sm: 4,
+    md: 8,
+    lg: 12,
+    xl: 16,
+    full: 9999,
+  },
+
+  typography: {
+    h1: {
+      fontSize: 32,
+      fontWeight: "700",
+      lineHeight: 40,
+    },
+    h2: {
+      fontSize: 24,
+      fontWeight: "700",
+      lineHeight: 32,
+    },
+    body: {
+      fontSize: 16,
+      fontWeight: "400",
+      lineHeight: 24,
+    },
+    caption: {
+      fontSize: 13,
+      fontWeight: "400",
+      lineHeight: 18,
+    },
   },
 } as const;
 
-// 3. Define your Dark Theme tokens
 const darkTheme = {
   colors: {
-    // Base Colors (Backgrounds & Surfaces)
-    base100: "#1d2e3d", // Main background
-    base200: "#253d52", // Sidebars/Cards
-    base300: "#2c4a66", // Borders/Dividers
-    baseContent: "#def1f5", // Main text
+    // Surfaces
+    background: "rgb(14, 26, 20)",
+    surface: "rgb(22, 37, 30)",
+    surfaceElevated: "rgb(32, 48, 40)",
+    surfacePressed: "rgb(43, 59, 50)",
 
-    // Brand Colors
-    primary: "#d1f4a5",
-    primaryContent: "#33482a",
-    secondary: "#f7bdbe",
-    secondaryContent: "#563536",
-    accent: "#f3eca0",
-    accentContent: "#4d462c",
+    // Text
+    text: "rgb(237, 248, 241)",
+    textSecondary: "rgb(182, 202, 189)",
+    textDisabled: "rgb(113, 129, 120)",
 
-    // Status Colors
-    neutral: "#9bbec7",
-    neutralContent: "#12202c",
-    info: "#5cb2ff",
-    infoContent: "#f1f8ff",
-    success: "#69e19a",
-    successContent: "#f1fdf6",
-    warning: "#f4ce5e",
-    warningContent: "#fdfbf0",
-    error: "#ff6c8b",
-    errorContent: "#fef1f3",
+    // Borders
+    border: "rgb(78, 102, 87)",
+    borderMuted: "rgb(52, 71, 60)",
 
-    // Unavailable Content Colors
-    disabled: "#334155",
-    disabledContent: "#64748b",
+    // Interactive
+    primary: "rgb(141, 216, 177)",
+    primaryContent: "rgb(22, 37, 30)",
+
+    secondary: "rgb(226, 163, 214)",
+    secondaryContent: "rgb(22, 37, 30)",
+
+    accent: "rgb(188, 186, 71)",
+    accentContent: "rgb(22, 37, 30)",
+
+    // Status
+    success: "rgb(79, 206, 142)",
+    successContent: "rgb(22, 37, 30)",
+
+    warning: "rgb(196, 188, 66)",
+    warningContent: "rgb(22, 37, 30)",
+
+    error: "rgb(215, 109, 91)",
+    errorContent: "rgb(22, 37, 30)",
+
+    info: "rgb(111, 151, 240)",
+    infoContent: "rgb(22, 37, 30)",
+
+    // Disabled
+    disabled: "rgb(52, 61, 56)",
+    disabledContent: "rgb(112, 124, 117)",
+
+    // Neutral palette
+    neutral100: "rgb(232, 237, 234)",
+    neutral200: "rgb(207, 214, 210)",
+    neutral300: "rgb(180, 189, 184)",
+    neutral400: "rgb(151, 161, 156)",
+    neutral500: "rgb(121, 132, 126)",
+    neutral600: "rgb(94, 105, 99)",
+    neutral700: "rgb(71, 81, 76)",
+    neutral800: "rgb(49, 57, 53)",
+    neutral900: "rgb(28, 34, 31)",
+
+    // Overlay
+    overlay: "rgba(0,0,0,0.65)",
   },
-  margins: {
+
+  spacing: {
+    xs: 4,
     sm: 8,
-    md: 16,
-    lg: 24,
+    md: 12,
+    lg: 16,
+    xl: 24,
+    "2xl": 32,
+  },
+
+  radius: {
+    sm: 4,
+    md: 8,
+    lg: 12,
+    xl: 16,
+    full: 9999,
+  },
+
+  typography: {
+    h1: {
+      fontSize: 32,
+      fontWeight: "700",
+      lineHeight: 40,
+    },
+    h2: {
+      fontSize: 24,
+      fontWeight: "700",
+      lineHeight: 32,
+    },
+    body: {
+      fontSize: 16,
+      fontWeight: "400",
+      lineHeight: 24,
+    },
+    caption: {
+      fontSize: 13,
+      fontWeight: "400",
+      lineHeight: 18,
+    },
   },
 } as const;
 

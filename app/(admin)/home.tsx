@@ -33,10 +33,10 @@ const Home = () => {
   return (
     <ThemedView style={styles.rootContainer}>
       <ThemedStatusBar />
-      <ThemedText type="baseContent" style={styles.headingText}>
+      <ThemedText type="text" style={styles.headingText}>
         {greeting}, admin!
       </ThemedText>
-      <ThemedText type="baseContent" style={{ fontSize: 16 }}>
+      <ThemedText type="text" style={{ fontSize: 16 }}>
         Ready to assign routines?{" "}
         <ThemedText
           style={{ color: colors.primary }}

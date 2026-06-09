@@ -17,7 +17,7 @@ const ThemedPressable = ({
     <Pressable
       style={(state) => [
         pressed
-          ? { borderColor: colors.neutral }
+          ? { borderColor: colors.neutral100 }
           : { borderColor: colors.success },
         inline
           ? {}

@@ -26,7 +26,7 @@ const ActionableHeaderCard = ({
         margin: 8,
         padding: 12,
         borderColor: colors.primary,
-        backgroundColor: colors.base200,
+        backgroundColor: colors.surface,
       }}
       onPress={onPress}
     >
@@ -85,7 +85,7 @@ const ActionableHeaderCard = ({
             paddingHorizontal: 8,
             opacity: 0.7,
             fontWeight: "500",
-            color: colors.baseContent,
+            color: colors.text,
           }}
         >
           {summaryText}

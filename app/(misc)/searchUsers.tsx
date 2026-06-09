@@ -33,7 +33,7 @@ const searchUsers = () => {
   const [searchError, setSearchError] = useState<string>("");
 
   const getDynamicStyle = (text: searchType) => {
-    return searchParams?.searchType === text ? "primaryContent" : "baseContent";
+    return searchParams?.searchType === text ? "primaryContent" : "text";
   };
 
   const handleSearchSubmit = () => {
@@ -103,7 +103,7 @@ const searchUsers = () => {
       >
         <ScrollView>
           <ThemedText
-            type="baseContent"
+            type="text"
             style={{
               fontSize: 24,
               fontWeight: "bold",
@@ -155,7 +155,7 @@ const searchUsers = () => {
                 No results found for "{searchParams.searchText}"
               </ThemedText>
             ) : searchParams.searchText.trim().length < 3 ? (
-              <ThemedText style={{ color: colors.neutral, padding: 8 }}>
+              <ThemedText style={{ color: colors.neutral100, padding: 8 }}>
                 Type at least 3 characters to search...
               </ThemedText>
             ) : (

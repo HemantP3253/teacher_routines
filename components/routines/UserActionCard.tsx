@@ -73,7 +73,7 @@ const UserActionCard = ({
         styles.cardContainer,
         {
           borderColor: colors.accent,
-          backgroundColor: colors.base200,
+          backgroundColor: colors.surface,
         },
       ]}
       onPress={() => !keepExpanded && setShowDropDown(!showDropDown)}
@@ -82,7 +82,7 @@ const UserActionCard = ({
         <View style={[styles.headerWrapper]}>
           <View style={styles.nameRow}>
             <NameIcon fill={colors.primary} />
-            <ThemedText type="baseContent" style={{ paddingRight: 4 }}>
+            <ThemedText type="text" style={{ paddingRight: 4 }}>
               {userData.full_name}
             </ThemedText>
             {!keepExpanded && (
@@ -98,26 +98,26 @@ const UserActionCard = ({
           <View>
             <View style={styles.iconInfoContainer}>
               <UsernameIcon fill={colors.primary} />
-              <ThemedText type="baseContent">
+              <ThemedText type="text">
                 <ThemedText style={{ color: colors.secondary }}>@</ThemedText>
                 {userData.username}
               </ThemedText>
             </View>
             <View style={styles.iconInfoContainer}>
               <AgeIcon fill={colors.primary} />
-              <ThemedText type="baseContent">
+              <ThemedText type="text">
                 {calculateAgeByDOB(userData.date_of_birth)}
                 {", " + userData.gender}
               </ThemedText>
             </View>
             <View style={styles.iconInfoContainer}>
               <PhoneIcon fill={colors.primary} />
-              <ThemedText type="baseContent">{userData.phone}</ThemedText>
+              <ThemedText type="text">{userData.phone}</ThemedText>
             </View>
             {userData?.address && (
               <View style={styles.iconInfoContainer}>
                 <AddressIcon fill={colors.primary} />
-                <ThemedText type="baseContent">{userData.address}</ThemedText>
+                <ThemedText type="text">{userData.address}</ThemedText>
               </View>
             )}
           </View>
@@ -130,7 +130,7 @@ const UserActionCard = ({
             <>
               {cardStatus === "Approved" ? (
                 <ClearIcon
-                  fill={colors.neutral}
+                  fill={colors.neutral100}
                   height={32}
                   width={32}
                   onPress={() => userAction(userData, collegeCode, "clear")}
@@ -147,7 +147,7 @@ const UserActionCard = ({
                 <ClearIcon
                   height={32}
                   width={32}
-                  fill={colors.neutral}
+                  fill={colors.neutral100}
                   onPress={() => userAction(userData, collegeCode, "clear")}
                 />
               ) : (
