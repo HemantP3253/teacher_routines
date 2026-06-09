@@ -22,8 +22,8 @@ const ThemedClassCard = ({ ...props }: ThemedClassCardProps) => {
           margin: 4,
           padding: 4,
           borderWidth: 1,
-          borderColor: colors.base300,
-          backgroundColor: colors.base200,
+          borderColor: colors.surfaceElevated,
+          backgroundColor: colors.surface,
           borderRadius: 8,
           flexDirection: "row",
         }}

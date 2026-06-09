@@ -17,7 +17,7 @@ const classes = () => {
   return (
     <ThemedView style={styles.rootContainer}>
       <ThemedStatusBar />
-      <ThemedText type="baseContent" style={styles.headingText}>
+      <ThemedText type="text" style={styles.headingText}>
         Today's classes are
         {/* Choose "no classes today, if no classes available" */}
       </ThemedText>

@@ -57,7 +57,9 @@ const approveUsers = () => {
   }, [cachedUsers, collegeCode]);
 
   return (
-    <ScrollView>
+    <ScrollView
+      style={[StyleSheet.absoluteFill, { backgroundColor: colors.background }]}
+    >
       <ThemedView style={styles.rootContainer}>
         <ThemedText style={styles.headingText}>User Action Section</ThemedText>
         {(["Pending", "Approved", "Rejected", "All"] as UserStatus[]).map(

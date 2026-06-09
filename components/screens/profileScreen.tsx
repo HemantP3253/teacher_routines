@@ -86,7 +86,7 @@ const UserProfileScreen = () => {
           </ThemedView>
         </View>
         <ThemedText
-          type="baseContent"
+          type="text"
           style={{ color: colors.secondary, fontWeight: "bold", fontSize: 18 }}
         >
           <ThemedText
@@ -111,7 +111,7 @@ const UserProfileScreen = () => {
         }}
       >
         <NameIcon fill={colors.primary} />
-        <ThemedText type="baseContent">
+        <ThemedText type="text">
           {userInfo.full_name ? userInfo.full_name : "Name not set"}
         </ThemedText>
       </ThemedView>
@@ -124,7 +124,7 @@ const UserProfileScreen = () => {
         }}
       >
         <AgeIcon fill={colors.primary} />
-        <ThemedText type="baseContent">
+        <ThemedText type="text">
           {userInfo.date_of_birth
             ? calculateAgeByDOB(userInfo.date_of_birth)
             : "Date of birth not set"}
@@ -139,7 +139,7 @@ const UserProfileScreen = () => {
         }}
       >
         <GenderIcon fill={colors.primary} />
-        <ThemedText type="baseContent">
+        <ThemedText type="text">
           {userInfo.gender ? userInfo.gender : "Gender not set"}
         </ThemedText>
       </ThemedView>
@@ -152,7 +152,7 @@ const UserProfileScreen = () => {
         }}
       >
         <PhoneIcon fill={colors.primary} />
-        <ThemedText type="baseContent">
+        <ThemedText type="text">
           {userInfo.phone ? "+977 " + userInfo.phone : "Phone not set"}
         </ThemedText>
       </ThemedView>
@@ -165,7 +165,7 @@ const UserProfileScreen = () => {
         }}
       >
         <AddressIcon fill={colors.primary} />
-        <ThemedText type="baseContent">
+        <ThemedText type="text">
           {userInfo.address ? userInfo.address : "Address not set"}
         </ThemedText>
       </ThemedView>

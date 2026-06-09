@@ -26,14 +26,11 @@ const ThemedOptionsCard = ({
         </ThemedView>
       )}
       <ThemedView style={{ flex: 1, marginLeft: 8 }}>
-        <ThemedText
-          type="baseContent"
-          style={{ fontSize: 16, fontWeight: "600" }}
-        >
+        <ThemedText type="text" style={{ fontSize: 16, fontWeight: "600" }}>
           {label}
         </ThemedText>
         {description && (
-          <ThemedText type="baseContent" style={{ fontSize: 14 }}>
+          <ThemedText type="text" style={{ fontSize: 14 }}>
             {description}
           </ThemedText>
         )}
@@ -42,7 +39,7 @@ const ThemedOptionsCard = ({
         <Switch
           value={switchValue}
           onValueChange={switchOnValueChange}
-          trackColor={{ false: colors.base300, true: colors.primary }}
+          trackColor={{ false: colors.surfaceElevated, true: colors.primary }}
           thumbColor={colors.accent}
           style={{ alignItems: "center", marginHorizontal: 8 }}
         />

@@ -26,7 +26,7 @@ const TagChip = ({
       return {
         background: `${colors.primary}5F`,
         border: "transparent",
-        text: colors.baseContent,
+        text: colors.text,
       };
     } else {
       return {

@@ -46,7 +46,7 @@ const DynamicTagSelect = <T,>({
               margin: 2,
               padding: 2,
               borderColor: colors.primary,
-              backgroundColor: colors.base200,
+              backgroundColor: colors.surface,
             }}
           >
             {data.map((item, index) => {

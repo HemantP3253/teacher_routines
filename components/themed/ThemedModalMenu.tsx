@@ -51,7 +51,7 @@ const ThemedModalMenu = ({
           ? colors.success
           : noFill
             ? colors.primary
-            : colors.base300,
+            : colors.surfaceElevated,
     };
   }, [errorText, colors, noFill]);
 
@@ -80,7 +80,9 @@ const ThemedModalMenu = ({
 
   const renderItem = useCallback(
     ({ item }: { item: string }) => (
-      <ThemedView style={{ backgroundColor: colors.base300, padding: 8 }}>
+      <ThemedView
+        style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
+      >
         <ThemedPressable
           onPress={() => {
             setItem(item);
@@ -153,13 +155,7 @@ const ThemedModalMenu = ({
           >
             {Icon && <Icon style={{ marginLeft: 4 }} fill={dynamicColorText} />}
             <ThemedText
-              type={
-                error
-                  ? "errorContent"
-                  : noFill
-                    ? "baseContent"
-                    : "primaryContent"
-              }
+              type={error ? "errorContent" : noFill ? "text" : "primaryContent"}
               style={{ fontSize: 16, paddingHorizontal: 8 }}
             >
               {item === ""
@@ -220,11 +216,11 @@ const ThemedModalMenu = ({
               maxHeight: "100%",
               borderRadius: 8,
               overflow: "hidden",
-              backgroundColor: colors.base100,
+              backgroundColor: colors.background,
             }}
           >
             <ThemedText
-              type="baseContent"
+              type="text"
               style={{
                 fontSize: 18,
                 padding: 8,
@@ -244,16 +240,18 @@ const ThemedModalMenu = ({
                     title="Type to Search"
                     value={searchText}
                     onChangeText={setSearchText}
-                    blendColor={colors.base300}
+                    blendColor={colors.surfaceElevated}
                   />
                 )
               }
-              ListHeaderComponentStyle={{ backgroundColor: colors.base300 }}
+              ListHeaderComponentStyle={{
+                backgroundColor: colors.surfaceElevated,
+              }}
               renderItem={renderItem}
               ListEmptyComponent={
                 <ThemedText
                   style={{
-                    backgroundColor: colors.base300,
+                    backgroundColor: colors.surfaceElevated,
                     padding: 12,
                     fontWeight: "700",
                     opacity: 0.9,
@@ -267,7 +265,7 @@ const ThemedModalMenu = ({
             />
             {cancelable && (
               <ThemedView
-                style={{ backgroundColor: colors.base300, padding: 8 }}
+                style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
               >
                 <ThemedPressable
                   noFill

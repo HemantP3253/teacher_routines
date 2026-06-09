@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { SvgProps } from "react-native-svg";
 
-type textType = "primaryContent" | "secondaryContent" | "accentContent" | "baseContent" | "neutralContent" | "infoContent" | "successContent" | "warningContent" | "errorContent";
+type textType = "text" | "textSecondary" | "textDisabled" | "primaryContent" | "secondaryContent" | "accentContent" | "disabledContent" | "warningContent" | "successContent" | "errorContent" | "infoContent";
 
 type genderType = "Male" | "Female" | "Others" | ""
 

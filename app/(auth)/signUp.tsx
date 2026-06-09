@@ -19,8 +19,10 @@ import {
 import { ThemedCheckbox } from "@/components/themed/";
 import { useSignUpForm } from "@/hooks/useSignUpForm";
 import { supabase } from "@/services/supabase";
+import { useAppDatePicker } from "@/utils/pickerUtils";
+import { pad } from "@/utils/stringUtils";
 import { isSignUpFormValid } from "@/utils/validationUtils";
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -31,6 +33,8 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { AdToBs, CalendarPicker } from "react-native-nepali-picker";
+import { useUnistyles } from "react-native-unistyles";
 
 // Sign up page code
 const signUp = () => {
@@ -46,6 +50,34 @@ const signUp = () => {
     colleges,
   } = useSignUpForm();
   const inputRefs = useRef<Record<string, TextInput | null>>({});
+
+  const { theme, rt } = useUnistyles();
+  console.log(theme.colors.text);
+  const colors = theme.colors;
+
+  const now = new Date();
+  const selectedDate = useMemo(
+    () =>
+      signUpData.dateOfBirth
+        ? new Date(signUpData.dateOfBirth)
+        : new Date(now.getFullYear() - 13, now.getMonth(), now.getDate()),
+
+    [signUpData.dateOfBirth],
+  );
+
+  const datePicker = useAppDatePicker({
+    selectedDate,
+    onDateChange: (date) => {
+      handleInputChange(
+        "dateOfBirth",
+        [
+          date.getFullYear(),
+          pad(date.getMonth() + 1),
+          pad(date.getDate()),
+        ].join("-"),
+      );
+    },
+  });
 
   const focusNextField = (id: string) => {
     inputRefs.current[id]?.focus();
@@ -66,13 +98,13 @@ const signUp = () => {
           <ThemedStatusBar />
           <Spacer size={8} />
 
-          <ThemedText type="baseContent" style={styles.headingText}>
+          <ThemedText type="text" style={styles.headingText}>
             Register New User
           </ThemedText>
 
           <Spacer size={8} />
 
-          <ThemedText type="baseContent" style={styles.labelText}>
+          <ThemedText type="text" style={styles.labelText}>
             Personal Details
           </ThemedText>
           <ThemedTextInput
@@ -95,21 +127,45 @@ const signUp = () => {
               inputRefs.current["dateOfBirth"] = element;
             }}
             Icon={CalendarInfoIcon}
-            onSubmitEditing={() => focusNextField("username")}
-            errorText={signUpError.dateOfBirth}
             title="Date of Birth"
             value={signUpData.dateOfBirth}
-            dateValue={
-              signUpData.dateOfBirth
-                ? new Date(signUpData.dateOfBirth)
-                : new Date()
-            }
-            setDateValue={(text: string) =>
-              handleInputChange("dateOfBirth", text)
-            }
+            onChangeText={(dateOfBirth) => {
+              handleInputChange("dateOfBirth", dateOfBirth);
+            }}
+            errorText={signUpError.dateOfBirth}
             infoText="You must be 13 years or older to use this app"
-            onChangeText={(text) => handleInputChange("dateOfBirth", text)}
-            maxLength={10}
+            customComponent={
+              <ThemedPressable
+                noFill
+                style={{
+                  height: 50,
+                  paddingHorizontal: 12,
+                  justifyContent: "center",
+                }}
+                onPress={() => datePicker.openPicker()}
+              >
+                <CalendarInfoIcon
+                  fill={colors.primary}
+                  width={24}
+                  height={24}
+                />
+              </ThemedPressable>
+            }
+          />
+
+          <CalendarPicker
+            visible={datePicker.visible}
+            date={datePicker.getInitialBsValue()}
+            onDateSelect={datePicker.handleNepaliDateSelect}
+            onClose={datePicker.closePicker}
+            language="en"
+            brandColor={colors.primary}
+            maxDate={AdToBs(
+              [now.getFullYear() - 13, now.getMonth() + 1, now.getDate()].join(
+                "-",
+              ),
+            )}
+            theme={rt.themeName == "light" ? "light" : "dark"}
           />
 
           <Spacer size={8} />
@@ -132,7 +188,7 @@ const signUp = () => {
 
           <Spacer size={8} />
 
-          <ThemedText type="baseContent" style={styles.labelText}>
+          <ThemedText type="text" style={styles.labelText}>
             Account details
           </ThemedText>
           <ThemedTextInput

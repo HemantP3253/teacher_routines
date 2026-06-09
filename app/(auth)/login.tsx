@@ -41,13 +41,13 @@ const landing = () => {
         <ThemedStatusBar />
         <Spacer size={8} />
 
-        <ThemedText type="baseContent" style={styles.headingText}>
+        <ThemedText type="text" style={styles.headingText}>
           Login
         </ThemedText>
 
         <Spacer size={8} />
 
-        <ThemedText type="baseContent" style={styles.labelText}>
+        <ThemedText type="text" style={styles.labelText}>
           Login Details
         </ThemedText>
 
@@ -115,7 +115,7 @@ const landing = () => {
 
         <Spacer size={20} lineVisible />
 
-        <ThemedText type="baseContent" style={styles.headingText}>
+        <ThemedText type="text" style={styles.headingText}>
           New here?{" "}
           <ThemedText
             style={[styles.headingText, { color: colors.primary }]}

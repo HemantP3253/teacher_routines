@@ -74,7 +74,7 @@ const ThemedRadioButtonMenu = <T,>({
                   {isChecked ? (
                     <RadioButtonCheckedIcon fill={colors.primary} />
                   ) : (
-                    <RadioButtonUncheckedIcon fill={colors.neutral} />
+                    <RadioButtonUncheckedIcon fill={colors.neutral100} />
                   )}
                   <View style={styles.labelContainer}>
                     <ThemedText style={styles.labelText}>{label}</ThemedText>
@@ -107,7 +107,7 @@ const ThemedRadioButtonMenu = <T,>({
 
 const styles = StyleSheet.create((theme) => ({
   rootContainer: {
-    backgroundColor: theme.colors.base200,
+    backgroundColor: theme.colors.surface,
     borderRadius: 8,
   },
   titleText: {
@@ -118,20 +118,20 @@ const styles = StyleSheet.create((theme) => ({
     textAlign: "center",
   },
   cardContainer: {
-    gap: theme.margins.sm,
-    padding: theme.margins.sm,
-    backgroundColor: theme.colors.base300,
+    gap: theme.spacing.sm,
+    padding: theme.spacing.sm,
+    backgroundColor: theme.colors.surfaceElevated,
     borderBottomStartRadius: 8,
     borderBottomEndRadius: 8,
   },
   card: {
     borderRadius: 8,
-    padding: theme.margins.sm,
+    padding: theme.spacing.sm,
     flexDirection: "column",
   },
   labelContainer: {
     flexDirection: "row",
-    gap: theme.margins.sm,
+    gap: theme.spacing.sm,
     width: "100%",
     alignItems: "center",
   },

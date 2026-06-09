@@ -74,7 +74,7 @@ const AssignTeacherModal = ({
           <FlatList
             data={filteredResults}
             keyExtractor={(item) => item.id}
-            keyboardShouldPersistTaps="never"
+            keyboardShouldPersistTaps="handled"
             style={{ marginTop: 12 }}
             ListEmptyComponent={() => (
               <ThemedText

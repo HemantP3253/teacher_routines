@@ -134,7 +134,7 @@ const routines = () => {
       data={subjectList}
       style={{
         flex: 1,
-        backgroundColor: colors.base100,
+        backgroundColor: colors.background,
         paddingTop: StatusBar.currentHeight,
       }}
       keyExtractor={(item) => item.subjectCode}

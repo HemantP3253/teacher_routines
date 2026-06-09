@@ -145,7 +145,7 @@ const ThemedCheckbox = <T,>({
                 {isChecked ? (
                   <SelectedCheckBox fill={colors.primary} />
                 ) : (
-                  <UncheckedCheckBoxIcon fill={colors.neutral} />
+                  <UncheckedCheckBoxIcon fill={colors.neutral100} />
                 )}
                 <View
                   style={{

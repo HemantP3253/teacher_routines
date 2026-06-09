@@ -34,7 +34,7 @@ const SubjectCard = ({
   return (
     <ThemedView
       style={{
-        backgroundColor: colors.base200,
+        backgroundColor: colors.surface,
         borderRadius: 4,
         flexDirection: "row",
         justifyContent: "space-between",

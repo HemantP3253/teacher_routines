@@ -41,7 +41,7 @@ const ThemedModalInput = ({
       ? colors.success
       : noFill
         ? colors.primary
-        : colors.base300;
+        : colors.surfaceElevated;
 
   const statusIconStyle: ViewStyle = {
     alignSelf: "center" as const,
@@ -99,13 +99,7 @@ const ThemedModalInput = ({
           >
             {Icon && <Icon style={{ marginLeft: 4 }} fill={dynamicColorText} />}
             <ThemedText
-              type={
-                error
-                  ? "errorContent"
-                  : noFill
-                    ? "baseContent"
-                    : "primaryContent"
-              }
+              type={error ? "errorContent" : noFill ? "text" : "primaryContent"}
               style={{ fontSize: 16, paddingHorizontal: 8 }}
             >
               {item === ""
@@ -159,11 +153,11 @@ const ThemedModalInput = ({
               maxHeight: "100%",
               borderRadius: 8,
               overflow: "hidden",
-              backgroundColor: colors.base100,
+              backgroundColor: colors.background,
             }}
           >
             <ThemedText
-              type="baseContent"
+              type="text"
               style={{
                 fontSize: 18,
                 padding: 8,
@@ -179,7 +173,10 @@ const ThemedModalInput = ({
               keyExtractor={(item) => item.toString()}
               renderItem={({ item }) => (
                 <ThemedView
-                  style={{ backgroundColor: colors.base300, padding: 8 }}
+                  style={{
+                    backgroundColor: colors.surfaceElevated,
+                    padding: 8,
+                  }}
                 >
                   <ThemedPressable
                     onPress={() => {
@@ -199,7 +196,7 @@ const ThemedModalInput = ({
             />
             {cancelable && (
               <ThemedView
-                style={{ backgroundColor: colors.base300, padding: 8 }}
+                style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
               >
                 <ThemedPressable
                   noFill
