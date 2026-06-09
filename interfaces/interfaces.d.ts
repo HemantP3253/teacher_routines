@@ -68,6 +68,7 @@ interface TabIconProps {
   focused: boolean;
   Icon: FC<CustomSvgProps>;
   title: string;
+  onPress: ((event: GestureResponderEvent) => void);
 }
 
 interface IconSet {

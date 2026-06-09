@@ -1,10 +1,11 @@
 import { AssignmentIcon, ScheduleIcon } from "@/assets/icons";
 import { SubjectCardProps } from "@/interfaces/interfaces";
 import { calculateFullPeriodTime } from "@/utils/dateUtils";
+import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import { ThemedText, ThemedView } from "../themed";
+import { ThemedText } from "../themed";
 import AssignTeacherModal from "./AssignTeacherModal";
 import AssignTimeModal from "./AssignTimeModal";
 
@@ -32,95 +33,114 @@ const SubjectCard = ({
   const courseTitle = nameSegments[1].trim() || courseCode;
 
   return (
-    <ThemedView
+    <View
       style={{
-        backgroundColor: colors.surface,
-        borderRadius: 4,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        margin: 8,
-        padding: 8,
+        marginVertical: theme.spacing.xs,
+        marginHorizontal: theme.spacing.md,
+        borderRadius: theme.radius.md,
+        elevation: 2,
+        shadowColor: colors.border,
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
+        backgroundColor: "transparent",
       }}
     >
-      <View>
-        {/* Subject Time */}
-        <ThemedText
-          style={{
-            fontWeight: "bold",
-            fontSize: 16,
-            color: colors.primary,
-          }}
-        >
-          {!startTime || !duration
-            ? "Time not selected"
-            : calculateFullPeriodTime(startTime, Number(duration), false)}
-        </ThemedText>
-
-        {/*  Subject Name */}
-        <ThemedText style={{ fontWeight: "600", fontSize: 14, opacity: 0.9 }}>
-          {courseTitle}
-        </ThemedText>
-
-        {/*  Subject Code */}
-        <ThemedText style={{ fontWeight: "400", fontSize: 14, opacity: 0.8 }}>
-          {courseCode}
-        </ThemedText>
-
-        {/* Assigned Status  */}
-        <ThemedText
-          style={{ fontSize: 12, color: colors.primary, marginTop: 4 }}
-        >
-          {teacherId !== "" && teacherName !== ""
-            ? `Teacher: ${teacherName}`
-            : "Not assigned"}
-        </ThemedText>
-      </View>
-      <View
+      <LinearGradient
+        colors={[colors.background, colors.surface]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
         style={{
-          alignItems: "center",
-          justifyContent: "flex-end",
-          gap: 12,
-          minWidth: 80,
+          borderRadius: theme.radius.md,
+          borderWidth: 1,
+          borderColor: colors.border,
           flexDirection: "row",
+          justifyContent: "space-between",
+          padding: 12,
         }}
       >
-        <ScheduleIcon
-          height={28}
-          width={28}
-          fillItem={!!(startTime && duration)}
-          fill={colors.secondary}
-          onPress={() => setVisible((prev) => ({ ...prev, timeModal: true }))}
-        />
-        <AssignTimeModal
-          title="Select Time Schedule"
-          visible={visible.timeModal}
-          onClose={() => setVisible((prev) => ({ ...prev, timeModal: false }))}
-          onSubmit={(time, duration) => {
-            onTimeChange(time, duration);
-            setVisible((prev) => ({ ...prev, timeModal: false }));
+        <View>
+          {/* Subject Time */}
+          <ThemedText
+            style={{
+              fontWeight: "bold",
+              fontSize: 16,
+              color: colors.primary,
+            }}
+          >
+            {!startTime || !duration
+              ? "Time not selected"
+              : calculateFullPeriodTime(startTime, Number(duration), false)}
+          </ThemedText>
+
+          {/*  Subject Name */}
+          <ThemedText style={{ fontWeight: "600", fontSize: 14, opacity: 0.9 }}>
+            {courseTitle}
+          </ThemedText>
+
+          {/*  Subject Code */}
+          <ThemedText style={{ fontWeight: "400", fontSize: 14, opacity: 0.8 }}>
+            {courseCode}
+          </ThemedText>
+
+          {/* Assigned Status  */}
+          <ThemedText
+            style={{ fontSize: 12, color: colors.primary, marginTop: 4 }}
+          >
+            {teacherId !== "" && teacherName !== ""
+              ? `Teacher: ${teacherName}`
+              : "Not assigned"}
+          </ThemedText>
+        </View>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "flex-end",
+            gap: 12,
+            minWidth: 80,
+            flexDirection: "row",
           }}
-        />
-        <AssignmentIcon
-          height={28}
-          width={28}
-          fillItem={!!teacherId}
-          fill={colors.secondary}
-          onPress={() =>
-            setVisible((prev) => ({ ...prev, teacherModal: true }))
-          }
-        />
-        <AssignTeacherModal
-          visible={visible.teacherModal}
-          onClose={() =>
-            setVisible((prev) => ({ ...prev, teacherModal: false }))
-          }
-          onSelectTeacher={(selectedTeacherId, selectedTeacherName) => {
-            onTeacherChange(selectedTeacherId, selectedTeacherName);
-            setVisible((prev) => ({ ...prev, teacherModal: false }));
-          }}
-        />
-      </View>
-    </ThemedView>
+        >
+          <ScheduleIcon
+            height={28}
+            width={28}
+            fillItem={!!(startTime && duration)}
+            fill={colors.secondary}
+            onPress={() => setVisible((prev) => ({ ...prev, timeModal: true }))}
+          />
+          <AssignTimeModal
+            title="Select Time Schedule"
+            visible={visible.timeModal}
+            onClose={() =>
+              setVisible((prev) => ({ ...prev, timeModal: false }))
+            }
+            onSubmit={(time, duration) => {
+              onTimeChange(time, duration);
+              setVisible((prev) => ({ ...prev, timeModal: false }));
+            }}
+          />
+          <AssignmentIcon
+            height={28}
+            width={28}
+            fillItem={!!teacherId}
+            fill={colors.secondary}
+            onPress={() =>
+              setVisible((prev) => ({ ...prev, teacherModal: true }))
+            }
+          />
+          <AssignTeacherModal
+            visible={visible.teacherModal}
+            onClose={() =>
+              setVisible((prev) => ({ ...prev, teacherModal: false }))
+            }
+            onSelectTeacher={(selectedTeacherId, selectedTeacherName) => {
+              onTeacherChange(selectedTeacherId, selectedTeacherName);
+              setVisible((prev) => ({ ...prev, teacherModal: false }));
+            }}
+          />
+        </View>
+      </LinearGradient>
+    </View>
   );
 };
 
