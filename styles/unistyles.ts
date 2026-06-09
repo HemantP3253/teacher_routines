@@ -69,6 +69,7 @@ const lightTheme = {
   },
 
   spacing: {
+    xxs: 2,
     xs: 4,
     sm: 8,
     md: 12,
@@ -169,6 +170,7 @@ const darkTheme = {
   },
 
   spacing: {
+    xxs: 2,
     xs: 4,
     sm: 8,
     md: 12,
