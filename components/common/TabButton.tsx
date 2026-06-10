@@ -4,9 +4,9 @@ import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import ThemedText from "../themed/ThemedText";
 
 const TabButton = ({ focused, Icon, title, onPress }: TabIconProps) => {
-  const { theme, rt } = useUnistyles();
+  const { theme } = useUnistyles();
   const colors = theme.colors;
-  const tabItemColor = focused ? colors.primary : colors.border;
+  const tabItemColor = colors.primary;
 
   return (
     <Pressable

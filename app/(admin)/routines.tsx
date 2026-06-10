@@ -5,9 +5,10 @@ import { useApp } from "@/contexts/AppContext";
 import { getCurriculumData, searchByDegreeName } from "@/data/degreeDataTU";
 import { level, RoutineData, SubjectData } from "@/interfaces/interfaces";
 import { RangeToSubjectTime } from "@/utils/dateUtils";
+import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, StatusBar } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 const routines = () => {
   const { theme } = useUnistyles();
@@ -66,19 +67,19 @@ const routines = () => {
     setSubjectsList(initialSubjects);
   }, [currentQueryContext, routineData.degreeName, routineData.term]);
 
-  const handleUpdateSubjectCard = (
-    index: number,
-    updatedFields: Partial<SubjectData>,
-  ) => {
-    setSubjectsList((prevList) => {
-      const newList = [...prevList];
-      newList[index] = {
-        ...newList[index],
-        ...updatedFields,
-      };
-      return newList;
-    });
-  };
+  const handleUpdateSubjectCard = useCallback(
+    (index: number, updatedFields: Partial<SubjectData>) => {
+      setSubjectsList((prevList) => {
+        const newList = [...prevList];
+        newList[index] = {
+          ...newList[index],
+          ...updatedFields,
+        };
+        return newList;
+      });
+    },
+    [],
+  );
 
   const renderSubjectCard = useCallback(
     ({ item, index }: { item: SubjectData; index: number }) => (
@@ -130,42 +131,49 @@ const routines = () => {
   );
 
   return (
-    <FlatList
-      data={subjectList}
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        paddingTop: StatusBar.currentHeight,
-      }}
-      keyExtractor={(item) => item.subjectCode}
-      ListHeaderComponent={
-        <RoutinesHeaderComponent
-          data={routineData}
-          setData={setRoutineData}
-          currentQueryContext={currentQueryContext}
-          onDynamicRoutineSelect={setSelectedRoutineId}
-        />
-      }
-      renderItem={renderSubjectCard}
-      ListFooterComponent={
-        subjectList.length > 0 ? (
-          <RoutinesFooterComponent />
-        ) : (
-          <ThemedText
-            style={{
-              fontWeight: "600",
-              fontSize: 16,
-              padding: 4,
-              marginHorizontal: 8,
-              color: colors.infoContent,
-            }}
-          >
-            Please select degree details.
-          </ThemedText>
-        )
-      }
-      ListFooterComponentStyle={{ marginBottom: 118 }}
-    />
+    <LinearGradient
+      style={StyleSheet.absoluteFillObject}
+      colors={[colors.background, colors.surface]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    >
+      <FlatList
+        data={subjectList}
+        style={{
+          flex: 1,
+          backgroundColor: "transparent",
+          paddingTop: StatusBar.currentHeight,
+        }}
+        keyExtractor={(item) => item.subjectCode}
+        ListHeaderComponent={
+          <RoutinesHeaderComponent
+            data={routineData}
+            setData={setRoutineData}
+            currentQueryContext={currentQueryContext}
+            onDynamicRoutineSelect={setSelectedRoutineId}
+          />
+        }
+        renderItem={renderSubjectCard}
+        ListFooterComponent={
+          subjectList.length > 0 ? (
+            <RoutinesFooterComponent />
+          ) : (
+            <ThemedText
+              style={{
+                fontWeight: "600",
+                fontSize: 16,
+                padding: 4,
+                marginHorizontal: 8,
+                color: colors.infoContent,
+              }}
+            >
+              Please select degree details.
+            </ThemedText>
+          )
+        }
+        ListFooterComponentStyle={{ marginBottom: 128 }}
+      />
+    </LinearGradient>
   );
 };
 

@@ -1,4 +1,5 @@
 import { LightTheme } from "@/assets/theme/Themes";
+import { LinearGradientProps } from "expo-linear-gradient";
 import React, { FC, ReactNode, SetStateAction, SVGProps } from "react";
 import {
   GestureResponderEvent,
@@ -23,6 +24,10 @@ type userType = "User" | "Admin"
 type level = "faculty" | "degreeType" | "degreeName" | "hasBranches" | "branch" | "term" | "subjects"
 
 interface ThemedViewProps extends ViewProps {}
+
+interface ThemedLinearGradientProps extends Omit< LinearGradientProps, "colors"> {
+  type?: "background" | "surface" | "surfaceElevated"
+}
 
 interface ThemedPressableProps extends PressableProps extends ViewProps {
   noFill?: boolean;

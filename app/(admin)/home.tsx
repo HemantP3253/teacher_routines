@@ -1,6 +1,10 @@
 import { ArrowForwardIcon } from "@/assets/icons";
 import { ActionableHeaderCard, UserActionCard } from "@/components/routines";
-import { ThemedStatusBar, ThemedText, ThemedView } from "@/components/themed";
+import {
+  ThemedLinearGradient,
+  ThemedStatusBar,
+  ThemedText
+} from "@/components/themed";
 import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { getGreeting } from "@/utils/stringUtils";
@@ -31,7 +35,7 @@ const Home = () => {
   }, [cachedUsers, currentCollege]);
 
   return (
-    <ThemedView style={styles.rootContainer}>
+    <ThemedLinearGradient style={styles.rootContainer}>
       <ThemedStatusBar />
       <ThemedText type="text" style={styles.headingText}>
         {greeting}, admin!
@@ -87,7 +91,7 @@ const Home = () => {
           </Pressable>
         )}
       </ActionableHeaderCard>
-    </ThemedView>
+    </ThemedLinearGradient>
   );
 };
 

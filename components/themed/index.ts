@@ -1,6 +1,7 @@
 export { default as ThemedAlertWindow } from "./ThemedAlertWindow";
 export { default as ThemedCheckbox } from "./ThemedCheckbox";
 export { default as ThemedClassCard } from "./ThemedClassCard";
+export { default as ThemedLinearGradient } from "./ThemedLinearGradient";
 export { default as ThemedModalInput } from "./ThemedModalInput";
 export { default as ThemedModalMenu } from "./ThemedModalMenu";
 export { default as ThemedOptionsCard } from "./ThemedOptionsCard";
