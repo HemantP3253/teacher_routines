@@ -47,13 +47,13 @@ const SubjectCard = ({
       }}
     >
       <LinearGradient
-        colors={[colors.background, colors.surface]}
+        colors={[colors.surface, colors.surfaceElevated]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={{
           borderRadius: theme.radius.md,
           borderWidth: 1,
-          borderColor: colors.border,
+          borderColor: colors.borderMuted,
           flexDirection: "row",
           justifyContent: "space-between",
           padding: 12,

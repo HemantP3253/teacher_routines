@@ -103,7 +103,7 @@ const RoutinesHeaderComponent = ({
   };
 
   return (
-    <ThemedView>
+    <ThemedView style={{ backgroundColor: "transparent" }}>
       <ThemedText
         style={{
           fontSize: 24,
@@ -165,7 +165,6 @@ const RoutinesHeaderComponent = ({
                   addSearchBar={stepName === "Degree Name"}
                   key={stepName}
                   data={pickerData}
-                  pressableStyle={{ backgroundColor: colors.surfaceElevated }}
                   title={`Select ${stepName}`}
                   type={stepName}
                   Icon={getIcon(stepName)}
