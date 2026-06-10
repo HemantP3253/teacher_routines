@@ -1,7 +1,11 @@
 import { SearchIcon } from "@/assets/icons";
 import TagChip from "@/components/common/DynamicTagSelect/TagChip";
 import { UserActionCard } from "@/components/routines";
-import { ThemedText, ThemedTextInput, ThemedView } from "@/components/themed";
+import {
+  ThemedLinearGradient,
+  ThemedText,
+  ThemedTextInput
+} from "@/components/themed";
 import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { useLocalSearchParams } from "expo-router";
@@ -94,7 +98,7 @@ const searchUsers = () => {
   }, [searchParams.searchText, searchParams.searchType, userData]);
 
   return (
-    <ThemedView
+    <ThemedLinearGradient
       style={[{ paddingTop: StatusBar.currentHeight }, StyleSheet.absoluteFill]}
     >
       <KeyboardAvoidingView
@@ -170,7 +174,7 @@ const searchUsers = () => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </ThemedView>
+    </ThemedLinearGradient>
   );
 };
 

@@ -8,7 +8,12 @@ import {
   PhoneIcon,
   UsernameIcon,
 } from "@/assets/icons";
-import { ThemedStatusBar, ThemedText, ThemedView } from "@/components/themed";
+import {
+  ThemedLinearGradient,
+  ThemedStatusBar,
+  ThemedText,
+  ThemedView,
+} from "@/components/themed";
 import { useUserInfo } from "@/contexts/UserInfoContext";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
 import { useRouter } from "expo-router";
@@ -29,7 +34,7 @@ const UserProfileScreen = () => {
 
   if (isLoading)
     return (
-      <ThemedView
+      <ThemedLinearGradient
         style={[
           StyleSheet.absoluteFill,
           { alignItems: "center", justifyContent: "center" },
@@ -40,13 +45,15 @@ const UserProfileScreen = () => {
           style={{ flex: 1, backgroundColor: colors.primary }}
           size="large"
         />
-      </ThemedView>
+      </ThemedLinearGradient>
     );
 
   if (!userInfo) return <ThemedText>No user info available.</ThemedText>;
 
   return (
-    <ThemedView style={{ flex: 1, paddingTop: StatusBar.currentHeight }}>
+    <ThemedLinearGradient
+      style={{ flex: 1, paddingTop: StatusBar.currentHeight }}
+    >
       <ThemedStatusBar />
       <OptionsIcon
         style={{ alignSelf: "flex-end", margin: 8 }}
@@ -169,7 +176,7 @@ const UserProfileScreen = () => {
           {userInfo.address ? userInfo.address : "Address not set"}
         </ThemedText>
       </ThemedView>
-    </ThemedView>
+    </ThemedLinearGradient>
   );
 };
 

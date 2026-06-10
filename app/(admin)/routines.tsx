@@ -1,11 +1,10 @@
 import { RoutinesFooterComponent, SubjectCard } from "@/components/routines";
 import RoutinesHeaderComponent from "@/components/routines/RoutinesHeaderComponent";
-import { ThemedText } from "@/components/themed";
+import { ThemedLinearGradient, ThemedText } from "@/components/themed";
 import { useApp } from "@/contexts/AppContext";
 import { getCurriculumData, searchByDegreeName } from "@/data/degreeDataTU";
 import { level, RoutineData, SubjectData } from "@/interfaces/interfaces";
 import { RangeToSubjectTime } from "@/utils/dateUtils";
-import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, StatusBar } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
@@ -131,12 +130,7 @@ const routines = () => {
   );
 
   return (
-    <LinearGradient
-      style={StyleSheet.absoluteFillObject}
-      colors={[colors.background, colors.surface]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-    >
+    <ThemedLinearGradient style={StyleSheet.absoluteFillObject}>
       <FlatList
         data={subjectList}
         style={{
@@ -164,8 +158,8 @@ const routines = () => {
                 fontSize: 16,
                 padding: 4,
                 marginHorizontal: 8,
-                color: colors.infoContent,
               }}
+              type="text"
             >
               Please select degree details.
             </ThemedText>
@@ -173,7 +167,7 @@ const routines = () => {
         }
         ListFooterComponentStyle={{ marginBottom: 128 }}
       />
-    </LinearGradient>
+    </ThemedLinearGradient>
   );
 };
 

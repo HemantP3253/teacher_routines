@@ -1,10 +1,10 @@
 import { DarkModeIcon, DegreeIcon, LogoutIcon } from "@/assets/icons";
 import {
+  ThemedLinearGradient,
   ThemedOptionsCard,
   ThemedPressable,
   ThemedStatusBar,
-  ThemedText,
-  ThemedView,
+  ThemedText
 } from "@/components/themed";
 import { useApp } from "@/contexts/AppContext";
 import { useUserInfo } from "@/contexts/UserInfoContext";
@@ -48,7 +48,7 @@ const OptionsScreen = () => {
   };
 
   return (
-    <ThemedView
+    <ThemedLinearGradient
       style={{
         height: "100%",
         paddingTop: StatusBar.currentHeight ?? 0,
@@ -128,7 +128,7 @@ const OptionsScreen = () => {
           Log Out
         </ThemedText>
       </ThemedPressable>
-    </ThemedView>
+    </ThemedLinearGradient>
   );
 };
 

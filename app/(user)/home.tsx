@@ -1,4 +1,9 @@
-import { ThemedStatusBar, ThemedText, ThemedView } from "@/components/themed";
+import {
+  ThemedLinearGradient,
+  ThemedStatusBar,
+  ThemedText,
+  ThemedView,
+} from "@/components/themed";
 import { getGreeting } from "@/utils/stringUtils";
 import { useEffect, useState } from "react";
 import { StatusBar, StyleSheet } from "react-native";
@@ -10,7 +15,7 @@ const home = () => {
     setGreeting(getGreeting());
   }, []);
   return (
-    <ThemedView style={styles.rootContainer}>
+    <ThemedLinearGradient style={styles.rootContainer}>
       <ThemedStatusBar />
       <ThemedText type="text" style={styles.headingText}>
         {greeting} {/* Add name for greeting, as well */}
@@ -20,7 +25,7 @@ const home = () => {
           You have 5 classes today!
         </ThemedText>
       </ThemedView>
-    </ThemedView>
+    </ThemedLinearGradient>
   );
 };
 const styles = StyleSheet.create({
