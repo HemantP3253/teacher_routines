@@ -1,8 +1,8 @@
 import {
   ThemedClassCard,
+  ThemedLinearGradient,
   ThemedStatusBar,
   ThemedText,
-  ThemedView,
 } from "@/components/themed";
 import { getGreeting } from "@/utils/stringUtils";
 import React, { useEffect, useState } from "react";
@@ -15,7 +15,7 @@ const classes = () => {
     setGreeting(getGreeting());
   }, []);
   return (
-    <ThemedView style={styles.rootContainer}>
+    <ThemedLinearGradient style={styles.rootContainer}>
       <ThemedStatusBar />
       <ThemedText type="text" style={styles.headingText}>
         Today's classes are
@@ -26,7 +26,7 @@ const classes = () => {
         startTime="09:30"
         subject="Database Management System"
       ></ThemedClassCard>
-    </ThemedView>
+    </ThemedLinearGradient>
   );
 };
 

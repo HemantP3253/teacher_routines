@@ -1,6 +1,9 @@
 import { ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
 import { ActionableHeaderCard, UserActionCard } from "@/components/routines";
-import { ThemedText, ThemedView } from "@/components/themed";
+import {
+  ThemedLinearGradient,
+  ThemedText
+} from "@/components/themed";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { getCurrentAdminCollege } from "@/services/collegeService";
 import { useRouter } from "expo-router";
@@ -60,7 +63,7 @@ const approveUsers = () => {
     <ScrollView
       style={[StyleSheet.absoluteFill, { backgroundColor: colors.background }]}
     >
-      <ThemedView style={styles.rootContainer}>
+      <ThemedLinearGradient style={styles.rootContainer}>
         <ThemedText style={styles.headingText}>User Action Section</ThemedText>
         {(["Pending", "Approved", "Rejected", "All"] as UserStatus[]).map(
           (type) => (
@@ -109,7 +112,7 @@ const approveUsers = () => {
             </ActionableHeaderCard>
           ),
         )}
-      </ThemedView>
+      </ThemedLinearGradient>
     </ScrollView>
   );
 };

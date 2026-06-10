@@ -17,9 +17,9 @@ import { UserActionCardProps } from "@/interfaces/interfaces";
 import { userAction } from "@/services/userActionService";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
 import { useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
-import { ThemedText } from "../themed";
+import { Pressable, View } from "react-native";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { ThemedLinearGradient, ThemedText } from "../themed";
 
 type CardType = "Pending" | "Approved" | "Rejected";
 
@@ -29,10 +29,9 @@ const UserActionCard = ({
   hideIcons,
   keepExpanded,
 }: UserActionCardProps) => {
-  const { theme } = useUnistyles();
+  const { colors } = useUnistyles().theme;
   const { currentCollege } = useCollegeInfo();
   const collegeCode: string = currentCollege?.college_code || "";
-  const colors = theme.colors;
 
   const [showDropDown, setShowDropDown] = useState<boolean>(
     keepExpanded || false,
@@ -68,129 +67,127 @@ const UserActionCard = ({
   };
 
   return (
-    <Pressable
-      style={[
-        styles.cardContainer,
-        {
-          borderColor: colors.accent,
-          backgroundColor: colors.surface,
-        },
-      ]}
-      onPress={() => !keepExpanded && setShowDropDown(!showDropDown)}
-    >
-      <View style={styles.leftColumn}>
-        <View style={[styles.headerWrapper]}>
-          <View style={styles.nameRow}>
-            <NameIcon fill={colors.primary} />
-            <ThemedText type="text" style={{ paddingRight: 4 }}>
-              {userData.full_name}
-            </ThemedText>
-            {!keepExpanded && (
-              <ArrowDownIcon
-                transform={[{ rotate: showDropDown ? "180deg" : "0deg" }]}
-                fill={colors.primary}
-              />
-            )}
+    <Pressable onPress={() => !keepExpanded && setShowDropDown(!showDropDown)}>
+      <ThemedLinearGradient
+        type="surface"
+        end={{ x: 0, y: 1 }}
+        style={styles.cardContainer}
+      >
+        <View style={styles.leftColumn}>
+          <View style={[styles.headerWrapper]}>
+            <View style={styles.nameRow}>
+              <NameIcon fill={colors.primary} />
+              <ThemedText type="text" style={{ paddingRight: 4 }}>
+                {userData.full_name}
+              </ThemedText>
+              {!keepExpanded && (
+                <ArrowDownIcon
+                  transform={[{ rotate: showDropDown ? "180deg" : "0deg" }]}
+                  fill={colors.primary}
+                />
+              )}
+            </View>
+            {!showDropDown && showStatus && <StatusCard />}
           </View>
-          {!showDropDown && showStatus && <StatusCard />}
-        </View>
-        {showDropDown && (
-          <View>
-            <View style={styles.iconInfoContainer}>
-              <UsernameIcon fill={colors.primary} />
-              <ThemedText type="text">
-                <ThemedText style={{ color: colors.secondary }}>@</ThemedText>
-                {userData.username}
-              </ThemedText>
-            </View>
-            <View style={styles.iconInfoContainer}>
-              <AgeIcon fill={colors.primary} />
-              <ThemedText type="text">
-                {calculateAgeByDOB(userData.date_of_birth)}
-                {", " + userData.gender}
-              </ThemedText>
-            </View>
-            <View style={styles.iconInfoContainer}>
-              <PhoneIcon fill={colors.primary} />
-              <ThemedText type="text">{userData.phone}</ThemedText>
-            </View>
-            {userData?.address && (
+          {showDropDown && (
+            <View>
               <View style={styles.iconInfoContainer}>
-                <AddressIcon fill={colors.primary} />
-                <ThemedText type="text">{userData.address}</ThemedText>
+                <UsernameIcon fill={colors.primary} />
+                <ThemedText type="text">
+                  <ThemedText style={{ color: colors.secondary }}>@</ThemedText>
+                  {userData.username}
+                </ThemedText>
               </View>
-            )}
-          </View>
-        )}
-      </View>
-      <View style={styles.rightColumn}>
-        {showStatus && showDropDown && <StatusCard />}
-        <View style={styles.actionButtonsContainer}>
-          {!hideIcons && (
-            <>
-              {cardStatus === "Approved" ? (
-                <ClearIcon
-                  fill={colors.neutral100}
-                  height={32}
-                  width={32}
-                  onPress={() => userAction(userData, collegeCode, "clear")}
-                />
-              ) : (
-                <ApproveIcon
-                  height={32}
-                  width={32}
-                  fill={colors.success}
-                  onPress={() => userAction(userData, collegeCode, "approve")}
-                />
+              <View style={styles.iconInfoContainer}>
+                <AgeIcon fill={colors.primary} />
+                <ThemedText type="text">
+                  {calculateAgeByDOB(userData.date_of_birth)}
+                  {", " + userData.gender}
+                </ThemedText>
+              </View>
+              <View style={styles.iconInfoContainer}>
+                <PhoneIcon fill={colors.primary} />
+                <ThemedText type="text">{userData.phone}</ThemedText>
+              </View>
+              {userData?.address && (
+                <View style={styles.iconInfoContainer}>
+                  <AddressIcon fill={colors.primary} />
+                  <ThemedText type="text">{userData.address}</ThemedText>
+                </View>
               )}
-              {cardStatus === "Rejected" ? (
-                <ClearIcon
-                  height={32}
-                  width={32}
-                  fill={colors.neutral100}
-                  onPress={() => userAction(userData, collegeCode, "clear")}
-                />
-              ) : (
-                <RejectIcon
-                  height={32}
-                  width={32}
-                  fill={colors.error}
-                  onPress={() => userAction(userData, collegeCode, "reject")}
-                />
-              )}
-            </>
+            </View>
           )}
         </View>
-      </View>
+        <View style={styles.rightColumn}>
+          {showStatus && showDropDown && <StatusCard />}
+          <View style={styles.actionButtonsContainer}>
+            {!hideIcons && (
+              <>
+                {cardStatus === "Approved" ? (
+                  <ClearIcon
+                    fill={colors.neutral500}
+                    height={32}
+                    width={32}
+                    onPress={() => userAction(userData, collegeCode, "clear")}
+                  />
+                ) : (
+                  <ApproveIcon
+                    height={32}
+                    width={32}
+                    fill={colors.success}
+                    onPress={() => userAction(userData, collegeCode, "approve")}
+                  />
+                )}
+                {cardStatus === "Rejected" ? (
+                  <ClearIcon
+                    height={32}
+                    width={32}
+                    fill={colors.neutral500}
+                    onPress={() => userAction(userData, collegeCode, "clear")}
+                  />
+                ) : (
+                  <RejectIcon
+                    height={32}
+                    width={32}
+                    fill={colors.error}
+                    onPress={() => userAction(userData, collegeCode, "reject")}
+                  />
+                )}
+              </>
+            )}
+          </View>
+        </View>
+      </ThemedLinearGradient>
     </Pressable>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme) => ({
   actionButtonsContainer: {
     flexDirection: "row",
-    padding: 8,
-    gap: 8,
+    padding: theme.spacing.sm,
+    gap: theme.spacing.sm,
     alignItems: "center",
   },
   iconInfoContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 4,
-    gap: 4,
+    padding: theme.spacing.xs,
+    gap: theme.spacing.xs,
   },
   statusRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingRight: 8,
-    gap: 4,
+    paddingRight: theme.spacing.sm,
+    gap: theme.spacing.xs,
   },
   cardContainer: {
     borderWidth: 1,
-    padding: 4,
-    margin: 4,
+    padding: theme.spacing.xs,
+    margin: theme.spacing.xs,
     flexDirection: "row",
     borderRadius: 10,
+    borderColor: theme.colors.border,
     justifyContent: "space-between",
   },
   leftColumn: {
@@ -201,10 +198,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerWrapper: {
-    padding: 4,
-    gap: 4,
+    padding: theme.spacing.xs,
+    gap: theme.spacing.xs,
   },
-  nameRow: { flexDirection: "row", alignItems: "center", gap: 4 },
-});
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing.xs,
+  },
+}));
 
 export default UserActionCard;

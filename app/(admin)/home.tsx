@@ -3,7 +3,7 @@ import { ActionableHeaderCard, UserActionCard } from "@/components/routines";
 import {
   ThemedLinearGradient,
   ThemedStatusBar,
-  ThemedText
+  ThemedText,
 } from "@/components/themed";
 import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
