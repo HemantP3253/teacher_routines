@@ -13,8 +13,35 @@ const ThemedLinearGradient = ({
     colors.surface,
     colors.surfaceElevated,
     colors.surfacePressed,
+    colors.primary,
+    colors.secondary,
+    colors.accent,
   ];
-  const gradientIndex = type === "background" ? 0 : type === "surface" ? 1 : 2;
+  let gradientIndex = 0;
+  switch (type) {
+    case "background":
+      gradientIndex = 0;
+      break;
+
+    case "surface":
+      gradientIndex = 1;
+      break;
+    case "surfaceElevated":
+      gradientIndex = 2;
+      break;
+    case "primary":
+      gradientIndex = 3;
+      break;
+    case "secondary":
+      gradientIndex = 4;
+      break;
+    case "accent":
+      gradientIndex = 5;
+      break;
+    default:
+      gradientIndex = 0;
+      break;
+  }
 
   return (
     <LinearGradient

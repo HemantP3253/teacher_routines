@@ -26,7 +26,7 @@ type level = "faculty" | "degreeType" | "degreeName" | "hasBranches" | "branch" 
 interface ThemedViewProps extends ViewProps {}
 
 interface ThemedLinearGradientProps extends Omit< LinearGradientProps, "colors"> {
-  type?: "background" | "surface" | "surfaceElevated"
+  type?: "background" | "surface" | "surfaceElevated" | "primary" | "secondary" | "accent"
 }
 
 interface ThemedPressableProps extends PressableProps extends ViewProps {
