@@ -1,9 +1,8 @@
 import { SearchIcon } from "@/assets/icons";
 import { ActionableHeaderCardProps } from "@/interfaces/interfaces";
-import { LinearGradient } from "expo-linear-gradient";
 import { ActivityIndicator, Pressable, View } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
-import { ThemedText } from "../themed";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { ThemedLinearGradient, ThemedText } from "../themed";
 
 const ActionableHeaderCard = ({
   title,
@@ -16,88 +15,90 @@ const ActionableHeaderCard = ({
   summaryText,
 }: ActionableHeaderCardProps) => {
   const { Icon, onPress, height, width } = iconProperties;
-  const { theme } = useUnistyles();
-  const colors = theme.colors;
+  const { colors } = useUnistyles().theme;
   return (
-    <Pressable style={{}} onPress={onPress}>
-      <LinearGradient
-        colors={[colors.surface, colors.surfaceElevated]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          gap: 4,
-          borderWidth: 1,
-          borderRadius: 8,
-          margin: 8,
-          padding: 12,
-          borderColor: colors.primary,
-          backgroundColor: colors.surface,
-        }}
+    <Pressable onPress={onPress}>
+      <ThemedLinearGradient
+        type="surface"
+        end={{ x: 0, y: 1 }}
+        style={styles.rootContainer}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 8,
-              alignItems: "center",
-              paddingLeft: 4,
-            }}
-          >
-            {IconBeforeText && <IconBeforeText fill={colors.primary} />}
-            <ThemedText
-              style={{
-                fontSize: 18,
-                fontWeight: "bold",
-                color: colors.primary,
-              }}
-            >
-              {title}
-            </ThemedText>
+        <View style={styles.headerContainer}>
+          <View style={styles.titleContainer}>
+            {IconBeforeText && <IconBeforeText fill={colors.text} />}
+            <ThemedText style={styles.title}>{title}</ThemedText>
           </View>
-          <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
+          <View style={styles.iconContainer}>
             {searchButtonProperties && (
               <SearchIcon
                 onPress={searchButtonProperties.onPress}
-                fill={colors.primary}
+                fill={colors.textSecondary}
               />
             )}
             <Icon
               height={height ?? 24}
               width={width ?? 24}
               onPress={onPress}
-              style={{ marginRight: 8 }}
+              style={styles.secondaryIcon}
               fill={colors.primary}
             />
           </View>
         </View>
-        {showBottomBorder && (
-          <View
-            style={{ borderWidth: 1, borderColor: colors.accent, margin: 4 }}
-          ></View>
-        )}
+        {showBottomBorder && <View style={styles.bottomBorder}></View>}
         {isDataLoading ? <ActivityIndicator size={"large"} /> : children}
         {summaryText && (
-          <ThemedText
-            style={{
-              fontSize: 14,
-              paddingHorizontal: 8,
-              opacity: 0.7,
-              fontWeight: "500",
-              color: colors.text,
-            }}
-          >
-            {summaryText}
-          </ThemedText>
+          <ThemedText style={styles.summaryText}>{summaryText}</ThemedText>
         )}
-      </LinearGradient>
+      </ThemedLinearGradient>
     </Pressable>
   );
 };
+
+const styles = StyleSheet.create((theme) => ({
+  rootContainer: {
+    gap: theme.spacing.xs,
+    borderWidth: 1,
+    borderRadius: theme.radius.md,
+    margin: theme.spacing.sm,
+    padding: theme.spacing.md,
+    borderColor: theme.colors.border,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  titleContainer: {
+    flexDirection: "row",
+    gap: theme.spacing.sm,
+    alignItems: "center",
+    paddingLeft: theme.spacing.xs,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: theme.colors.text,
+  },
+  iconContainer: {
+    flexDirection: "row",
+    gap: theme.spacing.sm,
+    alignItems: "center",
+  },
+  summaryText: {
+    fontSize: 14,
+    paddingHorizontal: theme.spacing.sm,
+    opacity: 0.7,
+    fontWeight: "500",
+    color: theme.colors.textSecondary,
+  },
+  bottomBorder: {
+    borderWidth: 1,
+    borderColor: theme.colors.accent,
+    margin: theme.spacing.sm,
+  },
+  secondaryIcon: {
+    marginRight: theme.spacing.sm,
+  },
+}));
 
 export default ActionableHeaderCard;
