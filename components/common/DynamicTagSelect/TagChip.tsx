@@ -1,10 +1,10 @@
-import { ThemedText } from "@/components/themed";
+import { ThemedLinearGradient, ThemedText } from "@/components/themed";
 import { TagChipProps } from "@/interfaces/interfaces";
-import { Pressable, StyleSheet, View } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { Pressable, View } from "react-native";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 const TagChip = ({
-  label = "Hello",
+  label = "Item",
   selected = false,
   onPress,
   fill = true,
@@ -14,82 +14,80 @@ const TagChip = ({
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
-  const getColors = () => {
-    if (fill) {
-      if (selected) {
-        return {
-          background: colors.primary,
-          border: colors.primary,
-          text: colors.primaryContent,
-        };
-      }
-      return {
-        background: `${colors.primary}5F`,
-        border: "transparent",
-        text: colors.text,
-      };
-    } else {
-      return {
-        background: selected ? `${colors.primary}10` : `${colors.primary}1F`,
-        border: colors.primary,
-        text: colors.primary,
-      };
-    }
-  };
-
-  const currentStyles = getColors();
+  const isDotted = dottedBorder && !fill;
 
   return (
     <Pressable
       onPress={onPress}
       style={[
-        {
-          backgroundColor: currentStyles.background,
-          borderColor: currentStyles.border,
-          borderStyle: dottedBorder && !fill ? "dotted" : "solid",
-        },
-        styles.chipBase,
+        styles.rootContainer,
+        selected && !isDotted && styles.selectedRootContainer,
+        isDotted && !selected && styles.dottedRootContainer,
       ]}
     >
-      {Icon && (
-        <View style={styles.iconWrapper}>
-          <Icon fill={colors.primary} />
-        </View>
-      )}
-      <ThemedText
-        style={[styles.labelText, { color: currentStyles.text }]}
-        numberOfLines={1}
+      <ThemedLinearGradient
+        style={[styles.chipBase]}
+        type={selected ? "primary" : "surfaceElevated"}
+        end={{ x: 0, y: 1 }}
       >
-        {label}
-      </ThemedText>
+        {Icon && (
+          <View style={styles.iconWrapper}>
+            <Icon
+              fill={selected ? colors.primaryContent : colors.textSecondary}
+            />
+          </View>
+        )}
+        <ThemedText
+          type={selected ? "primaryContent" : "text"}
+          style={[styles.labelText]}
+          numberOfLines={1}
+        >
+          {label}
+        </ThemedText>
+      </ThemedLinearGradient>
     </Pressable>
   );
 };
 
-const styles = StyleSheet.create({
-  chipBase: {
+const styles = StyleSheet.create((theme) => ({
+  rootContainer: {
     height: 40,
-    paddingHorizontal: 16,
-    borderWidth: 2,
-    borderRadius: 100,
+    margin: theme.spacing.xs,
+    borderColor: theme.colors.borderMuted,
+    borderWidth: 1,
+    borderRadius: theme.radius.full,
+    justifyContent: "center",
+    backgroundColor: "transparent",
+  },
+  selectedRootContainer: {
+    borderColor: theme.colors.primary,
+  },
+  dottedRootContainer: {
+    borderColor: theme.colors.primary,
+    borderStyle: "dotted",
+    borderWidth: 1.5,
+  },
+  chipBase: {
+    borderRadius: theme.radius.full,
     flexDirection: "row",
+    paddingHorizontal: theme.spacing.md,
     justifyContent: "center",
     alignSelf: "flex-start",
+    height: "100%",
     alignItems: "center",
-    margin: 4,
   },
   iconWrapper: {
-    marginRight: 6,
+    marginRight: theme.spacing.sm,
     alignItems: "center",
     justifyContent: "center",
   },
   labelText: {
-    fontWeight: "600",
     fontSize: 14,
+    fontWeight: "600",
     textAlign: "center",
     includeFontPadding: false,
     textAlignVertical: "center",
   },
-});
+}));
 
 export default TagChip;

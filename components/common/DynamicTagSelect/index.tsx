@@ -46,7 +46,6 @@ const DynamicTagSelect = <T,>({
               margin: 2,
               padding: 2,
               borderColor: colors.primary,
-              backgroundColor: colors.surface,
             }}
           >
             {data.map((item, index) => {
@@ -67,6 +66,7 @@ const DynamicTagSelect = <T,>({
             {showAddButton && (
               <TagChip
                 Icon={AddIcon}
+                dottedBorder
                 label={"Add New Item"}
                 selected={false}
                 fill={false}
