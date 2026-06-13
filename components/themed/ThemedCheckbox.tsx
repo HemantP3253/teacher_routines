@@ -6,7 +6,7 @@ import UncheckedCheckBoxIcon from "@/assets/icons/UncheckedCheckBoxIcon";
 import { ThemedCheckboxProps } from "@/interfaces/interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { Spacer } from "../common";
 import ThemedPressable from "./ThemedPressable";
 import ThemedText from "./ThemedText";
@@ -22,8 +22,7 @@ const ThemedCheckbox = <T,>({
   getLabel,
   getSubLabel,
 }: ThemedCheckboxProps<T>) => {
-  const { theme } = useUnistyles();
-  const colors = theme.colors;
+  const { colors } = useUnistyles().theme;
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
@@ -69,24 +68,22 @@ const ThemedCheckbox = <T,>({
     );
   }, [sortedData, getId]);
 
-  return (
-    <ScrollView contentContainerStyle={{ padding: 8 }}>
-      {title && (
-        <ThemedText
-          style={{
-            fontSize: 20,
-            fontWeight: "bold",
-            paddingHorizontal: 8,
-            textAlign: "center",
-          }}
-        >
-          {title}
-        </ThemedText>
-      )}
+  const selectedText: string = useMemo(() => {
+    const postfix = "selected";
+    let prefix = "No items";
+    if (selectedIds.length === 1) prefix = `1 item`;
+    if (selectedIds.length > 1) prefix = `${selectedIds.length} items`;
 
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+    return `${prefix} ${postfix}`;
+  }, [selectedIds]);
+
+  return (
+    <ScrollView contentContainerStyle={styles.scrollContent}>
+      {title && <ThemedText style={styles.titleText}>{title}</ThemedText>}
+
+      <View style={styles.selectOptionsContainer}>
         <Pressable
-          style={{ flexDirection: "row", alignItems: "center", padding: 8 }}
+          style={styles.selectAllContainer}
           onPress={handleGlobalToggle}
         >
           {selectedIds.length === 0 ? (
@@ -96,16 +93,16 @@ const ThemedCheckbox = <T,>({
           ) : (
             <IndeterminateCheckBoxIcon fill={colors.accent} />
           )}
-          <ThemedText style={{ paddingLeft: 8, fontSize: 16 }}>
-            {`${selectedIds.length} ${selectedIds.length === 1 ? "item" : "items"} selected`}
+          <ThemedText style={styles.selectOptionText}>
+            {selectedText}
           </ThemedText>
         </Pressable>
         <Pressable
-          style={{ flexDirection: "row", alignItems: "center", padding: 8 }}
+          style={styles.selectOptionsContainer}
           onPress={handleInverseSelection}
         >
           <SelectAllIcon fill={colors.accent} />
-          <ThemedText style={{ paddingLeft: 8, fontSize: 16 }}>
+          <ThemedText style={styles.selectOptionText}>
             Inverse Selection
           </ThemedText>
         </Pressable>
@@ -113,7 +110,9 @@ const ThemedCheckbox = <T,>({
 
       <Spacer lineVisible />
 
-      <ThemedView style={{ gap: 4 }}>
+      <Spacer />
+
+      <ThemedView style={styles.checkboxListContainer}>
         {sortedData.map((item: T) => {
           const id = getId(item);
           const label = getLabel(item);
@@ -122,72 +121,53 @@ const ThemedCheckbox = <T,>({
           const isChecked = selectedIds.includes(id);
           const isExpanded = expandedIds.includes(id);
 
+          const currentColor = isChecked
+            ? colors.primaryContent
+            : colors.primary;
+
           return (
             <Pressable
               key={id}
               onPress={() => toggleItem(id)}
               style={[
-                {
-                  paddingHorizontal: 8,
-                  paddingVertical: 4,
-                  borderRadius: 8,
-                },
-                isChecked ? { backgroundColor: colors.primary + 20 } : {},
+                styles.cardContainer,
+                isChecked && { backgroundColor: colors.primary },
               ]}
             >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
+              <View style={styles.innerCardContainer}>
                 {isChecked ? (
-                  <SelectedCheckBox fill={colors.primary} />
+                  <SelectedCheckBox fill={currentColor} />
                 ) : (
                   <UncheckedCheckBoxIcon fill={colors.neutral100} />
                 )}
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    paddingLeft: 8,
-                  }}
-                >
+                <View style={styles.innerTextContainer}>
                   <ThemedText
-                    style={{
-                      fontSize: 16,
-                      flexShrink: 1,
-                      paddingRight: 12,
-                    }}
+                    style={[
+                      styles.labelText,
+                      isChecked && { color: colors.primaryContent },
+                    ]}
                   >
                     {label}
                   </ThemedText>
                   {subLabel && (
                     <ArrowDownIcon
-                      fill={colors.primary}
+                      fill={currentColor}
                       transform={[{ rotate: isExpanded ? "180deg" : "0deg" }]}
                       onPress={() => toggleExpand(id)}
-                      style={{ padding: 12 }}
+                      style={styles.arrowIcon}
                     />
                   )}
                 </View>
               </View>
 
               {isExpanded && subLabel && (
-                <ThemedView
-                  style={[
-                    {
-                      paddingLeft: 32,
-                      paddingTop: 4,
-                      paddingBottom: 6,
-                      backgroundColor: "transparent",
-                    },
-                  ]}
-                >
-                  <ThemedText style={{ fontSize: 14, lineHeight: 18 }}>
+                <ThemedView style={styles.subLabelContainer}>
+                  <ThemedText
+                    style={[
+                      styles.subLabelText,
+                      isChecked && { color: colors.primaryContent },
+                    ]}
+                  >
                     {subLabel}
                   </ThemedText>
                 </ThemedView>
@@ -196,9 +176,11 @@ const ThemedCheckbox = <T,>({
           );
         })}
 
+        <Spacer />
+
         <ThemedPressable
           disabled={isSubmitDisabled}
-          style={isSubmitDisabled ? { backgroundColor: colors.disabled } : {}}
+          style={isSubmitDisabled && { backgroundColor: colors.disabled }}
           onPress={() => onSubmit?.(selectedIds)}
         >
           <ThemedText
@@ -206,7 +188,7 @@ const ThemedCheckbox = <T,>({
               isSubmitDisabled
                 ? { color: colors.disabledContent }
                 : { color: colors.primaryContent },
-              { textAlign: "center", fontWeight: "bold" },
+              styles.submitText,
             ]}
           >
             Submit Choices
@@ -216,5 +198,70 @@ const ThemedCheckbox = <T,>({
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create((theme) => ({
+  scrollContent: { padding: theme.spacing.sm },
+  titleText: {
+    fontSize: theme.typography.h2.fontSize,
+    padding: theme.spacing.md,
+    fontWeight: "bold",
+    paddingHorizontal: theme.spacing.sm,
+    textAlign: "center",
+  },
+  selectOptionsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  selectAllContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: theme.spacing.sm,
+  },
+  selectOptionText: {
+    ...theme.typography.body,
+    paddingLeft: theme.spacing.sm,
+  },
+  checkboxListContainer: {
+    gap: theme.spacing.xs,
+  },
+  cardContainer: {
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.spacing.sm,
+  },
+  innerCardContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+  },
+  innerTextContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingLeft: theme.spacing.sm,
+  },
+  labelText: {
+    fontSize: 16,
+    flexShrink: 1,
+    paddingRight: theme.spacing.md,
+  },
+  arrowIcon: { padding: theme.spacing.md },
+  subLabelContainer: {
+    paddingLeft: theme.spacing["2xl"],
+    paddingTop: theme.spacing.xs,
+    paddingBottom: theme.spacing.sm,
+    backgroundColor: "transparent",
+  },
+  subLabelText: {
+    fontSize: 14,
+    lineHeight: 18,
+  },
+  submitText: {
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+}));
 
 export default ThemedCheckbox;
