@@ -1,120 +1,47 @@
-import { ClassIcon, HomeIcon, UsernameIcon } from "@/assets/icons";
-import { ThemedText, ThemedView } from "@/components/themed";
-import { TabIconProps } from "@/interfaces/interfaces";
-import { Tabs } from "expo-router";
-import { StyleSheet } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
-
-const TabIcon = ({ focused, Icon, title }: TabIconProps) => {
-  const { theme } = useUnistyles();
-  const colors = theme.colors;
-  const tabItemColor = colors.primary;
-
-  return (
-    <ThemedView
-      style={[
-        styles.tabContainer,
-        { backgroundColor: focused ? colors.primary + 20 : "transparent" },
-      ]}
-    >
-      <Icon
-        height={focused ? 24 : 28}
-        width={focused ? 24 : 28}
-        fill={tabItemColor}
-        fillItem={focused}
-      />
-
-      {focused && (
-        <ThemedText
-          numberOfLines={1}
-          style={[styles.focusedText, { color: colors.primary }]}
-        >
-          {title}
-        </ThemedText>
-      )}
-    </ThemedView>
-  );
-};
+import {
+  ClassIcon,
+  HomeIcon,
+  UsernameIcon
+} from "@/assets/icons";
+import { FloatingTabBar, TabButton } from "@/components/common";
+import { Tabs, usePathname, useRouter } from "expo-router";
 
 const _Layout = () => {
-  const { theme } = useUnistyles();
-  const colors = theme.colors;
+  const pathname = usePathname();
+  const router = useRouter();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarShowLabel: false,
-        tabBarItemStyle: {
-          flexDirection: "row",
-          width: "100%",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        tabBarStyle: {
-          backgroundColor: colors.base200,
-          borderRadius: 8,
-          padding: 8,
-          height: 64,
-          position: "absolute",
-          overflow: "hidden",
-          borderWidth: 1,
-          borderColor: "#000000",
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="classes"
-        options={{
+    <>
+      <Tabs
+        screenOptions={{
+          tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ focused }) => {
-            return (
-              <TabIcon focused={focused} Icon={ClassIcon} title="Classes" />
-            );
-          },
+          tabBarStyle: { display: "none" },
         }}
       />
-      <Tabs.Screen
-        name="home"
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ focused }) => {
-            return <TabIcon focused={focused} Icon={HomeIcon} title="Home" />;
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ focused }) => {
-            return (
-              <TabIcon focused={focused} Icon={UsernameIcon} title="Profile" />
-            );
-          },
-        }}
-      />
-    </Tabs>
+
+      <FloatingTabBar>
+        <TabButton
+          focused={pathname === "/classes"}
+          title="Classes"
+          onPress={() => router.push("/(user)/classes")}
+          Icon={ClassIcon}
+        />
+        <TabButton
+          focused={pathname === "/home"}
+          title="Home"
+          onPress={() => router.push("/(user)/home")}
+          Icon={HomeIcon}
+        />
+        <TabButton
+          focused={pathname === "/profile"}
+          title="Profile"
+          onPress={() => router.push("/(user)/profile")}
+          Icon={UsernameIcon}
+        />
+      </FloatingTabBar>
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  tabContainer: {
-    width: 90,
-    borderRadius: 9999,
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-    height: 50,
-  },
-  focusedText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  unFocusedIcon: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default _Layout;

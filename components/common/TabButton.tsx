@@ -14,19 +14,12 @@ const TabButton = ({ focused, Icon, title, onPress }: TabIconProps) => {
       style={[styles.unfocusedContainer, focused && styles.focusedContainer]}
     >
       <View style={styles.iconContainer}>
-        <Icon
-          height={focused ? 24 : 28}
-          width={focused ? 24 : 28}
-          fill={tabItemColor}
-          fillItem={focused}
-        />
+        <Icon height={24} width={24} fill={tabItemColor} fillItem={focused} />
       </View>
 
-      {focused && (
-        <ThemedText numberOfLines={1} style={styles.focusedText}>
-          {title}
-        </ThemedText>
-      )}
+      <ThemedText numberOfLines={1} style={styles.focusedText}>
+        {title}
+      </ThemedText>
     </Pressable>
   );
 };
