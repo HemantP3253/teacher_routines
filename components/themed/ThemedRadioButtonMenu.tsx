@@ -20,8 +20,7 @@ const ThemedRadioButtonMenu = <T,>({
   initialSelection,
   sortList,
 }: ThemedRadioButtonMenuProps<T>) => {
-  const { theme } = useUnistyles();
-  const colors = theme.colors;
+  const { colors } = useUnistyles().theme;
 
   const [selectedId, setSelectedId] = useState<string>(initialSelection ?? "");
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
@@ -36,7 +35,7 @@ const ThemedRadioButtonMenu = <T,>({
     return sortList
       ? [...data].sort((a, b) => getLabel(a).localeCompare(getLabel(b)))
       : data;
-  }, [data]);
+  }, [data, sortList, getLabel]);
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedIds((prev) =>
@@ -45,7 +44,7 @@ const ThemedRadioButtonMenu = <T,>({
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 8 }}>
+    <ScrollView contentContainerStyle={styles.scrollContent}>
       <ThemedView style={styles.rootContainer}>
         {title && <ThemedText style={styles.titleText}>{title}</ThemedText>}
 
@@ -67,23 +66,38 @@ const ThemedRadioButtonMenu = <T,>({
                 }}
                 style={[
                   styles.card,
-                  isChecked ? { backgroundColor: colors.primary + 20 } : {},
+                  isChecked && { backgroundColor: colors.primary },
                 ]}
               >
                 <View style={styles.labelContainer}>
                   {isChecked ? (
-                    <RadioButtonCheckedIcon fill={colors.primary} />
+                    <RadioButtonCheckedIcon fill={colors.primaryContent} />
                   ) : (
                     <RadioButtonUncheckedIcon fill={colors.neutral100} />
                   )}
-                  <View style={styles.labelContainer}>
-                    <ThemedText style={styles.labelText}>{label}</ThemedText>
+                  <View style={styles.labelSubcontainer}>
+                    <ThemedText
+                      style={[
+                        styles.labelText,
+                        isChecked && {
+                          color: colors.primaryContent,
+                          fontWeight: "700",
+                        },
+                      ]}
+                    >
+                      {label}
+                    </ThemedText>
                     {subLabel && (
                       <ArrowDownIcon
-                        fill={colors.primary}
+                        fill={
+                          isChecked ? colors.primaryContent : colors.primary
+                        }
                         transform={[{ rotate: isExpanded ? "180deg" : "0deg" }]}
-                        onPress={() => toggleExpand(id)}
-                        style={{ padding: 12 }}
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          toggleExpand(id);
+                        }}
+                        style={styles.arrowDropdown}
                       />
                     )}
                   </View>
@@ -106,14 +120,17 @@ const ThemedRadioButtonMenu = <T,>({
 };
 
 const styles = StyleSheet.create((theme) => ({
+  scrollContent: {
+    padding: theme.spacing.sm,
+  },
   rootContainer: {
     backgroundColor: theme.colors.surface,
-    borderRadius: 8,
+    borderRadius: theme.radius.md,
   },
   titleText: {
     fontSize: 20,
     fontWeight: "bold",
-    padding: 8,
+    padding: theme.spacing.sm,
     color: theme.colors.primary,
     textAlign: "center",
   },
@@ -121,11 +138,11 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.spacing.sm,
     padding: theme.spacing.sm,
     backgroundColor: theme.colors.surfaceElevated,
-    borderBottomStartRadius: 8,
-    borderBottomEndRadius: 8,
+    borderBottomStartRadius: theme.radius.md,
+    borderBottomEndRadius: theme.radius.md,
   },
   card: {
-    borderRadius: 8,
+    borderRadius: theme.radius.md,
     padding: theme.spacing.sm,
     flexDirection: "column",
   },
@@ -146,14 +163,17 @@ const styles = StyleSheet.create((theme) => ({
     flexShrink: 1,
   },
   subLabelContainer: {
-    paddingLeft: 32,
-    paddingTop: 4,
-    paddingBottom: 6,
+    paddingLeft: theme.spacing["2xl"],
+    paddingTop: theme.spacing.xs,
+    paddingBottom: theme.spacing.sm,
     backgroundColor: "transparent",
   },
   subLabelText: {
     fontSize: 14,
     lineHeight: 18,
+  },
+  arrowDropdown: {
+    padding: theme.spacing.md,
   },
 }));
 
