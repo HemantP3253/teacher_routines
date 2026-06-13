@@ -46,10 +46,12 @@ const UserActionCard = ({
 
   const statusColor =
     cardStatus === "Pending"
-      ? colors.warning
+      ? colors.neutral400
       : cardStatus === "Approved"
         ? colors.success
         : colors.error;
+
+  const iconColour = colors.primary;
 
   const StatusCard = () => {
     return (
@@ -76,14 +78,14 @@ const UserActionCard = ({
         <View style={styles.leftColumn}>
           <View style={[styles.headerWrapper]}>
             <View style={styles.nameRow}>
-              <NameIcon fill={colors.primary} />
+              <NameIcon fill={iconColour} />
               <ThemedText type="text" style={{ paddingRight: 4 }}>
                 {userData.full_name}
               </ThemedText>
               {!keepExpanded && (
                 <ArrowDownIcon
                   transform={[{ rotate: showDropDown ? "180deg" : "0deg" }]}
-                  fill={colors.primary}
+                  fill={iconColour}
                 />
               )}
             </View>
@@ -92,26 +94,26 @@ const UserActionCard = ({
           {showDropDown && (
             <View>
               <View style={styles.iconInfoContainer}>
-                <UsernameIcon fill={colors.primary} />
+                <UsernameIcon fill={iconColour} />
                 <ThemedText type="text">
-                  <ThemedText style={{ color: colors.secondary }}>@</ThemedText>
+                  <ThemedText style={styles.username}>@</ThemedText>
                   {userData.username}
                 </ThemedText>
               </View>
               <View style={styles.iconInfoContainer}>
-                <AgeIcon fill={colors.primary} />
+                <AgeIcon fill={iconColour} />
                 <ThemedText type="text">
                   {calculateAgeByDOB(userData.date_of_birth)}
                   {", " + userData.gender}
                 </ThemedText>
               </View>
               <View style={styles.iconInfoContainer}>
-                <PhoneIcon fill={colors.primary} />
+                <PhoneIcon fill={iconColour} />
                 <ThemedText type="text">{userData.phone}</ThemedText>
               </View>
               {userData?.address && (
                 <View style={styles.iconInfoContainer}>
-                  <AddressIcon fill={colors.primary} />
+                  <AddressIcon fill={iconColour} />
                   <ThemedText type="text">{userData.address}</ThemedText>
                 </View>
               )}
@@ -125,7 +127,7 @@ const UserActionCard = ({
               <>
                 {cardStatus === "Approved" ? (
                   <ClearIcon
-                    fill={colors.neutral500}
+                    fill={colors.neutral400}
                     height={32}
                     width={32}
                     onPress={() => userAction(userData, collegeCode, "clear")}
@@ -142,7 +144,7 @@ const UserActionCard = ({
                   <ClearIcon
                     height={32}
                     width={32}
-                    fill={colors.neutral500}
+                    fill={colors.neutral400}
                     onPress={() => userAction(userData, collegeCode, "clear")}
                   />
                 ) : (
@@ -186,7 +188,7 @@ const styles = StyleSheet.create((theme) => ({
     padding: theme.spacing.xs,
     margin: theme.spacing.xs,
     flexDirection: "row",
-    borderRadius: 10,
+    borderRadius: theme.radius.xl,
     borderColor: theme.colors.border,
     justifyContent: "space-between",
   },
@@ -205,6 +207,9 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: theme.spacing.xs,
+  },
+  username: {
+    color: theme.colors.secondary,
   },
 }));
 

@@ -37,11 +37,7 @@ const TagChip = ({
             />
           </View>
         )}
-        <ThemedText
-          type={selected ? "primaryContent" : "text"}
-          style={[styles.labelText]}
-          numberOfLines={1}
-        >
+        <ThemedText type="text" style={[styles.labelText]} numberOfLines={1}>
           {label}
         </ThemedText>
       </ThemedLinearGradient>
