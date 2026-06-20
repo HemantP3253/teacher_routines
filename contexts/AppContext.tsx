@@ -18,7 +18,7 @@ const DEFAULT_SETTINGS: AppSettings = {
       id: 1,
       label: "Short morning routine",
       startTime: "06:00 AM",
-      endTime: "09:00 AM",
+      endTime: "09:20 AM",
       duration: "40",
       activeDays: "Mon, Tue, Wed, Thu, Fri",
     },
@@ -34,7 +34,7 @@ const DEFAULT_SETTINGS: AppSettings = {
       id: 3,
       label: "Day routine",
       startTime: "11:00 AM",
-      endTime: "04:00 AM",
+      endTime: "04:00 PM",
       duration: "60",
       activeDays: "Mon, Tue, Wed, Thu, Fri",
     },
@@ -44,25 +44,19 @@ const DEFAULT_SETTINGS: AppSettings = {
   updatedAt: Date.now(),
 };
 
-// 1. Define a clean key name matching your storage typing if needed
-const STORAGE_KEY = "user_theme_preference"; // Or add a generic 'app_settings' key to your StorageKeys type
-
 interface AppContextType {
   settings: AppSettings;
   updateSetting: <K extends keyof AppSettings>(
     key: K,
     value: AppSettings[K],
-  ) => void; // Changed from Promise<void> to void because MMKV is synchronous
+  ) => void;
   allAvailableDegrees: string[];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  // 2. Load settings SYNCHRONOUSLY directly inside the initial state initializer.
-  // There is zero layout pop or waiting for loading states!
   const [settings, setSettings] = useState<AppSettings>(() => {
-    // We reuse our setObject/getObject implementation logic using our raw key string
     const cached = storage.getObject<Partial<AppSettings>>(
       "user_theme_preference" as any,
     );
@@ -80,7 +74,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const allAvailableDegrees = getAllDegreeNames();
 
-  // 3. Update settings synchronously
   const updateSetting = <K extends keyof AppSettings>(
     key: K,
     value: AppSettings[K],
@@ -92,7 +85,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     setSettings(updatedSettings);
 
-    // Save to MMKV completely synchronously
     storage.setObject("user_theme_preference" as any, updatedSettings);
   };
 

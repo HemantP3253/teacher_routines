@@ -38,12 +38,17 @@ export const calculateFullPeriodTime = (
 
 export const changeTimeMode = (
   time: string,
-  currentMode: "24-hour" | "12-hour",
   hideSeconds: boolean = false,
+  currentMode: "24-hour" | "12-hour" | "auto" = "auto",
 ) => {
   if (!time) return "";
 
-  if (currentMode === "24-hour") {
+  let detectedMode = currentMode;
+  if (detectedMode === "auto") {
+    detectedMode = is12HourTime(time) ? "12-hour" : "24-hour";
+  }
+
+  if (detectedMode === "24-hour") {
     const parts = time.split(":");
     let hours = parseInt(parts[0], 10);
     const minutes = parts[1];
@@ -60,7 +65,7 @@ export const changeTimeMode = (
     return `${formattedHours}:${minutes}${seconds} ${dayPeriod}`;
   }
 
-  if (currentMode === "12-hour") {
+  if (detectedMode === "12-hour") {
     const isPM = time.includes("PM");
     const cleanTime = time.replace(/ (AM|PM)/i, "");
     const parts = cleanTime.split(":");
@@ -78,6 +83,10 @@ export const changeTimeMode = (
   }
 
   return "";
+};
+
+export const is12HourTime = (time: string) => {
+  return /[AM|PM]/i.test(time);
 };
 
 export const hoursToMinutes = (timeString: string) => {
@@ -103,8 +112,8 @@ export const doesRoutineCollide = ({
   const duration1 = Number(time1.duration);
   const duration2 = Number(time2.duration);
 
-  const minutes1 = hoursToMinutes(changeTimeMode(time1.startTime, "12-hour"));
-  const minutes2 = hoursToMinutes(changeTimeMode(time2.startTime, "12-hour"));
+  const minutes1 = hoursToMinutes(changeTimeMode(time1.startTime));
+  const minutes2 = hoursToMinutes(changeTimeMode(time2.startTime));
 
   const end1 = minutes1 + duration1;
   const end2 = minutes2 + duration2;
@@ -124,37 +133,68 @@ export const RangeToSubjectTime = (
   endTime: string,
   maxDuration: string,
   index: number,
+  returnType: "end-time" | "duration" | "number-of-subjects" = "end-time",
 ) => {
-  const startTime24hours = changeTimeMode(startTime, "12-hour", true);
-  const endTime24hours = changeTimeMode(endTime, "12-hour", true);
+  const startTime24hours = changeTimeMode(startTime);
+  const endTime24hours = changeTimeMode(endTime);
+
+  const durationMinutes = Number(maxDuration);
+  if (!durationMinutes) return null;
 
   const totalSubjects = Math.floor(
     (hoursToMinutes(endTime24hours) - hoursToMinutes(startTime24hours)) /
-      Number(maxDuration),
+      durationMinutes,
   );
-  if (index + 1 > totalSubjects) return null;
+
+  if (index > totalSubjects) return null;
+
   const startTimeInMinutes = hoursToMinutes(startTime24hours);
 
   const [startRange, endRange] = [
-    startTimeInMinutes + index * Number(maxDuration),
-    startTimeInMinutes + (index + 1) * Number(maxDuration),
+    startTimeInMinutes + index * durationMinutes,
+    startTimeInMinutes + (index + 1) * durationMinutes,
   ];
 
-  return [minutesToHours(startRange), minutesToHours(endRange)];
+  if (returnType === "end-time")
+    return {
+      startTime: changeTimeMode(minutesToHours(startRange)),
+      endTime: changeTimeMode(minutesToHours(endRange)),
+    };
+  if (returnType === "duration")
+    return {
+      startTime: changeTimeMode(minutesToHours(startRange)),
+      duration: maxDuration,
+    };
+  if (returnType === "number-of-subjects") {
+    return { startTime: "", endTime: "", totalSubjects: totalSubjects };
+  }
 };
 
 export const dateToFormattedTimeString = (
   date: Date,
-  hideSeconds?: boolean,
-  is24Hour?: boolean,
+  hideSeconds: boolean = false,
+  is24Hour: boolean = false,
 ) => {
+  if (!(date instanceof Date) || isNaN(date.getTime())) return "";
+
   const hours = date.getHours();
   const minutes = date.getMinutes();
   const seconds = date.getSeconds();
-  const newHours = hours > 12 ? hours - 12 : hours;
-  const ampm = hours > 12 ? "PM" : "AM";
 
-  return `${is24Hour ? pad(hours) : pad(newHours)}:${pad(minutes)}${hideSeconds ? "" : ":" + pad(seconds)} ${ampm}`;
+  const pad = (num: number) => String(num).padStart(2, "0");
+  const secondsStr = hideSeconds ? "" : `:${pad(seconds)}`;
+
+  // 🕒 24-Hour Branch logic: No AM/PM appended
+  if (is24Hour) {
+    return `${pad(hours)}:${pad(minutes)}${secondsStr}`;
+  }
+
+  // ⏰ 12-Hour Branch logic: Handles noon/midnight conversions perfectly
+  const ampm = hours >= 12 ? "PM" : "AM";
+  let displayHours = hours % 12;
+  if (displayHours === 0) displayHours = 12; // Fixes the 00:00 midnight issue
+
+  return `${pad(displayHours)}:${pad(minutes)}${secondsStr} ${ampm}`;
 };
 
 export const timeStringToDateObject = (

@@ -3,7 +3,7 @@ import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { AssignTeacherModalProps } from "@/interfaces/interfaces";
 import { useMemo, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable } from "react-native";
+import { ActivityIndicator, FlatList } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { CustomModal, Spacer } from "../common";
 import { ThemedText, ThemedTextInput, ThemedView } from "../themed";
@@ -91,14 +91,15 @@ const AssignTeacherModal = ({
               </ThemedText>
             )}
             renderItem={({ item: teacher }) => (
-              <Pressable
+              <UserActionCard
+                userData={teacher}
+                hideIcons
+                keepExpanded
                 onPress={() => {
                   onSelectTeacher(teacher.id, teacher.full_name);
                   setSearchText("");
                 }}
-              >
-                <UserActionCard userData={teacher} hideIcons keepExpanded />
-              </Pressable>
+              />
             )}
           />
         )}

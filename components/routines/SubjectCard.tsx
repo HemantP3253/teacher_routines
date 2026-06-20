@@ -1,4 +1,4 @@
-import { AssignmentIcon, ScheduleIcon } from "@/assets/icons";
+import { AssignmentIcon } from "@/assets/icons";
 import { SubjectCardProps } from "@/interfaces/interfaces";
 import { calculateFullPeriodTime } from "@/utils/dateUtils";
 import { LinearGradient } from "expo-linear-gradient";
@@ -7,7 +7,6 @@ import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { ThemedText } from "../themed";
 import AssignTeacherModal from "./AssignTeacherModal";
-import AssignTimeModal from "./AssignTimeModal";
 
 const SubjectCard = ({
   subjectName,
@@ -15,16 +14,16 @@ const SubjectCard = ({
   duration,
   teacherId,
   teacherName,
-  onTimeChange,
   onTeacherChange,
+  errorInfo,
 }: SubjectCardProps) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
   const [visible, setVisible] = useState<{
-    timeModal: boolean;
     teacherModal: boolean;
-  }>({ timeModal: false, teacherModal: false });
+    alertModal: boolean;
+  }>({ teacherModal: false, alertModal: false });
 
   const nameSegments = subjectName.includes(":")
     ? subjectName.split(":")
@@ -101,24 +100,6 @@ const SubjectCard = ({
             flexDirection: "row",
           }}
         >
-          <ScheduleIcon
-            height={28}
-            width={28}
-            fillItem={!!(startTime && duration)}
-            fill={colors.secondary}
-            onPress={() => setVisible((prev) => ({ ...prev, timeModal: true }))}
-          />
-          <AssignTimeModal
-            title="Select Time Schedule"
-            visible={visible.timeModal}
-            onClose={() =>
-              setVisible((prev) => ({ ...prev, timeModal: false }))
-            }
-            onSubmit={(time, duration) => {
-              onTimeChange(time, duration);
-              setVisible((prev) => ({ ...prev, timeModal: false }));
-            }}
-          />
           <AssignmentIcon
             height={28}
             width={28}
