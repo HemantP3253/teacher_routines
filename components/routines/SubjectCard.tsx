@@ -5,7 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import { ThemedText } from "../themed";
+import { ThemedAlertWindow, ThemedText } from "../themed";
 import AssignTeacherModal from "./AssignTeacherModal";
 
 const SubjectCard = ({
@@ -17,13 +17,16 @@ const SubjectCard = ({
   onTeacherChange,
   errorInfo,
 }: SubjectCardProps) => {
+  console.log("SubjectCard props", {
+    subject: subjectName,
+    startTime: startTime,
+    duration: duration,
+  });
+
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
-  const [visible, setVisible] = useState<{
-    teacherModal: boolean;
-    alertModal: boolean;
-  }>({ teacherModal: false, alertModal: false });
+  const [visible, setVisible] = useState<boolean>(false);
 
   const nameSegments = subjectName.includes(":")
     ? subjectName.split(":")
@@ -69,7 +72,7 @@ const SubjectCard = ({
           >
             {!startTime || !duration
               ? "Time not selected"
-              : calculateFullPeriodTime(startTime, Number(duration), false)}
+              : calculateFullPeriodTime(startTime, Number(duration))}
           </ThemedText>
 
           {/*  Subject Name */}
@@ -105,20 +108,29 @@ const SubjectCard = ({
             width={28}
             fillItem={!!teacherId}
             fill={colors.secondary}
-            onPress={() =>
-              setVisible((prev) => ({ ...prev, teacherModal: true }))
-            }
-          />
-          <AssignTeacherModal
-            visible={visible.teacherModal}
-            onClose={() =>
-              setVisible((prev) => ({ ...prev, teacherModal: false }))
-            }
-            onSelectTeacher={(selectedTeacherId, selectedTeacherName) => {
-              onTeacherChange(selectedTeacherId, selectedTeacherName);
-              setVisible((prev) => ({ ...prev, teacherModal: false }));
+            onPress={() => {
+              setVisible(true);
+              console.log(errorInfo);
             }}
           />
+          {errorInfo && errorInfo.showError ? (
+            <ThemedAlertWindow
+              title={errorInfo.title}
+              description={errorInfo?.description || ""}
+              visible={visible}
+              onClose={() => setVisible(false)}
+              onConfirm={() => setVisible(false)}
+            />
+          ) : (
+            <AssignTeacherModal
+              visible={visible}
+              onClose={() => setVisible(false)}
+              onSelectTeacher={(selectedTeacherId, selectedTeacherName) => {
+                onTeacherChange(selectedTeacherId, selectedTeacherName);
+                setVisible(false);
+              }}
+            />
+          )}
         </View>
       </LinearGradient>
     </View>

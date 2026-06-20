@@ -19,9 +19,15 @@ const routines = () => {
     batchAndSection: "",
     dayOfWeek: "",
   });
-
   const [selectedRoutineId, setSelectedRoutineId] = useState<number>(0);
-  const [error, setError] = useState<{ title: string; description: string }>();
+
+  const [routineState, setRoutineState] = useState<{
+    subjects: SubjectData[];
+    activeOrder: string[];
+  }>({
+    subjects: [],
+    activeOrder: [],
+  });
 
   const degreeMetadata = useMemo(() => {
     return (
@@ -48,83 +54,92 @@ const routines = () => {
     routineData.term,
   ]);
 
-  const [subjectList, setSubjectsList] = useState<SubjectData[]>([]);
-  const [activeSubjectOrder, setActiveSubjectOrder] = useState<number[]>([]);
-
   const currentRoutineOption = useMemo(() => {
     return settings.routineTimeOptions[selectedRoutineId];
   }, [settings.routineTimeOptions, selectedRoutineId]);
 
   const maxSubjects = useMemo(() => {
-    return RangeToSubjectTime(
+    if (!currentRoutineOption) return 0;
+
+    const result = RangeToSubjectTime(
       currentRoutineOption.startTime,
       currentRoutineOption.endTime,
       currentRoutineOption.duration,
       0,
-      "number-of-subjects",
-    )?.totalSubjects;
-  }, [currentRoutineOption]);
-
-  const computeCurrentSubjectTimes = useCallback((itemIndex: number) => {
-    // Data to return when requirements aren't met
-    const defaultData = { startTime: "", duration: "" };
-    if (!currentRoutineOption) return defaultData;
-
-    const calculatedTimeRange = RangeToSubjectTime(
-      currentRoutineOption.startTime,
-      currentRoutineOption.endTime,
-      currentRoutineOption.duration,
-      itemIndex,
-      "duration",
     );
 
-    if (calculatedTimeRange?.startTime && calculatedTimeRange.duration)
+    console.log({
+      start: currentRoutineOption.startTime,
+      end: currentRoutineOption.endTime,
+      duration: currentRoutineOption.duration,
+      result,
+    });
+
+    return result?.totalSubjects ?? 0;
+  }, [currentRoutineOption]);
+
+  const isLimitReached = routineState.activeOrder.length >= maxSubjects;
+
+  const error: { title: string; description: string; showError?: boolean } =
+    useMemo(() => {
+      if (isLimitReached)
+        return {
+          title: "Subject limit exceeded",
+          description: `The selected routine option can only have ${maxSubjects} subjects. Please remove one of the subjects first or select a different routine option.`,
+          showError: true,
+        };
+
+      return { title: "", description: "", showError: false };
+    }, [isLimitReached, maxSubjects]);
+
+  const computeCurrentSubjectTimes = useCallback(
+    (itemIndex: number) => {
+      const defaultData = { startTime: "", duration: "" };
+      if (!currentRoutineOption) return defaultData;
+
+      const calculatedTimeRange = RangeToSubjectTime(
+        currentRoutineOption.startTime,
+        currentRoutineOption.endTime,
+        currentRoutineOption.duration,
+        itemIndex,
+      );
+
       return {
         startTime: calculatedTimeRange?.startTime ?? "",
-        duration: calculatedTimeRange?.duration ?? "0",
+        duration: calculatedTimeRange?.duration ?? "",
       };
-    else return defaultData;
-  }, []);
+    },
+    [currentRoutineOption],
+  );
 
-  // const onRoutineChange = () => {
-  //   for (let i of activeSubjects) {
-  //     computeSubjectTimes(i);
-  //   }
-  // };
+  const assignTimes = useCallback(
+    (subjects: SubjectData[], activeOrder: string[]) => {
+      return subjects.map((subject) => {
+        const queueIndex = activeOrder.indexOf(subject.subjectCode);
+        if (queueIndex === -1)
+          return { ...subject, startTime: "", duration: "" };
 
-  const calculateActiveSubjectTimes = (
-    list: SubjectData[],
-    currentActiveOrder: number[],
-  ) => {
-    return list.map((item, index) => {
-      const queueIndex = currentActiveOrder.indexOf(index);
-      if (queueIndex === -1) return { ...item, startTime: "", duration: "" };
+        return {
+          ...subject,
+          ...computeCurrentSubjectTimes(queueIndex),
+        };
+      });
+    },
+    [computeCurrentSubjectTimes],
+  );
 
-      const times = computeCurrentSubjectTimes(queueIndex);
-      return { ...item, ...times };
-    });
-  };
-
-  // // Effect for active subject syncing
-  // useEffect(() => {
-  //   setSubjectsList((prevList) => calculateActiveSubjectTimes(prevList));
-  // }, []);
-
-  // useEffect for syncing subjects
+  // Sync subjects when parameters pivot
   useEffect(() => {
-    // Subject list not available, set all to empty
     if (!routineData.degreeName || !routineData.term) {
-      setSubjectsList([]);
+      setRoutineState({ subjects: [], activeOrder: [] });
       return;
     }
 
-    // Find subject list in the degree data
     const subjects = getCurriculumData({
       ...currentQueryContext,
       level: "subjects",
     });
 
-    // Set all subjects to starting value (prevent null errors)
     const initialSubjects: SubjectData[] = subjects.map((subjectString) => ({
       subjectCode: subjectString,
       teacherId: "",
@@ -133,55 +148,50 @@ const routines = () => {
       duration: "",
     }));
 
-    // Set default values
-    setSubjectsList(initialSubjects);
+    setRoutineState({ subjects: initialSubjects, activeOrder: [] });
   }, [currentQueryContext, routineData.degreeName, routineData.term]);
 
   const handleUpdateSubjectCard = useCallback(
     (index: number, updatedFields: Partial<SubjectData>) => {
-      if (!updatedFields.hasOwnProperty("teacherId")) {
-        setSubjectsList((prevList) => {
-          const newList = [...prevList];
-          newList[index] = {
-            ...newList[index],
-            ...updatedFields,
-          };
+      setRoutineState((prev) => {
+        const subjects = [...prev.subjects];
+        let activeOrder = [...prev.activeOrder];
 
-          return newList;
-        });
-      }
+        subjects[index] = {
+          ...subjects[index],
+          ...updatedFields,
+        };
 
-      const isTeacherAssigned = updatedFields.teacherId !== "";
+        if ("teacherId" in updatedFields) {
+          const currentSubjectCode = subjects[index].subjectCode;
+          const isAssigned = updatedFields.teacherId !== "";
+          const isTracked = activeOrder.includes(currentSubjectCode);
 
-      setActiveSubjectOrder((prevOrder) => {
-        let nextOrder = [...prevOrder];
-        const isAlreadyTracked = nextOrder.includes(index);
-
-        if (isTeacherAssigned && !isAlreadyTracked) {
-          if (activeSubjectOrder.length === maxSubjects) {
-            setError({
-              title: "Subject selection limit exceeded!",
-              description:
-                "Please clear one of the subjects before entering another subject. You have selected more subjects than the routine option allows. If this was intentional, please select another routine option or create a new one.",
-            });
+          if (isAssigned && !isTracked) {
+            activeOrder.push(currentSubjectCode);
           }
-          nextOrder.push(index);
-        } else if (!isTeacherAssigned && !isAlreadyTracked) {
-          nextOrder = nextOrder.filter((id) => id !== index);
+
+          if (!isAssigned && isTracked) {
+            activeOrder = activeOrder.filter((i) => i !== currentSubjectCode);
+          }
         }
 
-        setSubjectsList((prevList) => {
-          const newList = [...prevList];
-          newList[index] = { ...newList[index], ...updatedFields };
-
-          return calculateActiveSubjectTimes(newList, nextOrder);
-        });
-
-        return nextOrder;
+        return {
+          subjects: assignTimes(subjects, activeOrder),
+          activeOrder,
+        };
       });
     },
-    [],
+    [assignTimes],
   );
+
+  useEffect(() => {
+    console.log("Routine option changed", currentRoutineOption);
+    setRoutineState((prev) => ({
+      ...prev,
+      subjects: assignTimes(prev.subjects, prev.activeOrder),
+    }));
+  }, [assignTimes]);
 
   const renderSubjectCard = useCallback(
     ({ item, index }: { item: SubjectData; index: number }) => (
@@ -191,22 +201,19 @@ const routines = () => {
         duration={item.duration}
         teacherId={item.teacherId}
         teacherName={item.teacherName}
-        onTeacherChange={(teacherId, teacherName) => {
-          handleUpdateSubjectCard(index, {
-            teacherId: teacherId,
-            teacherName: teacherName,
-          });
-        }}
-        errorInfo={error}
+        onTeacherChange={(teacherId, teacherName) =>
+          handleUpdateSubjectCard(index, { teacherId, teacherName })
+        }
+        errorInfo={{ ...error, showError: isLimitReached }}
       />
     ),
-    [handleUpdateSubjectCard],
+    [handleUpdateSubjectCard, error],
   );
 
   return (
     <ThemedLinearGradient style={StyleSheet.absoluteFillObject}>
       <FlatList
-        data={subjectList}
+        data={routineState.subjects}
         style={{
           flex: 1,
           backgroundColor: "transparent",
@@ -223,7 +230,7 @@ const routines = () => {
         }
         renderItem={renderSubjectCard}
         ListFooterComponent={
-          subjectList.length > 0 ? (
+          routineState.subjects.length > 0 ? (
             <RoutinesFooterComponent />
           ) : (
             <ThemedText

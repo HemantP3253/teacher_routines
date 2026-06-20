@@ -446,5 +446,6 @@ interface SubjectCardProps {
   errorInfo?: {
     title: string;
     description: string;
+    showError?: boolean;
   }
 }
