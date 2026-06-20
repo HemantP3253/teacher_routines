@@ -3,37 +3,23 @@ import { pad } from "./stringUtils";
 export const calculateFullPeriodTime = (
   timeString: string,
   minutesToAdd: number,
-  is24hours: boolean = true,
 ) => {
-  let hours = 0,
-    minutes = 0;
-  if (is24hours) {
-    [hours, minutes] = timeString.split(":").map(Number);
-  } else {
-    hours = Number(timeString.slice(0, 2));
-    minutes = Number(timeString.slice(3, 5));
-  }
+  const is24Hours = !is12HourTime(timeString);
+
+  const time24 = is24Hours ? timeString : changeTimeMode(timeString);
+
+  const [hours, minutes] = time24.split(":").map(Number);
 
   const date = new Date();
   date.setHours(hours, minutes, 0, 0);
-
   date.setMinutes(date.getMinutes() + minutesToAdd);
 
-  const oldMinutes = pad(minutes);
+  const start = changeTimeMode(time24);
+  const end = changeTimeMode(
+    `${String(pad(date.getHours()))}:${String(pad(date.getMinutes()))}`,
+  );
 
-  let newHours = date.getHours();
-  const newMinutes = pad(date.getMinutes());
-  const newAMPM = newHours >= 12 ? "PM" : "AM";
-
-  const oldAMPM = hours >= 12 ? "PM" : "AM";
-
-  newHours %= 12;
-  newHours = newHours ? newHours : 12;
-
-  let oldHours = `${hours % 12}`;
-  oldHours = `${hours ? pad(hours) : 12}`;
-
-  return `${oldHours}:${oldMinutes} ${oldAMPM} - ${newHours}:${newMinutes} ${newAMPM}`;
+  return `${start} - ${end}`;
 };
 
 export const changeTimeMode = (
@@ -133,41 +119,34 @@ export const RangeToSubjectTime = (
   endTime: string,
   maxDuration: string,
   index: number,
-  returnType: "end-time" | "duration" | "number-of-subjects" = "end-time",
 ) => {
-  const startTime24hours = changeTimeMode(startTime);
-  const endTime24hours = changeTimeMode(endTime);
-
   const durationMinutes = Number(maxDuration);
   if (!durationMinutes) return null;
 
+  const startMinutes = hoursToMinutes(changeTimeMode(startTime));
+
+  let endMinutes = hoursToMinutes(changeTimeMode(endTime));
+
+  if (endMinutes <= startMinutes) {
+    endMinutes += 24 * 60;
+  }
+
   const totalSubjects = Math.floor(
-    (hoursToMinutes(endTime24hours) - hoursToMinutes(startTime24hours)) /
-      durationMinutes,
+    (endMinutes - startMinutes) / durationMinutes,
   );
 
   if (index > totalSubjects) return null;
 
-  const startTimeInMinutes = hoursToMinutes(startTime24hours);
+  const startRange = (startMinutes + index * durationMinutes) % (24 * 60);
 
-  const [startRange, endRange] = [
-    startTimeInMinutes + index * durationMinutes,
-    startTimeInMinutes + (index + 1) * durationMinutes,
-  ];
+  const endRange = (startMinutes + (index + 1) * durationMinutes) % (24 * 60);
 
-  if (returnType === "end-time")
-    return {
-      startTime: changeTimeMode(minutesToHours(startRange)),
-      endTime: changeTimeMode(minutesToHours(endRange)),
-    };
-  if (returnType === "duration")
-    return {
-      startTime: changeTimeMode(minutesToHours(startRange)),
-      duration: maxDuration,
-    };
-  if (returnType === "number-of-subjects") {
-    return { startTime: "", endTime: "", totalSubjects: totalSubjects };
-  }
+  return {
+    startTime: changeTimeMode(minutesToHours(startRange)),
+    endTime: changeTimeMode(minutesToHours(endRange)),
+    duration: maxDuration,
+    totalSubjects: totalSubjects + 1,
+  };
 };
 
 export const dateToFormattedTimeString = (
