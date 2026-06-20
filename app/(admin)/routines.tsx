@@ -7,12 +7,10 @@ import { level, RoutineData, SubjectData } from "@/interfaces/interfaces";
 import { RangeToSubjectTime } from "@/utils/dateUtils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, StatusBar } from "react-native";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { StyleSheet } from "react-native-unistyles";
 
 const routines = () => {
-  const { theme } = useUnistyles();
   const { settings } = useApp();
-  const colors = theme.colors;
 
   const [routineData, setRoutineData] = useState<RoutineData>({
     degreeName: "",
@@ -23,9 +21,15 @@ const routines = () => {
   });
 
   const [selectedRoutineId, setSelectedRoutineId] = useState<number>(0);
+  const [error, setError] = useState<{ title: string; description: string }>();
 
   const degreeMetadata = useMemo(() => {
-    return searchByDegreeName(routineData.degreeName);
+    return (
+      searchByDegreeName(routineData.degreeName) || {
+        faculty: "",
+        degreeType: "",
+      }
+    );
   }, [routineData.degreeName]);
 
   const currentQueryContext = useMemo(() => {
@@ -37,24 +41,90 @@ const routines = () => {
       term: routineData.term,
       level: "faculty" as level,
     };
-  }, [routineData, degreeMetadata]);
+  }, [
+    degreeMetadata,
+    routineData.degreeName,
+    routineData.branch,
+    routineData.term,
+  ]);
 
   const [subjectList, setSubjectsList] = useState<SubjectData[]>([]);
-  const [activeSubjects, setActiveSubjects] = useState<
-    { id: number; teacherId: string }[]
-  >([]);
+  const [activeSubjectOrder, setActiveSubjectOrder] = useState<number[]>([]);
 
+  const currentRoutineOption = useMemo(() => {
+    return settings.routineTimeOptions[selectedRoutineId];
+  }, [settings.routineTimeOptions, selectedRoutineId]);
+
+  const maxSubjects = useMemo(() => {
+    return RangeToSubjectTime(
+      currentRoutineOption.startTime,
+      currentRoutineOption.endTime,
+      currentRoutineOption.duration,
+      0,
+      "number-of-subjects",
+    )?.totalSubjects;
+  }, [currentRoutineOption]);
+
+  const computeCurrentSubjectTimes = useCallback((itemIndex: number) => {
+    // Data to return when requirements aren't met
+    const defaultData = { startTime: "", duration: "" };
+    if (!currentRoutineOption) return defaultData;
+
+    const calculatedTimeRange = RangeToSubjectTime(
+      currentRoutineOption.startTime,
+      currentRoutineOption.endTime,
+      currentRoutineOption.duration,
+      itemIndex,
+      "duration",
+    );
+
+    if (calculatedTimeRange?.startTime && calculatedTimeRange.duration)
+      return {
+        startTime: calculatedTimeRange?.startTime ?? "",
+        duration: calculatedTimeRange?.duration ?? "0",
+      };
+    else return defaultData;
+  }, []);
+
+  // const onRoutineChange = () => {
+  //   for (let i of activeSubjects) {
+  //     computeSubjectTimes(i);
+  //   }
+  // };
+
+  const calculateActiveSubjectTimes = (
+    list: SubjectData[],
+    currentActiveOrder: number[],
+  ) => {
+    return list.map((item, index) => {
+      const queueIndex = currentActiveOrder.indexOf(index);
+      if (queueIndex === -1) return { ...item, startTime: "", duration: "" };
+
+      const times = computeCurrentSubjectTimes(queueIndex);
+      return { ...item, ...times };
+    });
+  };
+
+  // // Effect for active subject syncing
+  // useEffect(() => {
+  //   setSubjectsList((prevList) => calculateActiveSubjectTimes(prevList));
+  // }, []);
+
+  // useEffect for syncing subjects
   useEffect(() => {
+    // Subject list not available, set all to empty
     if (!routineData.degreeName || !routineData.term) {
       setSubjectsList([]);
       return;
     }
 
+    // Find subject list in the degree data
     const subjects = getCurriculumData({
       ...currentQueryContext,
       level: "subjects",
     });
 
+    // Set all subjects to starting value (prevent null errors)
     const initialSubjects: SubjectData[] = subjects.map((subjectString) => ({
       subjectCode: subjectString,
       teacherId: "",
@@ -63,18 +133,51 @@ const routines = () => {
       duration: "",
     }));
 
+    // Set default values
     setSubjectsList(initialSubjects);
   }, [currentQueryContext, routineData.degreeName, routineData.term]);
 
   const handleUpdateSubjectCard = useCallback(
     (index: number, updatedFields: Partial<SubjectData>) => {
-      setSubjectsList((prevList) => {
-        const newList = [...prevList];
-        newList[index] = {
-          ...newList[index],
-          ...updatedFields,
-        };
-        return newList;
+      if (!updatedFields.hasOwnProperty("teacherId")) {
+        setSubjectsList((prevList) => {
+          const newList = [...prevList];
+          newList[index] = {
+            ...newList[index],
+            ...updatedFields,
+          };
+
+          return newList;
+        });
+      }
+
+      const isTeacherAssigned = updatedFields.teacherId !== "";
+
+      setActiveSubjectOrder((prevOrder) => {
+        let nextOrder = [...prevOrder];
+        const isAlreadyTracked = nextOrder.includes(index);
+
+        if (isTeacherAssigned && !isAlreadyTracked) {
+          if (activeSubjectOrder.length === maxSubjects) {
+            setError({
+              title: "Subject selection limit exceeded!",
+              description:
+                "Please clear one of the subjects before entering another subject. You have selected more subjects than the routine option allows. If this was intentional, please select another routine option or create a new one.",
+            });
+          }
+          nextOrder.push(index);
+        } else if (!isTeacherAssigned && !isAlreadyTracked) {
+          nextOrder = nextOrder.filter((id) => id !== index);
+        }
+
+        setSubjectsList((prevList) => {
+          const newList = [...prevList];
+          newList[index] = { ...newList[index], ...updatedFields };
+
+          return calculateActiveSubjectTimes(newList, nextOrder);
+        });
+
+        return nextOrder;
       });
     },
     [],
@@ -88,45 +191,16 @@ const routines = () => {
         duration={item.duration}
         teacherId={item.teacherId}
         teacherName={item.teacherName}
-        onTimeChange={(startTime, duration) =>
-          handleUpdateSubjectCard(index, {
-            startTime: startTime,
-            duration: duration,
-          })
-        }
         onTeacherChange={(teacherId, teacherName) => {
-          const routineOption = settings.routineTimeOptions[selectedRoutineId];
-
-          let timeFields: Partial<SubjectData> = {};
-
-          if (routineOption) {
-            const calculatedTimeRange = RangeToSubjectTime(
-              routineOption.startTime,
-              routineOption.endTime,
-              routineOption.duration,
-              index,
-            );
-
-            if (
-              Array.isArray(calculatedTimeRange) &&
-              calculatedTimeRange.length >= 2
-            ) {
-              timeFields = {
-                startTime: calculatedTimeRange[0],
-                duration: calculatedTimeRange[1],
-              };
-            }
-          }
-
           handleUpdateSubjectCard(index, {
             teacherId: teacherId,
             teacherName: teacherName,
-            ...timeFields,
           });
         }}
+        errorInfo={error}
       />
     ),
-    [settings.routineTimeOptions, selectedRoutineId, handleUpdateSubjectCard],
+    [handleUpdateSubjectCard],
   );
 
   return (

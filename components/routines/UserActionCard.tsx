@@ -28,6 +28,7 @@ const UserActionCard = ({
   showStatus,
   hideIcons,
   keepExpanded,
+  onPress,
 }: UserActionCardProps) => {
   const { colors } = useUnistyles().theme;
   const { currentCollege } = useCollegeInfo();
@@ -69,7 +70,12 @@ const UserActionCard = ({
   };
 
   return (
-    <Pressable onPress={() => !keepExpanded && setShowDropDown(!showDropDown)}>
+    <Pressable
+      onPress={() => {
+        onPress?.();
+        !keepExpanded && setShowDropDown(!showDropDown);
+      }}
+    >
       <ThemedLinearGradient
         type="surface"
         end={{ x: 0, y: 1 }}
@@ -193,6 +199,7 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "space-between",
   },
   leftColumn: {
+    flex: 1,
     justifyContent: "center",
   },
   rightColumn: {

@@ -341,6 +341,7 @@ interface UserActionCardProps {
   showStatus?: boolean;
   hideIcons?: boolean;
   keepExpanded?: boolean;
+  onPress?: () => void;
 }
 
 interface CollegeData {
@@ -441,6 +442,9 @@ interface SubjectCardProps {
   duration: string;
   teacherId: string;
   teacherName: string;
-  onTimeChange: (startTime: string, duration: string) => void;
   onTeacherChange: (teacherId: string, teacherName: string) => void;
+  errorInfo?: {
+    title: string;
+    description: string;
+  }
 }
