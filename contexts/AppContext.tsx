@@ -8,8 +8,10 @@ interface AppSettings {
   routineTimeOptions: DynamicRoutineDetails[];
   isDark: boolean;
   userRole?: "admin" | "user";
-  updatedAt: number;
+  settingsVersion: number;
 }
+
+const SETTINGS_VERSION = 2;
 
 const DEFAULT_SETTINGS: AppSettings = {
   shownDegrees: getAllDegreeNames(),
@@ -41,7 +43,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   ],
   isDark: false,
   userRole: "user",
-  updatedAt: Date.now(),
+  settingsVersion: SETTINGS_VERSION,
 };
 
 interface AppContextType {
@@ -60,16 +62,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const cached = storage.getObject<Partial<AppSettings>>(
       "user_theme_preference" as any,
     );
-    if (cached) {
-      return {
-        ...DEFAULT_SETTINGS,
-        ...cached,
-        routineTimeOptions:
-          cached.routineTimeOptions || DEFAULT_SETTINGS.routineTimeOptions,
-        shownDegrees: cached.shownDegrees || DEFAULT_SETTINGS.shownDegrees,
-      };
+    if (!cached || cached.settingsVersion !== SETTINGS_VERSION) {
+      return DEFAULT_SETTINGS;
     }
-    return DEFAULT_SETTINGS;
+
+    return {
+      ...DEFAULT_SETTINGS,
+      ...cached,
+    };
   });
 
   const allAvailableDegrees = getAllDegreeNames();
