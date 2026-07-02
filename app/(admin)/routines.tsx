@@ -59,24 +59,20 @@ const routines = () => {
   }, [settings.routineTimeOptions, selectedRoutineId]);
 
   const maxSubjects = useMemo(() => {
+    if (!routineState.subjects) return 0;
     if (!currentRoutineOption) return 0;
 
-    const result = RangeToSubjectTime(
-      currentRoutineOption.startTime,
-      currentRoutineOption.endTime,
-      currentRoutineOption.duration,
-      0,
-    );
-
-    console.log({
-      start: currentRoutineOption.startTime,
-      end: currentRoutineOption.endTime,
-      duration: currentRoutineOption.duration,
-      result,
+    const result = RangeToSubjectTime({
+      times: {
+        start: currentRoutineOption.startTime,
+        end: currentRoutineOption.endTime,
+        duration: currentRoutineOption.duration,
+      },
+      index: 0,
     });
 
     return result?.totalSubjects ?? 0;
-  }, [currentRoutineOption]);
+  }, [currentRoutineOption, routineState.subjects]);
 
   const isLimitReached = routineState.activeOrder.length >= maxSubjects;
 
@@ -97,12 +93,14 @@ const routines = () => {
       const defaultData = { startTime: "", duration: "" };
       if (!currentRoutineOption) return defaultData;
 
-      const calculatedTimeRange = RangeToSubjectTime(
-        currentRoutineOption.startTime,
-        currentRoutineOption.endTime,
-        currentRoutineOption.duration,
-        itemIndex,
-      );
+      const calculatedTimeRange = RangeToSubjectTime({
+        times: {
+          start: currentRoutineOption.startTime,
+          end: currentRoutineOption.endTime,
+          duration: currentRoutineOption.duration,
+        },
+        index: itemIndex,
+      });
 
       return {
         startTime: calculatedTimeRange?.startTime ?? "",
@@ -186,7 +184,6 @@ const routines = () => {
   );
 
   useEffect(() => {
-    console.log("Routine option changed", currentRoutineOption);
     setRoutineState((prev) => ({
       ...prev,
       subjects: assignTimes(prev.subjects, prev.activeOrder),

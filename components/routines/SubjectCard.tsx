@@ -4,7 +4,7 @@ import { calculateFullPeriodTime } from "@/utils/dateUtils";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { View } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { ThemedAlertWindow, ThemedText } from "../themed";
 import AssignTeacherModal from "./AssignTeacherModal";
 
@@ -17,16 +17,7 @@ const SubjectCard = ({
   onTeacherChange,
   errorInfo,
 }: SubjectCardProps) => {
-  console.log("SubjectCard props", {
-    subject: subjectName,
-    startTime: startTime,
-    duration: duration,
-  });
-
-  const { theme } = useUnistyles();
-  const colors = theme.colors;
-
-  const [visible, setVisible] = useState<boolean>(false);
+  const { colors } = useUnistyles().theme;
 
   const nameSegments = subjectName.includes(":")
     ? subjectName.split(":")
@@ -34,107 +25,107 @@ const SubjectCard = ({
   const courseCode = nameSegments[0].trim();
   const courseTitle = nameSegments[1].trim() || courseCode;
 
+  const [visible, setVisible] = useState<boolean>(false);
+
   return (
-    <View
-      style={{
-        marginVertical: theme.spacing.xs,
-        marginHorizontal: theme.spacing.md,
-        borderRadius: theme.radius.md,
-        elevation: 2,
-        shadowColor: colors.border,
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 2 },
-        backgroundColor: "transparent",
-      }}
-    >
+    <View style={styles.rootView}>
+      {/* Gradient View for the subtle background in the card */}
       <LinearGradient
         colors={[colors.surface, colors.surfaceElevated]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
-        style={{
-          borderRadius: theme.radius.md,
-          borderWidth: 1,
-          borderColor: colors.borderMuted,
-          flexDirection: "row",
-          justifyContent: "space-between",
-          padding: 12,
-        }}
+        style={styles.cardContainer}
       >
+        {/* Left column container (Subject info container) */}
         <View>
           {/* Subject Time */}
-          <ThemedText
-            style={{
-              fontWeight: "bold",
-              fontSize: 16,
-              color: colors.primary,
-            }}
-          >
+          <ThemedText style={styles.timeContainer}>
             {!startTime || !duration
               ? "Time not selected"
               : calculateFullPeriodTime(startTime, Number(duration))}
           </ThemedText>
 
           {/*  Subject Name */}
-          <ThemedText style={{ fontWeight: "600", fontSize: 14, opacity: 0.9 }}>
-            {courseTitle}
-          </ThemedText>
+          <ThemedText style={styles.titleText}>{courseTitle}</ThemedText>
 
           {/*  Subject Code */}
-          <ThemedText style={{ fontWeight: "400", fontSize: 14, opacity: 0.8 }}>
-            {courseCode}
-          </ThemedText>
+          <ThemedText style={styles.codeText}>{courseCode}</ThemedText>
 
           {/* Assigned Status  */}
-          <ThemedText
-            style={{ fontSize: 12, color: colors.primary, marginTop: 4 }}
-          >
+          <ThemedText style={styles.teacherAssignedText}>
             {teacherId !== "" && teacherName !== ""
               ? `Teacher: ${teacherName}`
               : "Not assigned"}
           </ThemedText>
         </View>
-        <View
-          style={{
-            alignItems: "center",
-            justifyContent: "flex-end",
-            gap: 12,
-            minWidth: 80,
-            flexDirection: "row",
-          }}
-        >
-          <AssignmentIcon
-            height={28}
-            width={28}
-            fillItem={!!teacherId}
-            fill={colors.secondary}
-            onPress={() => {
-              setVisible(true);
-              console.log(errorInfo);
+
+        {/* Icon for selecting teachers */}
+        <AssignmentIcon
+          height={32}
+          width={32}
+          fillItem={!!teacherId}
+          fill={colors.secondary}
+          style={styles.icon}
+          onPress={() => setVisible(true)}
+        />
+
+        {/* If error is shown, then the error modal appears, otherwise assign teacher modal appears */}
+        {errorInfo && errorInfo.showError ? (
+          <ThemedAlertWindow
+            title={errorInfo.title}
+            description={errorInfo?.description || ""}
+            visible={visible}
+            onClose={() => setVisible(false)}
+            onConfirm={() => setVisible(false)}
+          />
+        ) : (
+          <AssignTeacherModal
+            visible={visible}
+            onClose={() => setVisible(false)}
+            onSelectTeacher={(id, name) => {
+              onTeacherChange(id, name);
+              setVisible(false);
             }}
           />
-          {errorInfo && errorInfo.showError ? (
-            <ThemedAlertWindow
-              title={errorInfo.title}
-              description={errorInfo?.description || ""}
-              visible={visible}
-              onClose={() => setVisible(false)}
-              onConfirm={() => setVisible(false)}
-            />
-          ) : (
-            <AssignTeacherModal
-              visible={visible}
-              onClose={() => setVisible(false)}
-              onSelectTeacher={(selectedTeacherId, selectedTeacherName) => {
-                onTeacherChange(selectedTeacherId, selectedTeacherName);
-                setVisible(false);
-              }}
-            />
-          )}
-        </View>
+        )}
       </LinearGradient>
     </View>
   );
 };
+
+const styles = StyleSheet.create((theme) => ({
+  rootView: {
+    marginVertical: theme.spacing.xs,
+    marginHorizontal: theme.spacing.md,
+    borderRadius: theme.radius.md,
+    elevation: 2,
+    shadowColor: theme.colors.border,
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    backgroundColor: "transparent",
+  },
+  cardContainer: {
+    borderRadius: theme.radius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.borderMuted,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 12,
+  },
+  timeContainer: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: theme.colors.primary,
+  },
+  titleText: { fontWeight: "600", fontSize: 14, opacity: 0.9 },
+  codeText: { fontWeight: "400", fontSize: 14, opacity: 0.8 },
+  teacherAssignedText: {
+    fontSize: 12,
+    color: theme.colors.primary,
+    marginTop: 4,
+  },
+  icon: { alignSelf: "center", margin: theme.spacing.lg },
+}));
 
 export default SubjectCard;
