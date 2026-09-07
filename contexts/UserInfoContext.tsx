@@ -24,90 +24,108 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const getCurrentUserProfile = useCallback(async () => {
-    setIsLoading(true); // Force start
+  const fetchProfile = useCallback(async (userId: string) => {
+    console.log("🔍 [UserInfoContext] Fetching DB profile for user:", userId);
+
+    // Timeout safety net: force DB query to fail after 3s if Supabase hangs
+    const dbPromise = supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const timeoutPromise = new Promise<{
+      data: null;
+      error: Error;
+      status: number;
+    }>((_, reject) =>
+      setTimeout(() => reject(new Error("DB Profile Fetch Timed Out")), 3000),
+    );
+
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const response = await Promise.race([dbPromise, timeoutPromise]);
 
-      if (!user) {
-        setCachedUserInfo(null);
-        setIsLoading(false);
-        return;
-      }
+      console.log(
+        "📊 [UserInfoContext] DB Response Status:",
+        response.status,
+        "Data:",
+        response.data,
+        "Error:",
+        response.error,
+      );
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (error) {
-        throw error;
-      }
-
-      setCachedUserInfo(data);
+      if (response.error) throw response.error;
+      setCachedUserInfo(response.data);
     } catch (err) {
+      console.error("❌ [UserInfoContext] Profile fetch error:", err);
       setCachedUserInfo(null);
     } finally {
-      setIsLoading(false);
+      console.log("✅ [UserInfoContext] Profile fetch finished");
     }
   }, []);
 
   useEffect(() => {
-    getCurrentUserProfile();
+    let isMounted = true;
 
+    console.log("🔍 [UserInfoContext] Subscribing to auth state change...");
+
+    // Unified listener handling both initial session & subsequent auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        getCurrentUserProfile();
-      }
-      if (event === "SIGNED_OUT") {
-        setCachedUserInfo(null);
-        setIsLoading(false);
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(
+        "⚡ [UserInfoContext] Auth Event Fired:",
+        event,
+        "Session exists:",
+        !!session,
+      );
+
+      try {
+        if (session?.user) {
+          await fetchProfile(session.user.id);
+        } else {
+          setCachedUserInfo(null);
+        }
+      } catch (err) {
+        console.error("❌ [UserInfoContext] Auth listener error:", err);
+        if (isMounted) setCachedUserInfo(null);
+      } finally {
+        if (isMounted) {
+          console.log("✅ [UserInfoContext] Setting isLoading = false");
+          setIsLoading(false);
+        }
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, [getCurrentUserProfile]);
-
-  useEffect(() => {
-    if (!cachedUserInfo?.id) return;
-
-    const channelInstanceId = `user-row-sync-${cachedUserInfo.id}`;
-
-    const profileSubscription = supabase
-      .channel(channelInstanceId)
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE" as const,
-          schema: "public",
-          table: "profiles",
-          filter: `id=eq.${cachedUserInfo.id}`,
-        },
-        (payload) => {
-          if (JSON.stringify(payload.new) !== JSON.stringify(cachedUserInfo)) {
-            setCachedUserInfo(payload.new as UserProfileProps);
-          }
-        },
-      )
-      .subscribe();
-
     return () => {
-      supabase.removeChannel(profileSubscription);
+      isMounted = false;
+      subscription.unsubscribe();
     };
-  }, [cachedUserInfo?.id]);
+  }, [fetchProfile]);
+
+  const refreshUser = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        await fetchProfile(user.id);
+      } else {
+        setCachedUserInfo(null);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchProfile]);
 
   const contextValue = useMemo(
     () => ({
       userInfo: cachedUserInfo,
       isLoading,
-      refreshUser: getCurrentUserProfile,
+      refreshUser,
     }),
-    [cachedUserInfo, isLoading, getCurrentUserProfile],
+    [cachedUserInfo, isLoading, refreshUser],
   );
 
   return (
