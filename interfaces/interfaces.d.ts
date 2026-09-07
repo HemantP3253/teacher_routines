@@ -449,3 +449,20 @@ interface SubjectCardProps {
     showError?: boolean;
   }
 }
+
+type DynamicInputType = {
+  title: string;
+  blendColor: string;
+  inputFormatType?: "whole-number" | "name" | "phone" | "decimal-number" | "date" | "time";
+  precision?: number;
+  isSensitiveText?: boolean;
+  showPicker?: "date" | "time" | "dateAndTime";
+  isNullable?: boolean;
+}
+
+interface DynamicTextInputProps {
+  inputFields: DynamicInputType[];
+  optionalInputFields?: DynamicInputType[];
+  onSubmit?: (inputs: string[]) => void;
+  defaultValues?: string[];
+}
