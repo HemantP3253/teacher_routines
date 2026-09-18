@@ -34,7 +34,6 @@ const RoutinesHeaderComponent = ({
 }: RoutinesHeaderProps) => {
   const { theme } = useUnistyles();
   const { allAvailableDegrees, settings } = useApp();
-  const colors = theme.colors;
   const activeMenuSteps: StepType[] = [
     "Degree Name",
     "Branch",
