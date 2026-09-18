@@ -8,7 +8,9 @@ const Spacer = ({
   size = 8,
   lineSize = 2,
   style,
+  lineType,
   lineColor,
+  useFullWidth,
   ...otherProps
 }: SpacerProps) => {
   const { theme } = useUnistyles();
@@ -16,9 +18,12 @@ const Spacer = ({
 
   const containerStyle = [
     horizontal
-      ? { width: size, height: "auto" }
-      : { height: size, width: "auto" },
-    lineVisible && { justifyContent: "center", marginHorizontal: 4 },
+      ? { width: useFullWidth ? "100%" : size, height: "auto" }
+      : { height: size, width: useFullWidth ? "100%" : "auto" },
+    lineVisible && {
+      justifyContent: "center",
+      marginHorizontal: useFullWidth ? 0 : 4,
+    },
     style,
   ];
 
@@ -27,7 +32,11 @@ const Spacer = ({
       {lineVisible && (
         <View
           style={{
-            backgroundColor: lineColor ? lineColor : colors.accent,
+            backgroundColor: lineType
+              ? colors[lineType]
+              : lineColor
+                ? lineColor
+                : colors.divider,
             height: lineSize,
           }}
         />
