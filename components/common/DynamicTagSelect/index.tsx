@@ -14,6 +14,7 @@ const DynamicTagSelect = <T,>({
   Icon,
   getLabel,
   onSelect,
+  addButtonProperties,
 }: DynamicTagSelectProps<T>) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
@@ -70,6 +71,7 @@ const DynamicTagSelect = <T,>({
                 label={"Add New Item"}
                 selected={false}
                 fill={false}
+                onPress={addButtonProperties?.onPress}
               />
             )}
           </View>
