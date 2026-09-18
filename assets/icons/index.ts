@@ -8,6 +8,7 @@ export { default as ArrowForwardIcon } from "./ArrowForwardIcon";
 export { default as ArrowUpIcon } from "./ArrowUpIcon";
 export { default as AssignmentIcon } from "./AssignmentIcon";
 export { default as CalendarButtonIcon } from "./CalendarButtonIcon";
+export { default as CalendarClockIcon } from "./CalendarClockIcon";
 export { default as CalendarInfoIcon } from "./CalendarInfoIcon";
 export { default as CheckSmallIcon } from "./CheckSmallIcon";
 export { default as ClassIcon } from "./ClassIcon";
