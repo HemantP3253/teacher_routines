@@ -23,7 +23,7 @@ import ThemedRadioButtonMenu from "../themed/ThemedRadioButtonMenu";
 const OptionsScreen = () => {
   const { userInfo } = useUserInfo();
   const isAdmin = userInfo?.is_admin || false;
-  const { theme, rt } = useUnistyles();
+  const { theme } = useUnistyles();
   const availableThemeOptions = ["Use System Theme", "Light Mode", "Dark Mode"];
   const { settings, updateSetting, allAvailableDegrees } = useApp();
   const colors = theme.colors;
