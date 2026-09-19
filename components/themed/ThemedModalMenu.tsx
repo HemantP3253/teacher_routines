@@ -1,7 +1,7 @@
 import { ErrorIcon, SuccessIcon } from "@/assets/icons";
 import { ThemedModalMenuProps } from "@/interfaces/interfaces";
 import React, { useCallback, useMemo, useState } from "react";
-import { Dimensions, FlatList, Pressable, View, ViewStyle } from "react-native";
+import { FlatList, Pressable, View, ViewStyle } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { ErrorCard, Spacer } from "../common";
 import CustomModal from "../common/CustomModal";
@@ -28,7 +28,6 @@ const ThemedModalMenu = ({
   addSearchBar = false,
   ...props
 }: ThemedModalMenuProps) => {
-  const MODAL_HEIGHT = Dimensions.get("window").height * 0.6;
   const [modalVisible, setModalVisible] = useState<{
     alert: boolean;
     mainModal: boolean;
