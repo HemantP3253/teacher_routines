@@ -1,10 +1,11 @@
 import { DarkModeIcon, DegreeIcon, LogoutIcon } from "@/assets/icons";
 import {
+  ThemedCheckboxMenu,
   ThemedLinearGradient,
   ThemedOptionsCard,
   ThemedPressable,
   ThemedStatusBar,
-  ThemedText
+  ThemedText,
 } from "@/components/themed";
 import { useApp } from "@/contexts/AppContext";
 import { useUserInfo } from "@/contexts/UserInfoContext";
@@ -17,7 +18,6 @@ import {
   useUnistyles,
 } from "react-native-unistyles";
 import { CustomModal, Spacer } from "../common";
-import { ThemedCheckbox } from "../themed/";
 import ThemedRadioButtonMenu from "../themed/ThemedRadioButtonMenu";
 
 const OptionsScreen = () => {
@@ -76,10 +76,17 @@ const OptionsScreen = () => {
         setModalVisible={setThemeModalVisible}
       >
         <ThemedRadioButtonMenu
+          title="Select Theme"
           data={availableThemeOptions}
           getId={(item) => item}
           initialSelection={currentTheme}
           getLabel={(item) => item}
+          getSubLabel={(item) =>
+            item === "Use System Theme"
+              ? "Automatically assigns dark mode and light mode according to the system theme"
+              : undefined
+          }
+          alwaysShowSubLabel
           onSelect={(selected: string) => {
             if (selected === "Use System Theme") {
               UnistylesRuntime.setAdaptiveThemes(true);
@@ -90,18 +97,18 @@ const OptionsScreen = () => {
               );
             }
           }}
-          title="Select Theme"
         />
       </CustomModal>
       <CustomModal
         modalVisible={degreesModalVisible}
         setModalVisible={setDegreesModalVisible}
       >
-        <ThemedCheckbox
+        <ThemedCheckboxMenu
+          title="Select Available Degrees"
           data={allAvailableDegrees}
           getId={(item: string) => item}
+          minSelection={1}
           initialSelection={settings.shownDegrees}
-          title="Select Available Degrees"
           getLabel={(item: string) => item}
           onSubmit={(degreeNames: string[]) => {
             setDegreesModalVisible(false);
