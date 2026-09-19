@@ -29,12 +29,16 @@ const lightTheme = {
     // Interactive
     primary: "rgb(74, 152, 118)",
     primaryContent: "rgb(248, 251, 249)",
+    primaryContainer: "rgba(74, 152, 118, 0.12)",
+    onPrimaryContainer: "rgb(27, 38, 33)",
 
     secondary: "rgb(179, 103, 169)",
     secondaryContent: "rgb(248, 251, 249)",
 
     accent: "rgb(175, 174, 58)",
     accentContent: "rgb(27, 38, 33)",
+    accentContainer: "rgba(175, 174, 58, 0.15)",
+    onAccentContainer: "rgb(27, 38, 33)",
 
     // Status
     success: "rgb(52, 170, 112)",
@@ -66,6 +70,15 @@ const lightTheme = {
 
     // Overlay
     overlay: "rgba(0,0,0,0.40)",
+
+    // Input Fields
+    inputBackground: "rgb(255, 255, 255)",
+    inputPlaceholder: "rgb(145, 154, 148)",
+    inputFocusedBorder: "rgb(74, 152, 118)",
+
+    // Shimmers & Divider Lines
+    divider: "rgba(207, 216, 211, 0.60)",
+    shimmer: "rgb(231, 236, 233)",
   },
 
   spacing: {
@@ -130,12 +143,16 @@ const darkTheme = {
     // Interactive
     primary: "rgb(141, 216, 177)",
     primaryContent: "rgb(22, 37, 30)",
+    primaryContainer: "rgba(141, 216, 177, 0.18)",
+    onPrimaryContainer: "rgb(237, 248, 241)",
 
     secondary: "rgb(226, 163, 214)",
     secondaryContent: "rgb(22, 37, 30)",
 
     accent: "rgb(188, 186, 71)",
     accentContent: "rgb(22, 37, 30)",
+    accentContainer: "rgba(188, 186, 71, 0.20)",
+    onAccentContainer: "rgb(237, 248, 241)",
 
     // Status
     success: "rgb(79, 206, 142)",
@@ -167,6 +184,15 @@ const darkTheme = {
 
     // Overlay
     overlay: "rgba(0,0,0,0.65)",
+
+    // Input Fields
+    inputBackground: "rgb(22, 37, 30)",
+    inputPlaceholder: "rgb(113, 129, 120)",
+    inputFocusedBorder: "rgb(141, 216, 177)",
+
+    // Shimmers & Divider Lines
+    divider: "rgba(78, 102, 87, 0.50)",
+    shimmer: "rgb(32, 48, 40)",
   },
 
   spacing: {
