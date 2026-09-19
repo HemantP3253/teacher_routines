@@ -19,6 +19,7 @@ const ThemedRadioButtonMenu = <T,>({
   getSubLabel,
   initialSelection,
   sortList,
+  alwaysShowSubLabel,
 }: ThemedRadioButtonMenuProps<T>) => {
   const { colors } = useUnistyles().theme;
 
@@ -46,7 +47,9 @@ const ThemedRadioButtonMenu = <T,>({
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
       <ThemedView style={styles.rootContainer}>
-        {title && <ThemedText style={styles.titleText}>{title}</ThemedText>}
+        <ThemedText type="text" style={styles.titleText}>
+          {title ?? "Select an option"}
+        </ThemedText>
 
         <ThemedView style={styles.cardContainer}>
           {sortedData.map((item: T) => {
@@ -55,7 +58,9 @@ const ThemedRadioButtonMenu = <T,>({
             const subLabel = getSubLabel?.(item);
 
             const isChecked = selectedId === id;
-            const isExpanded = expandedIds.includes(id);
+            let isExpanded = alwaysShowSubLabel
+              ? true
+              : expandedIds.includes(id);
 
             return (
               <Pressable
@@ -64,30 +69,33 @@ const ThemedRadioButtonMenu = <T,>({
                   setSelectedId(id);
                   onSelect?.(id);
                 }}
+                onLongPress={() => !alwaysShowSubLabel && toggleExpand(id)}
                 style={[
                   styles.card,
                   isChecked && { backgroundColor: colors.primary },
                 ]}
               >
-                <View style={styles.labelContainer}>
+                <View style={styles.leftContainer}>
                   {isChecked ? (
                     <RadioButtonCheckedIcon fill={colors.primaryContent} />
                   ) : (
-                    <RadioButtonUncheckedIcon fill={colors.neutral100} />
+                    <RadioButtonUncheckedIcon fill={colors.neutral600} />
                   )}
-                  <View style={styles.labelSubcontainer}>
+                </View>
+                <View style={styles.rightContainer}>
+                  <View style={styles.labelContainer}>
                     <ThemedText
+                      type={isChecked ? "primaryContent" : "text"}
                       style={[
                         styles.labelText,
                         isChecked && {
-                          color: colors.primaryContent,
                           fontWeight: "700",
                         },
                       ]}
                     >
                       {label}
                     </ThemedText>
-                    {subLabel && (
+                    {subLabel && !alwaysShowSubLabel && (
                       <ArrowDownIcon
                         fill={
                           isChecked ? colors.primaryContent : colors.primary
@@ -97,19 +105,20 @@ const ThemedRadioButtonMenu = <T,>({
                           e.stopPropagation();
                           toggleExpand(id);
                         }}
-                        style={styles.arrowDropdown}
                       />
                     )}
                   </View>
+                  <View style={styles.subLabelContainer}>
+                    {isExpanded && subLabel && (
+                      <ThemedText
+                        type={isChecked ? "primaryContent" : "text"}
+                        style={styles.subLabelText}
+                      >
+                        {subLabel}
+                      </ThemedText>
+                    )}
+                  </View>
                 </View>
-
-                {isExpanded && subLabel && (
-                  <ThemedView style={styles.subLabelContainer}>
-                    <ThemedText style={styles.subLabelText}>
-                      {subLabel}
-                    </ThemedText>
-                  </ThemedView>
-                )}
               </Pressable>
             );
           })}
@@ -119,61 +128,63 @@ const ThemedRadioButtonMenu = <T,>({
   );
 };
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create(({ colors, spacing, radius }) => ({
   scrollContent: {
-    padding: theme.spacing.sm,
+    padding: spacing.sm,
   },
   rootContainer: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.md,
-  },
-  titleText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    padding: theme.spacing.sm,
-    color: theme.colors.primary,
-    textAlign: "center",
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
   },
   cardContainer: {
-    gap: theme.spacing.sm,
-    padding: theme.spacing.sm,
-    backgroundColor: theme.colors.surfaceElevated,
-    borderBottomStartRadius: theme.radius.md,
-    borderBottomEndRadius: theme.radius.md,
+    gap: spacing.sm,
+    padding: spacing.sm,
+    backgroundColor: colors.surfaceElevated,
+    borderBottomStartRadius: radius.md,
+    borderBottomEndRadius: radius.md,
   },
   card: {
-    borderRadius: theme.radius.md,
-    padding: theme.spacing.sm,
-    flexDirection: "column",
+    borderRadius: radius.md,
+    padding: spacing.sm,
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
+  leftContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rightContainer: {
+    justifyContent: "center",
+    flex: 1,
   },
   labelContainer: {
     flexDirection: "row",
-    gap: theme.spacing.sm,
-    width: "100%",
     alignItems: "center",
-  },
-  labelSubcontainer: {
-    flex: 1,
-    flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
   },
   labelText: {
     fontSize: 16,
     flexShrink: 1,
+    fontWeight: "500",
+    paddingRight: spacing.md,
+    flexWrap: "wrap",
   },
   subLabelContainer: {
-    paddingLeft: theme.spacing["2xl"],
-    paddingTop: theme.spacing.xs,
-    paddingBottom: theme.spacing.sm,
-    backgroundColor: "transparent",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   subLabelText: {
     fontSize: 14,
+    opacity: 0.8,
     lineHeight: 18,
+    flexWrap: "wrap",
   },
-  arrowDropdown: {
-    padding: theme.spacing.md,
+  titleText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    padding: spacing.sm,
+    textAlign: "center",
   },
 }));
 
