@@ -9,6 +9,7 @@ import {
 } from "@/assets/icons";
 import { CustomModal, Spacer } from "@/components/common";
 import {
+  ThemedCheckboxMenu,
   ThemedModalMenu,
   ThemedPressable,
   ThemedStatusBar,
@@ -16,7 +17,6 @@ import {
   ThemedTextInput,
   ThemedView,
 } from "@/components/themed";
-import { ThemedCheckbox } from "@/components/themed/";
 import { useSignUpForm } from "@/hooks/useSignUpForm";
 import { supabase } from "@/services/supabase";
 import { useAppDatePicker } from "@/utils/pickerUtils";
@@ -142,7 +142,9 @@ const signUp = () => {
                   paddingHorizontal: 12,
                   justifyContent: "center",
                 }}
-                onPress={() => datePicker.openPicker()}
+                onPress={() =>
+                  datePicker.openPicker({ mode: "date", calendarType: "AD" })
+                }
               >
                 <CalendarInfoIcon
                   fill={colors.primary}
@@ -284,7 +286,7 @@ const signUp = () => {
             }}
           >
             <View style={{ width: "100%" }}>
-              <ThemedCheckbox
+              <ThemedCheckboxMenu
                 data={colleges}
                 getId={(item) => item.id}
                 getLabel={(item) => item.college_name}
@@ -313,7 +315,6 @@ const signUp = () => {
                   });
 
                 if (authError) {
-                  // Modify Later
                   console.error(
                     "Sign up error (in signUp.tsx): ",
                     authError.message,
