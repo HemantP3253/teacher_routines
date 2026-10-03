@@ -5,17 +5,11 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "useDefineForClassFields": false,
+    "moduleResolution": "bundler",
     "strict": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "src",
-    "svg.d.ts"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "src", "svg.d.ts"]
 }

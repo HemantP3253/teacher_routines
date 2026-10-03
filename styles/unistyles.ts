@@ -1,5 +1,15 @@
 import { StyleSheet } from "react-native-unistyles";
 
+StyleSheet.configure({
+  themes: {
+    light: { colors: {}, spacing: {}, radius: {}, typography: {} } as any,
+    dark: { colors: {}, spacing: {}, radius: {}, typography: {} } as any,
+  },
+  settings: {
+    initialTheme: "light",
+  },
+});
+
 // 1. Define your responsive design breakpoints
 const breakpoints = {
   xs: 0,

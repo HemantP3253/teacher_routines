@@ -7,7 +7,7 @@ const ThemedStatusBar = ({ ...props }: ThemedStatusBarProps) => {
   return (
     <StatusBar
       barStyle={rt.themeName === "dark" ? "light-content" : "dark-content"}
-      backgroundColor={theme.colors.base200}
+      backgroundColor={theme.colors.surface}
       animated
       {...props}
     />

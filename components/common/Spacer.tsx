@@ -10,7 +10,7 @@ const Spacer = ({
   style,
   lineType,
   lineColor,
-  useFullWidth,
+  useFullWidth = false,
   ...otherProps
 }: SpacerProps) => {
   const { theme } = useUnistyles();
