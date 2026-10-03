@@ -14,8 +14,13 @@ import {
   ViewStyle
 } from "react-native";
 import { SvgProps } from "react-native-svg";
+import { UnistylesThemes } from "react-native-unistyles";
+
+type ThemeColors = UnistylesThemes[keyof UnistylesThemes]['colors'];
 
 type textType = "text" | "textSecondary" | "textDisabled" | "primaryContent" | "secondaryContent" | "accentContent" | "disabledContent" | "warningContent" | "successContent" | "errorContent" | "infoContent";
+
+type formatType = "whole-number" | "name" | "phone" | "decimal-number" | "date" | "time" | "email" | "username"
 
 type genderType = "Male" | "Female" | "Others" | ""
 
@@ -62,11 +67,14 @@ interface ThemedTextInputProps extends TextInputProps {
 }
 
 interface SpacerProps extends ViewProps {
-  horizontal?;
+  horizontal?: boolean;
   size?: number;
-  lineVisible?;
+  lineVisible?: boolean;
   lineSize?: number;
   lineColor?: color;
+  useFullWidth?: boolean;
+  style?: ViewProps<ViewStyle>;
+  lineType?: keyof ThemeColors
 }
 
 interface TabIconProps {
@@ -363,9 +371,19 @@ interface ThemedRadioButtonMenuProps<T> {
   getLabel: (item: T) => string;
   getSubLabel?: (item: T) => string | undefined;
   sortList?: boolean;
+  alwaysShowSubLabel?: boolean;
 }
 
-interface ThemedCheckboxProps<T> {
+interface ThemedCheckboxProps {
+  label: string,
+  alwaysShowSubLabel?: boolean,
+  subLabel?: string,
+  style?: StyleProp<ViewStyle>,
+  onPress?: () => void,
+  isChecked?: boolean,
+}
+
+interface ThemedCheckboxMenuProps<T> {
   title?: string;
   data: T[];
   initialSelection?: string[];
@@ -425,6 +443,9 @@ interface DynamicTagSelectProps<T> {
   title: string;
   Icon?: FC<SvgProps>;
   onSelect?: Function;
+  addButtonProperties?: {
+    onPress: () => void;
+  }
 }
 
 interface DynamicRoutineDetails {
@@ -453,7 +474,7 @@ interface SubjectCardProps {
 type DynamicInputType = {
   title: string;
   blendColor: string;
-  inputFormatType?: "whole-number" | "name" | "phone" | "decimal-number" | "date" | "time";
+  inputFormatType?: formatType;
   precision?: number;
   isSensitiveText?: boolean;
   showPicker?: "date" | "time" | "dateAndTime";
@@ -462,6 +483,10 @@ type DynamicInputType = {
 
 interface DynamicTextInputProps {
   inputFields: DynamicInputType[];
+  extraInputs?: {
+    inputFields: DynamicInputType[],
+    captionText: string;
+  };
   optionalInputFields?: DynamicInputType[];
   onSubmit?: (inputs: string[]) => void;
   defaultValues?: string[];
