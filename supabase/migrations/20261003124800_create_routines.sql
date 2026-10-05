@@ -1,7 +1,6 @@
--- ============================================================
 -- ROUTINES
 --
--- Stores recurring classes taught by teachers at institutions.
+-- Stores recurring classes taught by teachers at institutess.
 --
 -- The academic fields are intentionally flexible because the
 -- system supports schools, +2, bachelor's degrees, etc.
@@ -21,12 +20,11 @@
 --
 -- Bachelor's:
 --   faculty_id  = 'fohss'
---   program_id  = 'ba'
+--   program_id  = 'bca'
 --   semester_id = 'semester3'
 --   batch       = '2082'
 --   section     = 'A'
 --   subject_id  = 'sociology'
--- ============================================================
 
 create table public.routines (
   -- Numeric ID.
@@ -38,24 +36,17 @@ create table public.routines (
   -- unique ID before synchronization.
   id bigint primary key,
 
-  -- Institution where this routine takes place.
-  institution_id uuid not null
-    references public.institutions(id)
+  -- Institutes where this routine takes place.
+  institute_id uuid not null
+    references public.institutes(id)
     on delete cascade,
+
+  unit_id text not null,
 
   -- Teacher who teaches this routine.
   teacher_id uuid not null
     references public.profiles(id)
     on delete cascade,
-
-
-  -- ==========================================================
-  -- ACADEMIC STRUCTURE
-  -- ==========================================================
-
-  -- Faculty / institute.
-  -- Examples: FoHSS, IoE, IoM
-  faculty_id text,
 
   -- +2 stream.
   -- Examples: Science, Management, Law
@@ -72,12 +63,12 @@ create table public.routines (
   -- Semester / term.
   semester_id text,
 
-  -- Institution-specific batch.
+  -- Institute-specific batch.
   -- Kept as text because batch identifiers may not always
   -- be purely numeric.
-  batch text,
+  batch text not null,
 
-  -- Institution-specific section.
+  -- Institutes-specific section.
   -- Examples: A, B, C
   section text,
 
@@ -85,10 +76,7 @@ create table public.routines (
   -- subject catalog.
   subject_id text not null,
 
-
-  -- ==========================================================
   -- CLASS TIME
-  -- ==========================================================
 
   start_time time not null,
   end_time time not null,
@@ -99,19 +87,11 @@ create table public.routines (
   -- {'monday', 'wednesday', 'friday'}
   days text[] not null,
 
-
-  -- ==========================================================
-  -- SYNC METADATA
-  -- ==========================================================
+  -- Sync metadata
 
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   deleted_at timestamptz,
-
-
-  -- ==========================================================
-  -- VALIDATION
-  -- ==========================================================
 
   -- A routine cannot end before it starts.
   check (
@@ -137,95 +117,3 @@ create table public.routines (
   )
 );
 
-
--- ============================================================
--- INDEXES
--- ============================================================
-
-create index routines_teacher_id_idx
-on public.routines(teacher_id);
-
-create index routines_institution_id_idx
-on public.routines(institution_id);
-
-create index routines_teacher_institution_idx
-on public.routines(
-  teacher_id,
-  institution_id
-);
-
-
--- Useful when displaying a teacher's routines ordered by time.
-create index routines_teacher_time_idx
-on public.routines(
-  teacher_id,
-  start_time
-);
-
-
--- ============================================================
--- RLS
--- ============================================================
-
-alter table public.routines enable row level security;
-
-
--- ============================================================
--- READ OWN ROUTINES
--- ============================================================
-
-create policy "Teachers can read their own routines"
-on public.routines
-for select
-to authenticated
-using (
-  auth.uid() = teacher_id
-);
-
-
--- ============================================================
--- CREATE OWN ROUTINES
--- ============================================================
-
-create policy "Teachers can create their own routines"
-on public.routines
-for insert
-to authenticated
-with check (
-  auth.uid() = teacher_id
-);
-
-
--- ============================================================
--- UPDATE OWN ROUTINES
--- ============================================================
-
-create policy "Teachers can update their own routines"
-on public.routines
-for update
-to authenticated
-using (
-  auth.uid() = teacher_id
-)
-with check (
-  auth.uid() = teacher_id
-);
-
-
--- ============================================================
--- DELETE
---
--- Physical deletion is intentionally not permitted.
---
--- For offline synchronization, set deleted_at instead.
--- ============================================================
-
-
--- ============================================================
--- UPDATED_AT
--- ============================================================
-
-create trigger routines_updated_at
-before update on public.routines
-for each row
-execute function public.update_updated_at();
