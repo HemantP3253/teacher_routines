@@ -1,5 +1,6 @@
-import { UserProfileProps } from "@/interfaces/interfaces";
+import { getCurrentUserId, getUserProfileById } from "@/services/authService";
 import { supabase } from "@/services/supabase";
+import { Tables } from "@/types/database";
 import {
   createContext,
   ReactNode,
@@ -10,8 +11,10 @@ import {
   useState,
 } from "react";
 
+type UserData = Tables<"profiles">;
+
 interface UserContextType {
-  userInfo: UserProfileProps | null;
+  userInfo: UserData | null;
   isLoading: boolean;
   refreshUser: () => Promise<void>;
 }
@@ -19,79 +22,43 @@ interface UserContextType {
 const UserInfoContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
-  const [cachedUserInfo, setCachedUserInfo] = useState<UserProfileProps | null>(
-    null,
-  );
+  const [cachedUserInfo, setCachedUserInfo] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const fetchProfile = useCallback(async (userId: string) => {
-    console.log("🔍 [UserInfoContext] Fetching DB profile for user:", userId);
+  const fetchCurrentProfile = useCallback(async () => {
+    const currentUserId = await getCurrentUserId();
 
-    // Timeout safety net: force DB query to fail after 3s if Supabase hangs
-    const dbPromise = supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle();
-
-    const timeoutPromise = new Promise<{
-      data: null;
-      error: Error;
-      status: number;
-    }>((_, reject) =>
-      setTimeout(() => reject(new Error("DB Profile Fetch Timed Out")), 3000),
-    );
-
-    try {
-      const response = await Promise.race([dbPromise, timeoutPromise]);
-
-      console.log(
-        "📊 [UserInfoContext] DB Response Status:",
-        response.status,
-        "Data:",
-        response.data,
-        "Error:",
-        response.error,
-      );
-
-      if (response.error) throw response.error;
-      setCachedUserInfo(response.data);
-    } catch (err) {
-      console.error("❌ [UserInfoContext] Profile fetch error:", err);
+    if (!currentUserId) {
       setCachedUserInfo(null);
-    } finally {
-      console.log("✅ [UserInfoContext] Profile fetch finished");
+      return null;
     }
+
+    const profile = await getUserProfileById(currentUserId);
+    setCachedUserInfo(profile);
   }, []);
 
   useEffect(() => {
     let isMounted = true;
 
-    console.log("🔍 [UserInfoContext] Subscribing to auth state change...");
-
-    // Unified listener handling both initial session & subsequent auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(
-        "⚡ [UserInfoContext] Auth Event Fired:",
-        event,
-        "Session exists:",
-        !!session,
-      );
+      if (!isMounted) return;
 
       try {
         if (session?.user) {
-          await fetchProfile(session.user.id);
+          await fetchCurrentProfile();
         } else {
           setCachedUserInfo(null);
         }
-      } catch (err) {
-        console.error("❌ [UserInfoContext] Auth listener error:", err);
+      } catch (error) {
+        console.error(
+          "[UserInfoContext] Failed to update user profile:",
+          error,
+        );
         if (isMounted) setCachedUserInfo(null);
       } finally {
         if (isMounted) {
-          console.log("✅ [UserInfoContext] Setting isLoading = false");
           setIsLoading(false);
         }
       }
@@ -101,23 +68,19 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [fetchProfile]);
+  }, [fetchCurrentProfile]);
 
   const refreshUser = useCallback(async () => {
     setIsLoading(true);
+
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        await fetchProfile(user.id);
-      } else {
-        setCachedUserInfo(null);
-      }
+      await fetchCurrentProfile();
+    } catch (error) {
+      console.error("[UserInfoContext] Failed to refresh user: ", error);
     } finally {
       setIsLoading(false);
     }
-  }, [fetchProfile]);
+  }, [fetchCurrentProfile]);
 
   const contextValue = useMemo(
     () => ({
