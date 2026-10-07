@@ -40,6 +40,34 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
 
+    const initialize = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (!isMounted) return;
+
+        if (session?.user) {
+          await fetchCurrentProfile();
+        } else {
+          setCachedUserInfo(null);
+        }
+      } catch (error) {
+        console.error("[UserInfoContext] Failed to initialize user:", error);
+
+        if (isMounted) {
+          setCachedUserInfo(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initialize();
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -56,11 +84,6 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
           "[UserInfoContext] Failed to update user profile:",
           error,
         );
-        if (isMounted) setCachedUserInfo(null);
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
       }
     });
 
