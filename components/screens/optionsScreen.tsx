@@ -8,7 +8,7 @@ import {
   ThemedText,
 } from "@/components/themed";
 import { useApp } from "@/contexts/AppContext";
-import { useUserInfo } from "@/contexts/UserInfoContext";
+import { useInstituteInfo } from "@/contexts/InstituteInfoContext";
 import { supabase } from "@/services/supabase";
 import { useState } from "react";
 import { StatusBar } from "react-native";
@@ -21,8 +21,10 @@ import { CustomModal, Spacer } from "../common";
 import ThemedRadioButtonMenu from "../themed/ThemedRadioButtonMenu";
 
 const OptionsScreen = () => {
-  const { userInfo } = useUserInfo();
-  const isAdmin = userInfo?.is_admin || false;
+  const { currentMembership } = useInstituteInfo();
+  const isAdmin =
+    currentMembership?.role === "department_admin" ||
+    currentMembership?.role === "institute_admin";
   const { theme } = useUnistyles();
   const availableThemeOptions = ["Use System Theme", "Light Mode", "Dark Mode"];
   const { settings, updateSetting, allAvailableDegrees } = useApp();
