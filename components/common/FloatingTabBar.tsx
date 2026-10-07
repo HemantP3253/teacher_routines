@@ -12,7 +12,7 @@ const FloatingTabBar = ({ children }: { children?: ReactNode }) => {
         intensity={40}
         tint={rt.themeName === "light" ? "light" : "dark"}
         style={styles.tabBar}
-        experimentalBlurMethod="dimezisBlurView"
+        blurMethod="dimezisBlurView"
       >
         {children}
       </BlurView>

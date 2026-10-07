@@ -41,7 +41,7 @@ const CustomModal = ({
             }}
             tint="systemThickMaterialDark"
             intensity={10}
-            experimentalBlurMethod="dimezisBlurView"
+            blurMethod="dimezisBlurView"
           >
             <Pressable
               style={{ width: "100%", maxWidth: 400 }}
