@@ -21,6 +21,7 @@ export const isSignUpFormValid = (
       signUpData.confirmPassword,
       signUpData.password,
     ),
+    address: signUpData.address !== "" ? "Success!" : "",
     username: checkUsernameValidity(signUpData.username),
     phone: checkPhoneValidity(signUpData.phone),
   };
