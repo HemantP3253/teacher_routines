@@ -1,9 +1,9 @@
 import {
-  CollegeData,
+  InstituteData,
   SignUpErrorProps,
   SignUpProps,
 } from "@/interfaces/interfaces";
-import { fetchColleges } from "@/services/collegeService";
+import { fetchAllInstitutes } from "@/services/instituteService";
 import {
   formatDateInput,
   formatNameInput,
@@ -20,13 +20,12 @@ export const useSignUpForm = () => {
     dateOfBirth: "",
     username: "",
     gender: "",
+    address: "",
     email: "",
     password: "",
     confirmPassword: "",
     phone: "",
-    colleges: [],
-    userType: "User",
-    error: false,
+    hasError: false,
   });
 
   const [signUpError, setSignUpError] = useState<SignUpErrorProps>({
@@ -35,12 +34,13 @@ export const useSignUpForm = () => {
     gender: "",
     username: "",
     email: "",
+    address: "",
     password: "",
     confirmPassword: "",
     phone: "",
   });
 
-  const [colleges, setColleges] = useState<CollegeData[]>([]);
+  const [institutes, setInstitutes] = useState<InstituteData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -48,9 +48,9 @@ export const useSignUpForm = () => {
       try {
         setLoading(true);
 
-        const data = await fetchColleges();
+        const data = await fetchAllInstitutes();
 
-        setColleges(data);
+        setInstitutes(data);
       } catch (err) {
         Alert.alert("Error", "Failed to load colleges. Please try again.");
       } finally {
@@ -97,7 +97,7 @@ export const useSignUpForm = () => {
     checkError,
     modalVisible,
     setModalVisible,
-    colleges,
+    institutes,
     loading,
   };
 };
