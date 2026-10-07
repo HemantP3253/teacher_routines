@@ -1,4 +1,4 @@
-import { searchByDegreeName } from "@/data/degreeDataTU";
+import { searchByDegreeName } from "@/data/curricula/university/TU/degreeDataTU";
 import { degreeQuery } from "@/interfaces/interfaces";
 
 export const formatSubjectCode = (degreeInfo: degreeQuery): string => {
