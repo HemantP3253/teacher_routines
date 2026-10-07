@@ -4,9 +4,8 @@ import { UserActionCard } from "@/components/routines";
 import {
   ThemedLinearGradient,
   ThemedText,
-  ThemedTextInput
+  ThemedTextInput,
 } from "@/components/themed";
-import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
@@ -25,20 +24,14 @@ type searchType = "Name" | "Username" | "Phone";
 
 const searchUsers = () => {
   const { title } = useLocalSearchParams();
-  const { cachedUsers, isLoading } = useUserSearch();
-  const { theme } = useUnistyles();
-  const colors = theme.colors;
-  const { currentCollege } = useCollegeInfo();
+  const { users, isLoading, updateMembershipStatus } = useUserSearch();
+  const { colors } = useUnistyles().theme;
 
   const [searchParams, setSearchParams] = useState<{
     searchText: string;
     searchType: searchType;
   }>({ searchText: "", searchType: "Name" });
   const [searchError, setSearchError] = useState<string>("");
-
-  const getDynamicStyle = (text: searchType) => {
-    return searchParams?.searchType === text ? "primaryContent" : "text";
-  };
 
   const handleSearchSubmit = () => {
     if (
@@ -51,30 +44,20 @@ const searchUsers = () => {
   };
 
   const userData = useMemo(() => {
-    if (!currentCollege?.college_code) return;
-
     if (title === "Pending") {
-      return cachedUsers.filter(
-        (user) =>
-          !user.approved_by?.includes(currentCollege?.college_code) &&
-          !user.rejected_by?.includes(currentCollege?.college_code),
-      );
+      return users.pending;
     }
 
     if (title === "Approved") {
-      return cachedUsers.filter((user) =>
-        user.approved_by?.includes(currentCollege?.college_code),
-      );
+      return users.approved;
     }
 
     if (title === "Rejected") {
-      return cachedUsers.filter((user) =>
-        user.rejected_by?.includes(currentCollege?.college_code),
-      );
+      return users.rejected;
     }
 
-    return cachedUsers;
-  }, [cachedUsers, title]);
+    return users.all;
+  }, [users, title]);
 
   const filteredUsers = useMemo(() => {
     const query = searchParams.searchText.trim().toLowerCase();
@@ -82,16 +65,16 @@ const searchUsers = () => {
     if (!query || query.length < 3) return [];
 
     return userData?.filter((user) => {
-      if (!user.id) return false;
+      if (!user.profile_id) return false;
 
       if (searchParams.searchType === "Name") {
-        return user.full_name.toLowerCase().includes(query);
+        return user.profile.full_name.toLowerCase().includes(query);
       }
       if (searchParams.searchType === "Username") {
-        return user.username.toLowerCase().includes(query);
+        return user.profile.username.toLowerCase().includes(query);
       }
       if (searchParams.searchType === "Phone") {
-        return user.phone.toLowerCase().includes(query);
+        return user.profile.phone.toLowerCase().includes(query);
       }
       return false;
     });
@@ -165,9 +148,12 @@ const searchUsers = () => {
             ) : (
               filteredUsers?.map((user) => (
                 <UserActionCard
-                  userData={user}
-                  key={user.id}
+                  user={user}
+                  key={user.profile_id}
                   showStatus={!title || title === "All"}
+                  onStatusChange={(status) =>
+                    updateMembershipStatus(user.profile_id, status)
+                  }
                 />
               ))
             )}
