@@ -1,12 +1,12 @@
+import { useInstituteInfo } from "@/contexts/InstituteInfoContext";
 import "../styles/unistyles";
 
-import { useUserInfo } from "@/contexts/UserInfoContext";
 import { Redirect } from "expo-router";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
 
 export default function EntryPoint() {
-  const { userInfo, isLoading } = useUserInfo();
+  const { currentMembership, isLoading } = useInstituteInfo();
 
   if (isLoading) {
     return (
@@ -16,11 +16,18 @@ export default function EntryPoint() {
     );
   }
 
-  if (!userInfo) {
+  if (!currentMembership) {
     return <Redirect href="/(auth)/login" />;
   }
 
   return (
-    <Redirect href={userInfo.is_admin ? "/(admin)/home" : "/(user)/home"} />
+    <Redirect
+      href={
+        currentMembership.role === "department_admin" ||
+        currentMembership.role === "institute_admin"
+          ? "/(admin)/home"
+          : "/(user)/home"
+      }
+    />
   );
 }
