@@ -2,7 +2,10 @@ import { RoutinesFooterComponent, SubjectCard } from "@/components/routines";
 import RoutinesHeaderComponent from "@/components/routines/RoutinesHeaderComponent";
 import { ThemedLinearGradient, ThemedText } from "@/components/themed";
 import { useApp } from "@/contexts/AppContext";
-import { getCurriculumData, searchByDegreeName } from "@/data/degreeDataTU";
+import {
+  getCurriculumData,
+  searchByDegreeName,
+} from "@/data/curricula/university/TU/degreeDataTU";
 import { level, RoutineData, SubjectData } from "@/interfaces/interfaces";
 import { RangeToSubjectTime } from "@/utils/dateUtils";
 import { useCallback, useEffect, useMemo, useState } from "react";
