@@ -1,4 +1,3 @@
-
 export const getGreeting = () => {
   const currentHour = new Date().getHours();
 
@@ -69,7 +68,6 @@ export const removeSpaces = (text: string) => {
 export function addSpacesAfterUppercase(text: string): string;
 export function addSpacesAfterUppercase(text: string[]): string[];
 
-// 2. Implement the actual function
 export function addSpacesAfterUppercase(
   text: string | string[],
 ): string | string[] {
@@ -79,3 +77,6 @@ export function addSpacesAfterUppercase(
 
   return text.replace(/([A-Z])/g, " $1").trim();
 }
+
+export const capitalizeFirstLettter = (text: string) =>
+  `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
