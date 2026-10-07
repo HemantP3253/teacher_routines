@@ -1,4 +1,4 @@
-import { getAllDegreeNames } from "@/data/degreeDataTU";
+import { getAllDegreeNames } from "@/data/curricula/university/TU/degreeDataTU";
 import { DynamicRoutineDetails } from "@/interfaces/interfaces";
 import { storage } from "@/utils/storage";
 import { createContext, ReactNode, useContext, useState } from "react";

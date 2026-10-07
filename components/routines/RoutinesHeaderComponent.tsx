@@ -8,7 +8,7 @@ import {
   RoutinesIcon,
 } from "@/assets/icons";
 import { useApp } from "@/contexts/AppContext";
-import { getCurriculumData } from "@/data/degreeDataTU";
+import { getCurriculumData } from "@/data/curricula/university/TU/degreeDataTU";
 import { level, RoutinesHeaderProps } from "@/interfaces/interfaces";
 import { useMemo, useState } from "react";
 import { useUnistyles } from "react-native-unistyles";
