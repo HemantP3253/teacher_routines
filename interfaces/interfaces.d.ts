@@ -1,4 +1,5 @@
 import { LightTheme } from "@/assets/theme/Themes";
+import { Tables } from "@/types/database";
 import { LinearGradientProps } from "expo-linear-gradient";
 import React, { FC, ReactNode, SetStateAction, SVGProps } from "react";
 import {
@@ -24,9 +25,17 @@ type formatType = "whole-number" | "name" | "phone" | "decimal-number" | "date" 
 
 type genderType = "Male" | "Female" | "Others" | ""
 
-type userType = "User" | "Admin"
+type userType = "student" | "teacher" | "department_admin" | "institute_admin" | "super_admin"
 
 type level = "faculty" | "degreeType" | "degreeName" | "hasBranches" | "branch" | "term" | "subjects"
+
+type days = "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday"
+
+type SearchUser = Tables<"profile_institutes"> & {
+  profile: Tables<"profiles">;
+};
+
+type MembershipStatus = "approved" | "rejected" | "pending"
 
 interface ThemedViewProps extends ViewProps {}
 
@@ -128,12 +137,11 @@ interface SignUpProps {
   gender: genderType;
   username: string;
   email: string;
+  address: string | null;
   password: string;
   confirmPassword: string;
   phone: string;
-  userType?: userType;
-  colleges?: string[],
-  error: boolean;
+  hasError: boolean;
 }
 
 interface SignUpErrorProps {
@@ -142,6 +150,7 @@ interface SignUpErrorProps {
   gender: string,
   username: string,
   email: string,
+  address: string,
   password: string,
   confirmPassword: string,
   phone: string,
@@ -301,15 +310,13 @@ interface UserProfileProps {
   username: string;
   full_name: string;
   date_of_birth: string;
-  colleges: string[] | null;
   gender: string;
   phone: string;
   address: string | null;
-  avatar_url: string;
-  is_admin: boolean;
-  approved_by: string[] | null;
-  rejected_by: string[] | null;
-  created_at?: string;
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null,
 }
 
 interface ChooseTimeComponentProps {
@@ -345,21 +352,26 @@ interface ActionableHeaderCardProps {
 }
 
 interface UserActionCardProps {
-  userData: UserProfileProps;
+  user: SearchUser;
   showStatus?: boolean;
   hideIcons?: boolean;
   keepExpanded?: boolean;
   onPress?: () => void;
+  onStatusChange?: (
+    status: "approved" | "rejected" | "pending",
+  ) => void;
 }
 
-interface CollegeData {
+interface InstituteData {
   id: string;
-  university: string;
-  college_code: string;
-  college_name: string;
-  address: string;
-  authorized_users?: string;
-  available_faculties?: string[];
+  name: string;
+  type: string;
+  code: string;
+  address: string | null;
+  affiliated_university: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
 }
 
 interface ThemedRadioButtonMenuProps<T> {
@@ -407,6 +419,39 @@ interface RoutineData {
   term: string;
   batchAndSection: string;
   dayOfWeek: string;
+}
+
+interface RoutineDataStructure {
+  id: string;
+  institute_id: string;
+  unit_id: string;
+  teacher_id: string;
+  stream_id?: string;
+  program_id?: string;
+  grade_id?: string;
+  term_id?: string;
+  batch?: string;
+  section?: string;
+  subject_id: string;
+  start_time: string;
+  end_time: string;
+  days: days[];
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
+}
+
+interface ProfileInstitutesStructure {
+  profile_id: string;
+  institute_id: string;
+  role: string;
+  status: string;
+  allowed_units: string[];
+  reviewed_by: string;
+  reviewed_at: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
 }
 
 interface QueryContext {
