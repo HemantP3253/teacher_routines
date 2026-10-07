@@ -4,7 +4,10 @@ import "../styles/unistyles";
 void null;
 
 import { AppProvider } from "@/contexts/AppContext";
-import { CollegeInfoProvider } from "@/contexts/CollegeInfoContext";
+import {
+  InstituteInfoProvider,
+  useInstituteInfo,
+} from "@/contexts/InstituteInfoContext";
 import { UserInfoProvider, useUserInfo } from "@/contexts/UserInfoContext";
 import { UserSearchProvider } from "@/contexts/UserSearchContext";
 import { Stack, useRouter, useSegments } from "expo-router";
@@ -44,23 +47,34 @@ const ScreenStack = ({ colors }: ScreenStackProps) => {
 };
 
 const AppNavigationLayout = () => {
-  const { userInfo, isLoading } = useUserInfo();
-  const colors = useUnistyles().theme.colors;
+  const { userInfo, isLoading: userLoading } = useUserInfo();
+  const { currentMembership, isLoading: instituteLoading } = useInstituteInfo();
+  const isAdmin =
+    currentMembership?.role === "department_admin" ||
+    currentMembership?.role === "institute_admin";
+
+  const { colors } = useUnistyles().theme;
   const router = useRouter();
   const segments = useSegments();
 
+  const isLoading = userLoading || instituteLoading;
+
   useEffect(() => {
-    if (isLoading) return; // Wait for the provider to finish
+    if (isLoading) return;
 
     const inAuthGroup = segments[0] === "(auth)";
 
-    if (!userInfo && !inAuthGroup) {
-      router.replace("/(auth)/login");
-    } else if (userInfo && inAuthGroup) {
-      const targetPath = userInfo.is_admin ? "/(admin)/home" : "/(user)/home";
-      router.replace(targetPath as any);
+    if (!userInfo) {
+      if (!inAuthGroup) {
+        router.replace("/(auth)/login");
+      }
+      return;
     }
-  }, [userInfo, isLoading, segments]);
+
+    if (inAuthGroup) {
+      router.replace(isAdmin ? "/(admin)/home" : "/(user)/home");
+    }
+  }, [userInfo, currentMembership, isLoading, segments[0]]);
 
   if (isLoading) {
     return (
@@ -72,7 +86,7 @@ const AppNavigationLayout = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {userInfo?.is_admin ? (
+      {isAdmin ? (
         <UserSearchProvider>
           <ScreenStack colors={colors} />
         </UserSearchProvider>
@@ -86,11 +100,11 @@ const AppNavigationLayout = () => {
 const RootLayout = () => {
   return (
     <UserInfoProvider>
-      <CollegeInfoProvider>
+      <InstituteInfoProvider>
         <AppProvider>
           <AppNavigationLayout />
         </AppProvider>
-      </CollegeInfoProvider>
+      </InstituteInfoProvider>
     </UserInfoProvider>
   );
 };
