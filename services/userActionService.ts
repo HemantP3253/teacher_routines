@@ -1,119 +1,58 @@
-import { UserProfileProps } from "@/interfaces/interfaces";
+import { Tables } from "@/types/database";
 import { supabase } from "./supabase";
+
+type ProfileData = Tables<"profiles">;
 
 export const getProfilesByStatus = async (
   userStatus: "pending" | "rejected" | "approved" | "all" = "pending",
-  collegeCode: string,
+  instituteId: string,
   limitCount: number = 3,
-) => {
-  let baseQuery = supabase
-    .from("profiles")
-    .select("*")
-    .contains("colleges", [collegeCode])
-    .eq("is_admin", false)
-    .order("created_at", { ascending: true });
+): Promise<ProfileData[]> => {
+  let query = supabase
+    .from("profile_institutes")
+    .select(
+      `
+      profile:profiles!profile_institutes_profile_id_fkey (*)
+    `,
+    )
+    .eq("institute_id", instituteId);
 
-  if (userStatus === "pending") {
-    baseQuery = baseQuery
-      .or(`approved_by.is.null,approved_by.not.cs.{${collegeCode}}`)
-      .or(`rejected_by.is.null,rejected_by.not.cs.{${collegeCode}}`);
-  } else if (userStatus === "approved") {
-    baseQuery = baseQuery.contains("approved_by", [collegeCode]);
-  } else if (userStatus === "rejected") {
-    baseQuery = baseQuery.contains("rejected_by", [collegeCode]);
+  if (userStatus !== "all") {
+    query = query.eq("status", userStatus);
   }
 
-  const { data, error } = await baseQuery
-    .order("created_at", {
-      ascending: true,
-    })
+  const { data, error } = await query
+    .order("created_at", { ascending: true })
     .limit(limitCount);
 
   if (error) {
-    console.error("Error while fetching user information: ", error.message);
-    return { formattedUsers: [], error: null };
+    console.error(
+      "[getProfilesByStatus] Failed to fetch user profiles:",
+      error,
+    );
+    throw error;
   }
 
-  if (data && Array.isArray(data)) {
-    let formattedUsers = data.map((user: UserProfileProps) => ({
-      id: user?.id,
-      username: user?.username,
-      full_name: user?.full_name,
-      date_of_birth: user?.date_of_birth,
-      colleges: user?.colleges,
-      gender: user?.gender,
-      address: user?.address,
-      phone: user?.phone,
-      avatar_url: user?.avatar_url,
-      is_admin: user?.is_admin,
-      approved_by: user?.approved_by,
-      rejected_by: user?.rejected_by,
-    }));
-
-    return { formattedUsers, error: null };
-  }
-  return { formattedUsers: [], error: null };
+  return data
+    .map(({ profile }) => profile)
+    .filter((profile) => profile !== null);
 };
 
-export const userAction = async (
-  userData: UserProfileProps,
-  collegeCode: string,
-  action: "reject" | "approve" | "clear",
+export const updateUserStatus = async (
+  profileId: string,
+  instituteId: string,
+  newStatus: "approved" | "rejected" | "pending",
 ) => {
-  if (!collegeCode) return;
-  try {
-    let currentApprovals = userData?.approved_by || [];
-    let currentRejections = userData?.rejected_by || [];
-    let updatedApprovals: string[] = [];
-    let updatedRejections: string[] = [];
+  if (!instituteId || !profileId) return;
 
-    switch (action) {
-      case "approve":
-        updatedApprovals = [...new Set([...currentApprovals, collegeCode])];
-        updatedRejections = currentRejections.filter(
-          (code) => code !== collegeCode,
-        );
-        break;
+  const { error } = await supabase
+    .from("profile_institutes")
+    .update({ status: newStatus })
+    .eq("profile_id", profileId)
+    .eq("institute_id", instituteId);
 
-      case "reject":
-        updatedApprovals = currentApprovals.filter(
-          (code) => code !== collegeCode,
-        );
-        updatedRejections = [...new Set([...currentRejections, collegeCode])];
-        break;
-
-      case "clear":
-        updatedApprovals = currentApprovals.filter(
-          (code) => code !== collegeCode,
-        );
-        updatedRejections = currentRejections.filter(
-          (code) => code !== collegeCode,
-        );
-        break;
-
-      default:
-        return;
-    }
-
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        approved_by: updatedApprovals.length > 0 ? updatedApprovals : null,
-        rejected_by: updatedRejections.length > 0 ? updatedRejections : null,
-      })
-      .eq("id", userData.id);
-
-    if (error) {
-      console.error(
-        `Error executing [${action}] on user profile: `,
-        error.message,
-      );
-      return;
-    }
-  } catch (error: any) {
-    console.error(
-      `Unexpected error while approving user profile: `,
-      error.message,
-    );
+  if (error) {
+    console.error(`[userAction] Error updating user profile: `, error);
+    throw error;
   }
 };
