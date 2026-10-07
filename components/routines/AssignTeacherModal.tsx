@@ -1,5 +1,4 @@
 import { SearchIcon } from "@/assets/icons";
-import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { AssignTeacherModalProps } from "@/interfaces/interfaces";
 import { useMemo, useState } from "react";
@@ -14,30 +13,22 @@ const AssignTeacherModal = ({
   onClose,
   onSelectTeacher,
 }: AssignTeacherModalProps) => {
-  const { cachedUsers, isLoading } = useUserSearch();
-  const { currentCollege } = useCollegeInfo();
+  const { users, isLoading } = useUserSearch();
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
   const [searchText, setSearchText] = useState<string>("");
 
-  const approvedTeachers = useMemo(() => {
-    if (!currentCollege?.college_code) return [];
-    return cachedUsers.filter((user) =>
-      user.approved_by?.includes(currentCollege.college_code),
-    );
-  }, [cachedUsers, currentCollege?.college_code]);
-
   const filteredResults = useMemo(() => {
     const query = searchText.trim().toLowerCase();
-    if (!query) return approvedTeachers;
+    if (!query) return users.approved;
 
-    return approvedTeachers.filter(
+    return users.approved.filter(
       (user) =>
-        user.full_name.toLowerCase().includes(query) ||
-        user.username.toLowerCase().includes(query),
+        user.profile.full_name.toLowerCase().includes(query) ||
+        user.profile.username.toLowerCase().includes(query),
     );
-  }, [searchText, approvedTeachers]);
+  }, [searchText, users]);
 
   return (
     <CustomModal modalVisible={visible} setModalVisible={onClose}>
@@ -73,7 +64,7 @@ const AssignTeacherModal = ({
         ) : (
           <FlatList
             data={filteredResults}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.profile_id}
             keyboardShouldPersistTaps="handled"
             style={{ marginTop: 12 }}
             ListEmptyComponent={() => (
@@ -92,11 +83,14 @@ const AssignTeacherModal = ({
             )}
             renderItem={({ item: teacher }) => (
               <UserActionCard
-                userData={teacher}
+                user={teacher}
                 hideIcons
                 keepExpanded
                 onPress={() => {
-                  onSelectTeacher(teacher.id, teacher.full_name);
+                  onSelectTeacher(
+                    teacher.profile_id,
+                    teacher.profile.full_name,
+                  );
                   setSearchText("");
                 }}
               />
