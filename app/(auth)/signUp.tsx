@@ -17,6 +17,7 @@ import {
   ThemedTextInput,
   ThemedView,
 } from "@/components/themed";
+import { useUserInfo } from "@/contexts/UserInfoContext";
 import { useSignUpForm } from "@/hooks/useSignUpForm";
 import { supabase } from "@/services/supabase";
 import { useAppDatePicker } from "@/utils/pickerUtils";
@@ -47,12 +48,12 @@ const signUp = () => {
     handleInputChange,
     modalVisible,
     setModalVisible,
-    colleges,
+    institutes,
   } = useSignUpForm();
+  const { refreshUser } = useUserInfo();
   const inputRefs = useRef<Record<string, TextInput | null>>({});
 
   const { theme, rt } = useUnistyles();
-  console.log(theme.colors.text);
   const colors = theme.colors;
 
   const now = new Date();
@@ -173,9 +174,7 @@ const signUp = () => {
           <Spacer size={8} />
 
           <ThemedModalMenu
-            title={
-              signUpData.gender === "" ? "Select Gender" : signUpData.gender
-            }
+            title={"Select Gender"}
             errorText={signUpError.gender}
             setItem={(gender) => setSignUpData((prev) => ({ ...prev, gender }))}
             data={genderData}
@@ -287,11 +286,11 @@ const signUp = () => {
           >
             <View style={{ width: "100%" }}>
               <ThemedCheckboxMenu
-                data={colleges}
+                data={institutes}
                 getId={(item) => item.id}
-                getLabel={(item) => item.college_name}
+                getLabel={(item) => item.name}
                 getSubLabel={(item) =>
-                  `Code: ${item.college_code}\nUniversity: ${item.university}\nAddress: ${item.address}`
+                  `${item.type.charAt(0).toUpperCase()}${item.type.substring(1)} Code: ${item.code}\nAffiliated University: ${item.affiliated_university}\nAddress: ${item.address}`
                 }
                 onSubmit={(selectedIds) => {
                   setSignUpData((prev) => ({ ...prev, colleges: selectedIds }));
@@ -306,39 +305,38 @@ const signUp = () => {
             onPress={async () => {
               if (!isSignUpFormValid(signUpData, setSignUpData, setSignUpError))
                 return;
-
               try {
-                const { data: authData, error: authError } =
-                  await supabase.auth.signUp({
-                    email: signUpData.email,
-                    password: signUpData.password,
-                  });
+                const { data, error: authError } = await supabase.auth.signUp({
+                  email: signUpData.email,
+                  password: signUpData.password,
+                });
 
                 if (authError) {
                   console.error(
                     "Sign up error (in signUp.tsx): ",
                     authError.message,
                   );
-                  return;
+                  throw authError;
                 }
 
-                const registeredUser = authData?.user;
+                const userId = data.user?.id;
 
-                if (!registeredUser) {
-                  console.error("Auth completed but no user data returned.");
+                if (!userId) {
+                  console.error(
+                    "Signup succeeded but no user ID was returned.",
+                  );
+                  return;
                 }
 
                 const { error: profileError } = await supabase
                   .from("profiles")
                   .insert({
-                    id: registeredUser?.id,
+                    id: userId,
                     username: signUpData.username,
                     full_name: signUpData.name,
                     date_of_birth: signUpData.dateOfBirth,
-                    colleges: signUpData.colleges,
                     gender: signUpData.gender,
                     phone: signUpData.phone,
-                    is_admin: false,
                   });
 
                 if (profileError) {
@@ -348,6 +346,8 @@ const signUp = () => {
                   );
                   return;
                 }
+
+                await refreshUser();
               } catch (error: any) {
                 console.error("Signup Error (in signUp.tsx): ", error.message);
               }
