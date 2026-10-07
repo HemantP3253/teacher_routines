@@ -5,7 +5,6 @@ import {
   ThemedStatusBar,
   ThemedText,
 } from "@/components/themed";
-import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { getGreeting } from "@/utils/stringUtils";
 import { useRouter } from "expo-router";
@@ -17,22 +16,11 @@ const Home = () => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
   const router = useRouter();
-  const { currentCollege } = useCollegeInfo();
-  const { cachedUsers, isLoading } = useUserSearch();
+  const { users, isLoading, updateMembershipStatus } = useUserSearch();
 
   const greeting = useMemo(() => {
     return getGreeting();
   }, []);
-
-  const unapprovedUsers = useMemo(() => {
-    if (!currentCollege?.college_code) return [];
-
-    return cachedUsers.filter(
-      (user) =>
-        !user.approved_by?.includes(currentCollege?.college_code) &&
-        !user.rejected_by?.includes(currentCollege?.college_code),
-    );
-  }, [cachedUsers, currentCollege]);
 
   return (
     <ThemedLinearGradient style={styles.rootContainer}>
@@ -59,7 +47,7 @@ const Home = () => {
         }}
         isDataLoading={isLoading}
       >
-        {unapprovedUsers?.length === 0 ? (
+        {users.pending.length === 0 ? (
           <ThemedText
             style={{
               paddingHorizontal: 8,
@@ -71,22 +59,30 @@ const Home = () => {
             No pending users found
           </ThemedText>
         ) : (
-          unapprovedUsers
+          users.pending
             ?.sort((a, b) => {
               if (a < b) return 1;
               if (a > b) return -1;
               return 0;
             })
             .slice(0, 3)
-            .map((user) => <UserActionCard userData={user} key={user.id} />)
+            .map((user) => (
+              <UserActionCard
+                user={user}
+                key={user.profile_id}
+                onStatusChange={(status) =>
+                  updateMembershipStatus(user.profile_id, status)
+                }
+              />
+            ))
         )}
-        {unapprovedUsers && unapprovedUsers?.length > 3 && (
+        {users.pending.length > 3 && (
           <Pressable
             onPress={() => router.push("/(misc)/approveUsers")}
             style={{ alignItems: "flex-end", padding: 8 }}
           >
             <ThemedText style={{ fontWeight: "600", fontSize: 16 }}>
-              + {unapprovedUsers?.length - 3} more
+              + {users.pending.length - 3} more
             </ThemedText>
           </Pressable>
         )}
