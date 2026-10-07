@@ -1,22 +1,21 @@
 import { Database } from "@/types/database";
 import { createClient } from "@supabase/supabase-js";
+import Constants from "expo-constants";
 import { storage } from "../utils/storage";
 
 const mmkvSupabaseStorage = {
-  getItem: (key: string) => {
-    const value = storage.getString(key);
-    return value ?? null;
-  },
-  setItem: (key: string, value: string) => {
-    storage.setString(key, value);
-  },
-  removeItem: (key: string) => {
-    storage.delete(key);
-  },
+  getItem: (key: string) => storage.getString(key) ?? null,
+  setItem: (key: string, value: string) => storage.setString(key, value),
+  removeItem: (key: string) => storage.delete(key),
 };
+const host = Constants.expoConfig?.hostUri?.split(":")[0];
 
-const supabaseUrl = "http://127.0.0.1:54321";
-const supabaseAnonKey = "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
+if (!host) {
+  throw new Error("Could not determine Expo development server host.");
+}
+
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = `http://${host}:${54321}`;
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
