@@ -37,7 +37,6 @@ const InfoCard = ({
         style={[
           {
             paddingLeft: 4,
-            textAlign: "justify",
             maxWidth: "92%",
           },
           textStyle,
