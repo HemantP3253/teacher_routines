@@ -12,43 +12,33 @@ import {
   SuccessIcon,
   UsernameIcon,
 } from "@/assets/icons";
-import { useCollegeInfo } from "@/contexts/CollegeInfoContext";
 import { UserActionCardProps } from "@/interfaces/interfaces";
-import { userAction } from "@/services/userActionService";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
+import { capitalizeFirstLettter } from "@/utils/stringUtils";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { ThemedLinearGradient, ThemedText } from "../themed";
 
-type CardType = "Pending" | "Approved" | "Rejected";
-
 const UserActionCard = ({
-  userData,
+  user,
   showStatus,
   hideIcons,
   keepExpanded,
   onPress,
+  onStatusChange,
 }: UserActionCardProps) => {
+  const { profile, status } = user;
   const { colors } = useUnistyles().theme;
-  const { currentCollege } = useCollegeInfo();
-  const collegeCode: string = currentCollege?.college_code || "";
 
   const [showDropDown, setShowDropDown] = useState<boolean>(
     keepExpanded || false,
   );
-  const cardStatus: CardType = userData?.approved_by?.includes(
-    currentCollege?.college_code ?? "",
-  )
-    ? "Approved"
-    : userData?.rejected_by?.includes(currentCollege?.college_code ?? "")
-      ? "Rejected"
-      : "Pending";
 
   const statusColor =
-    cardStatus === "Pending"
+    status === "pending"
       ? colors.neutral400
-      : cardStatus === "Approved"
+      : status === "approved"
         ? colors.success
         : colors.error;
 
@@ -57,14 +47,16 @@ const UserActionCard = ({
   const StatusCard = () => {
     return (
       <View style={styles.statusRow}>
-        {cardStatus === "Pending" ? (
+        {status === "pending" ? (
           <ExclamationIcon fill={statusColor} />
-        ) : cardStatus === "Approved" ? (
+        ) : status === "approved" ? (
           <SuccessIcon fill={statusColor} />
         ) : (
           <CloseIcon fill={statusColor} />
         )}
-        <ThemedText style={{ color: statusColor }}>{cardStatus}</ThemedText>
+        <ThemedText style={{ color: statusColor }}>
+          {capitalizeFirstLettter(status)}
+        </ThemedText>
       </View>
     );
   };
@@ -86,7 +78,7 @@ const UserActionCard = ({
             <View style={styles.nameRow}>
               <NameIcon fill={iconColour} />
               <ThemedText type="text" style={{ paddingRight: 4 }}>
-                {userData.full_name}
+                {profile.full_name}
               </ThemedText>
               {!keepExpanded && (
                 <ArrowDownIcon
@@ -103,24 +95,24 @@ const UserActionCard = ({
                 <UsernameIcon fill={iconColour} />
                 <ThemedText type="text">
                   <ThemedText style={styles.username}>@</ThemedText>
-                  {userData.username}
+                  {profile.username}
                 </ThemedText>
               </View>
               <View style={styles.iconInfoContainer}>
                 <AgeIcon fill={iconColour} />
                 <ThemedText type="text">
-                  {calculateAgeByDOB(userData.date_of_birth)}
-                  {", " + userData.gender}
+                  {calculateAgeByDOB(profile.date_of_birth)}
+                  {", " + profile.gender}
                 </ThemedText>
               </View>
               <View style={styles.iconInfoContainer}>
                 <PhoneIcon fill={iconColour} />
-                <ThemedText type="text">{userData.phone}</ThemedText>
+                <ThemedText type="text">{profile.phone}</ThemedText>
               </View>
-              {userData?.address && (
+              {profile?.address && (
                 <View style={styles.iconInfoContainer}>
                   <AddressIcon fill={iconColour} />
-                  <ThemedText type="text">{userData.address}</ThemedText>
+                  <ThemedText type="text">{profile.address}</ThemedText>
                 </View>
               )}
             </View>
@@ -131,34 +123,34 @@ const UserActionCard = ({
           <View style={styles.actionButtonsContainer}>
             {!hideIcons && (
               <>
-                {cardStatus === "Approved" ? (
+                {status === "approved" ? (
                   <ClearIcon
                     fill={colors.neutral400}
                     height={32}
                     width={32}
-                    onPress={() => userAction(userData, collegeCode, "clear")}
+                    onPress={() => onStatusChange?.("pending")}
                   />
                 ) : (
                   <ApproveIcon
                     height={32}
                     width={32}
                     fill={colors.success}
-                    onPress={() => userAction(userData, collegeCode, "approve")}
+                    onPress={() => onStatusChange?.("approved")}
                   />
                 )}
-                {cardStatus === "Rejected" ? (
+                {status === "rejected" ? (
                   <ClearIcon
                     height={32}
                     width={32}
                     fill={colors.neutral400}
-                    onPress={() => userAction(userData, collegeCode, "clear")}
+                    onPress={() => onStatusChange?.("pending")}
                   />
                 ) : (
                   <RejectIcon
                     height={32}
                     width={32}
                     fill={colors.error}
-                    onPress={() => userAction(userData, collegeCode, "reject")}
+                    onPress={() => onStatusChange?.("rejected")}
                   />
                 )}
               </>
