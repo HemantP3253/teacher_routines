@@ -1,7 +1,6 @@
-import { UserProfileProps } from "@/interfaces/interfaces";
-import { getUserProfileById } from "@/services/authService";
-import { getCurrentAdminCollege } from "@/services/collegeService";
+import { MembershipStatus, SearchUser } from "@/interfaces/interfaces";
 import { supabase } from "@/services/supabase";
+import { updateUserStatus } from "@/services/userActionService";
 import {
   createContext,
   ReactNode,
@@ -11,11 +10,24 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useInstituteInfo } from "./InstituteInfoContext";
+import { useUserInfo } from "./UserInfoContext";
+
+type AllUserData = {
+  all: SearchUser[];
+  pending: SearchUser[];
+  approved: SearchUser[];
+  rejected: SearchUser[];
+};
 
 interface SearchContextType {
-  cachedUsers: UserProfileProps[];
+  users: AllUserData;
   isLoading: boolean;
-  refreshUsers: () => Promise<void>;
+  updateMembershipStatus: (
+    userId: string,
+    status: MembershipStatus,
+  ) => Promise<void>;
+  refreshSearchData: () => Promise<void>;
 }
 
 const UserSearchContext = createContext<SearchContextType | undefined>(
@@ -23,118 +35,77 @@ const UserSearchContext = createContext<SearchContextType | undefined>(
 );
 
 export const UserSearchProvider = ({ children }: { children: ReactNode }) => {
-  const [cachedUsers, setCachedUsers] = useState<UserProfileProps[]>([]);
+  const { userInfo } = useUserInfo();
+  const { currentInstitute, currentMembership } = useInstituteInfo();
+  const [allUsers, setAllUsers] = useState<SearchUser[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [collegeCode, setCollegeCode] = useState<string>("");
+
+  const users = useMemo<AllUserData>(
+    () => ({
+      all: allUsers,
+      pending: allUsers.filter((user) => user.status === "pending"),
+      approved: allUsers.filter((user) => user.status === "approved"),
+      rejected: allUsers.filter((user) => user.status === "rejected"),
+    }),
+    [allUsers],
+  );
 
   const getUserProfiles = useCallback(async () => {
-    if (cachedUsers.length === 0) setIsLoading(true);
+    if (!currentInstitute || !userInfo) return;
+    if (
+      currentMembership?.role === "teacher" ||
+      currentMembership?.role === "student" ||
+      !currentMembership?.role
+    )
+      return;
 
-    const collegeInfo = await getCurrentAdminCollege();
-    setCollegeCode(collegeInfo[0].college_code);
-
-    if (!collegeCode) return;
-
-    const currentUserId = (await supabase.auth.getUser()).data.user?.id;
-
-    if (!currentUserId) return;
-
-    const currentUser = await getUserProfileById(currentUserId);
-    if (!currentUser) return;
-    if (!currentUser.is_admin) return;
+    setIsLoading(true);
 
     try {
       const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("is_admin", false)
-        .contains("colleges", [collegeCode])
-        .order("full_name", { ascending: true });
+        .from("profile_institutes")
+        .select(`*, profile:profiles!profile_institutes_profile_id_fkey(*)`)
+        .eq("institute_id", currentInstitute?.id);
 
       if (error) throw error;
-      setCachedUsers(data || []);
+      setAllUsers(data);
     } catch (error: any) {
       console.error(
         "Error fetching filtered array inside UserSearch Context: ",
         error.message,
       );
+      setAllUsers([]);
     } finally {
       setIsLoading(false);
     }
-  }, [collegeCode, cachedUsers.length]);
+  }, [currentInstitute, currentMembership, userInfo]);
+
+  const updateMembershipStatus = useCallback(
+    async (userId: string, status: MembershipStatus) => {
+      if (!currentInstitute) return;
+      await updateUserStatus(userId, currentInstitute.id, status);
+
+      setAllUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.profile_id === userId ? { ...user, status } : user,
+        ),
+      );
+    },
+    [currentInstitute],
+  );
 
   useEffect(() => {
     getUserProfiles();
-
-    const channelInstanceId = `admin-queue-${Math.random().toString(36).substring(7)}`;
-
-    const profileSubscription = supabase
-      .channel(channelInstanceId)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "profiles",
-        },
-        (payload) => {
-          setCachedUsers((prevUsers) => {
-            if (payload.eventType === "DELETE") {
-              return prevUsers.filter((user) => user.id !== payload.old.id);
-            }
-
-            const record = payload.new as UserProfileProps;
-            const collegeArray = record?.colleges as string[] | undefined;
-            const includesCollegeCode =
-              collegeArray?.includes(collegeCode) && !record.is_admin;
-
-            if (payload.eventType === "INSERT") {
-              if (!includesCollegeCode) return prevUsers;
-
-              return [...prevUsers, record].sort((a, b) =>
-                (a.full_name || "").localeCompare(b.full_name || ""),
-              );
-            }
-
-            if (payload.eventType === "UPDATE") {
-              const existsInCache = prevUsers.some(
-                (user) => user.id === record.id,
-              );
-
-              if (includesCollegeCode) {
-                if (existsInCache)
-                  return prevUsers.map((user) =>
-                    user.id === record.id ? record : user,
-                  );
-                else
-                  return [...prevUsers, record].sort((a, b) =>
-                    (a.full_name || "").localeCompare(b.full_name || ""),
-                  );
-              } else {
-                if (existsInCache) {
-                  return prevUsers.filter((user) => user.id !== record.id);
-                }
-              }
-            }
-
-            return prevUsers;
-          });
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(profileSubscription);
-    };
   }, [getUserProfiles]);
 
   const contextValue = useMemo(
     () => ({
-      cachedUsers,
+      users,
       isLoading,
-      refreshUsers: getUserProfiles,
+      updateMembershipStatus,
+      refreshSearchData: getUserProfiles,
     }),
-    [cachedUsers, isLoading, getUserProfiles],
+    [users, isLoading, getUserProfiles, updateMembershipStatus],
   );
 
   return (
