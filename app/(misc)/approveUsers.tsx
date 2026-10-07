@@ -1,13 +1,9 @@
 import { ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
 import { ActionableHeaderCard, UserActionCard } from "@/components/routines";
-import {
-  ThemedLinearGradient,
-  ThemedText
-} from "@/components/themed";
+import { ThemedLinearGradient, ThemedText } from "@/components/themed";
 import { useUserSearch } from "@/contexts/UserSearchContext";
-import { getCurrentAdminCollege } from "@/services/collegeService";
 import { useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { ScrollView, StatusBar, StyleSheet } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
@@ -15,10 +11,9 @@ type UserStatus = "Pending" | "Approved" | "Rejected" | "All";
 
 const approveUsers = () => {
   const { theme } = useUnistyles();
-  const { cachedUsers, isLoading } = useUserSearch();
+  const { users, isLoading, updateMembershipStatus } = useUserSearch();
   const colors = theme.colors;
   const router = useRouter();
-  const [collegeCode, setCollegeCode] = useState<string>("");
 
   const [showDropDown, setShowDropDown] = useState<Record<UserStatus, boolean>>(
     { Pending: false, Approved: false, Rejected: false, All: false },
@@ -32,32 +27,6 @@ const approveUsers = () => {
   const getHeaderCardIcon = (status: UserStatus) => {
     return showDropDown[status] ? ArrowUpIcon : ArrowDownIcon;
   };
-
-  useEffect(() => {
-    const getUserCollege = async () => {
-      const collegeInfo = await getCurrentAdminCollege();
-      setCollegeCode(collegeInfo[0].college_code);
-    };
-
-    getUserCollege();
-  }, [collegeCode]);
-
-  const userData = useMemo(() => {
-    return {
-      pending: cachedUsers.filter(
-        (user) =>
-          !user.approved_by?.includes(collegeCode) &&
-          !user.rejected_by?.includes(collegeCode),
-      ),
-      approved: cachedUsers.filter((user) =>
-        user.approved_by?.includes(collegeCode),
-      ),
-      rejected: cachedUsers.filter((user) =>
-        user.rejected_by?.includes(collegeCode),
-      ),
-      all: cachedUsers,
-    };
-  }, [cachedUsers, collegeCode]);
 
   return (
     <ScrollView
@@ -86,8 +55,7 @@ const approveUsers = () => {
               }}
             >
               {showDropDown[type] &&
-                (userData[type.toLowerCase() as keyof typeof userData]
-                  .length === 0 ? (
+                (users.all.length === 0 ? (
                   <ThemedText
                     style={{
                       paddingHorizontal: 8,
@@ -99,12 +67,15 @@ const approveUsers = () => {
                     No {type} users found
                   </ThemedText>
                 ) : (
-                  userData[type.toLowerCase() as keyof typeof userData].map(
+                  users[type.toLowerCase() as keyof typeof users].map(
                     (user) => (
                       <UserActionCard
-                        userData={user}
-                        key={user.id}
+                        user={user}
+                        key={user.profile_id}
                         showStatus={type === "All"}
+                        onStatusChange={(status) =>
+                          updateMembershipStatus(user.profile_id, status)
+                        }
                       />
                     ),
                   )
