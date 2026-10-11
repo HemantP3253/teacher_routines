@@ -10,6 +10,7 @@ import {
 import { useApp } from "@/contexts/AppContext";
 import { useInstituteInfo } from "@/contexts/InstituteInfoContext";
 import { supabase } from "@/services/supabase";
+import { UniversityProgram } from "@/types/academic";
 import { useState } from "react";
 import { StatusBar } from "react-native";
 import {
@@ -49,6 +50,18 @@ const OptionsScreen = () => {
     }
   };
 
+  const getShownDegreesDescription = (shownDegrees: UniversityProgram[]) => {
+    if (!shownDegrees) return "";
+    let description: string = "";
+    shownDegrees.forEach((degree, index) => {
+      description =
+        description +
+        degree.shortCode +
+        (index === shownDegrees.length - 1 ? "" : ", ");
+    });
+    return description;
+  };
+
   return (
     <ThemedLinearGradient
       style={{
@@ -69,7 +82,7 @@ const OptionsScreen = () => {
           Icon={DegreeIcon}
           label="Selected Degrees"
           onPress={() => setDegreesModalVisible(true)}
-          description={`${settings.shownDegrees.length > 0 ? settings.shownDegrees.join(", ") : "All"}`}
+          description={`${getShownDegreesDescription(settings.shownDegrees)}`}
         />
       )}
 
@@ -80,8 +93,8 @@ const OptionsScreen = () => {
         <ThemedRadioButtonMenu
           title="Select Theme"
           data={availableThemeOptions}
+          selectedItem={currentTheme}
           getId={(item) => item}
-          initialSelection={currentTheme}
           getLabel={(item) => item}
           getSubLabel={(item) =>
             item === "Use System Theme"
@@ -89,7 +102,7 @@ const OptionsScreen = () => {
               : undefined
           }
           alwaysShowSubLabel
-          onSelect={(selected: string) => {
+          onItemSelect={(selected: string) => {
             if (selected === "Use System Theme") {
               UnistylesRuntime.setAdaptiveThemes(true);
             } else {
@@ -108,11 +121,11 @@ const OptionsScreen = () => {
         <ThemedCheckboxMenu
           title="Select Available Degrees"
           data={allAvailableDegrees}
-          getId={(item: string) => item}
           minSelection={1}
           initialSelection={settings.shownDegrees}
-          getLabel={(item: string) => item}
-          onSubmit={(degreeNames: string[]) => {
+          getId={(item) => item.id}
+          getLabel={(item) => item.name}
+          onSubmit={(degreeNames) => {
             setDegreesModalVisible(false);
             updateSetting("shownDegrees", degreeNames);
           }}
