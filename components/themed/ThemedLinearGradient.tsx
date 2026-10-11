@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useUnistyles } from "react-native-unistyles";
 
 const ThemedLinearGradient = ({
+  overrideColors,
   style,
   type = "background",
   ...otherProps
@@ -45,10 +46,11 @@ const ThemedLinearGradient = ({
 
   return (
     <LinearGradient
-      colors={[
-        gradientColors[gradientIndex],
-        gradientColors[gradientIndex + 1],
-      ]}
+      colors={
+        overrideColors
+          ? overrideColors
+          : [gradientColors[gradientIndex], gradientColors[gradientIndex + 1]]
+      }
       start={otherProps.start ? otherProps.start : { x: 0, y: 0 }}
       end={otherProps.end ? otherProps.end : { x: 1, y: 1 }}
       style={style}
