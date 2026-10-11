@@ -55,12 +55,13 @@ const approveUsers = () => {
               }}
             >
               {showDropDown[type] &&
-                (users.all.length === 0 ? (
+                (users[type.toLowerCase() as keyof typeof users].length ===
+                0 ? (
                   <ThemedText
+                    type="text"
                     style={{
                       paddingHorizontal: 8,
-                      fontWeight: "700",
-                      color: colors.warning,
+                      fontWeight: "500",
                       fontSize: 16,
                     }}
                   >
