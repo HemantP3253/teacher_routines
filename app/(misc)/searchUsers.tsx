@@ -123,6 +123,7 @@ const searchUsers = () => {
                 key={type}
                 label={type}
                 fill={searchParams?.searchType === type}
+                selected={searchParams.searchType === type}
                 onPress={() =>
                   setSearchParams((prev) => ({ ...prev, searchType: type }))
                 }
@@ -138,11 +139,11 @@ const searchUsers = () => {
               />
             ) : searchParams.searchText.trim().length >= 3 &&
               filteredUsers?.length === 0 ? (
-              <ThemedText style={{ color: colors.warning, padding: 8 }}>
+              <ThemedText style={{ color: colors.text, padding: 8 }}>
                 No results found for "{searchParams.searchText}"
               </ThemedText>
             ) : searchParams.searchText.trim().length < 3 ? (
-              <ThemedText style={{ color: colors.neutral100, padding: 8 }}>
+              <ThemedText style={{ color: colors.text, padding: 8 }}>
                 Type at least 3 characters to search...
               </ThemedText>
             ) : (
