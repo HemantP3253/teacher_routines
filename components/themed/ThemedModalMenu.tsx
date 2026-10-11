@@ -3,31 +3,33 @@ import { ThemedModalMenuProps } from "@/interfaces/interfaces";
 import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, Pressable, View, ViewStyle } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import { ErrorCard, Spacer } from "../common";
 import CustomModal from "../common/CustomModal";
+import ErrorCard from "../common/ErrorCard";
+import Spacer from "../common/Spacer";
 import ThemedAlertWindow from "./ThemedAlertWindow";
 import ThemedPressable from "./ThemedPressable";
 import ThemedText from "./ThemedText";
 import ThemedTextInput from "./ThemedTextInput";
 import ThemedView from "./ThemedView";
 
-const ThemedModalMenu = ({
+const ThemedModalMenu = <T,>({
   data,
-  item,
-  setItem,
+  selectedItem,
+  onItemSelect,
   title,
   type,
+  getId,
+  getLabel,
+  getSublabel,
   noFill,
-  Icon,
   errorText,
   alertCondition,
   cancelable = true,
-  hideItemType,
   pressableStyle,
   iconProperties,
   addSearchBar = false,
   ...props
-}: ThemedModalMenuProps) => {
+}: ThemedModalMenuProps<T>) => {
   const [modalVisible, setModalVisible] = useState<{
     alert: boolean;
     mainModal: boolean;
@@ -68,39 +70,50 @@ const ThemedModalMenu = ({
   }, [alertCondition?.visible]);
 
   const sortedData = useMemo(() => {
-    return [...data].sort((a, b) => a.toString().localeCompare(b.toString()));
+    return [...data].sort((a, b) =>
+      getLabel(a).toString().localeCompare(getLabel(b).toString()),
+    );
   }, [data]);
 
   const filteredResults = useMemo(() => {
     return sortedData.filter((value) =>
-      value.toString().toLowerCase().includes(searchText.toLowerCase()),
+      getLabel(value)
+        .toString()
+        .toLowerCase()
+        .includes(searchText.toLowerCase()),
     );
   }, [sortedData, searchText]);
 
   const renderItem = useCallback(
-    ({ item }: { item: string }) => (
-      <ThemedView
-        style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
-      >
-        <ThemedPressable
-          onPress={() => {
-            setItem(item);
-            setModalVisible((prev) => ({
-              ...prev,
-              mainModal: false,
-            }));
-          }}
+    ({ item }: { item: T }) => {
+      return (
+        <ThemedView
+          style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
         >
-          <ThemedText
-            type="primaryContent"
-            style={{ textAlign: "center", fontWeight: "600" }}
+          <ThemedPressable
+            onPress={() => {
+              onItemSelect?.(item);
+              setModalVisible((prev) => ({
+                ...prev,
+                mainModal: false,
+              }));
+            }}
           >
-            {item}
-          </ThemedText>
-        </ThemedPressable>
-      </ThemedView>
-    ),
-    [setItem],
+            <ThemedText
+              type="primaryContent"
+              style={{ textAlign: "center", fontWeight: "600" }}
+            >
+              {getLabel(item)}
+            </ThemedText>
+
+            {getSublabel && (
+              <ThemedText type="text">{getSublabel(item)}</ThemedText>
+            )}
+          </ThemedPressable>
+        </ThemedView>
+      );
+    },
+    [onItemSelect],
   );
 
   return (
@@ -111,8 +124,8 @@ const ThemedModalMenu = ({
             style={[{ alignSelf: "center" }, pressableStyle]}
             onPress={openModal}
           >
-            {Icon && (
-              <Icon
+            {iconProperties.Icon && (
+              <iconProperties.Icon
                 fillItem={iconProperties.iconFill}
                 fill={iconProperties.iconFillColor}
                 height={
@@ -152,16 +165,21 @@ const ThemedModalMenu = ({
                 : undefined,
             ]}
           >
-            {Icon && <Icon style={{ marginLeft: 4 }} fill={dynamicColorText} />}
+            {iconProperties?.Icon && (
+              <iconProperties.Icon
+                style={{ marginLeft: 4 }}
+                fill={dynamicColorText}
+              />
+            )}
             <ThemedText
               type={error ? "errorContent" : noFill ? "text" : "primaryContent"}
               style={{ fontSize: 16, paddingHorizontal: 8 }}
             >
-              {item === ""
+              {selectedItem == null
                 ? title
-                : hideItemType
-                  ? `${item}`
-                  : `${type}: ${item}`}
+                : type
+                  ? `${type}: ${getLabel(selectedItem)}`
+                  : `${getLabel(selectedItem)}`}
             </ThemedText>
 
             <Spacer horizontal style={{ flex: 1 }} />
@@ -193,12 +211,12 @@ const ThemedModalMenu = ({
               "Please select a required field first."
             }
             visible={modalVisible.alert}
-            onConfirm={() => {
-              setModalVisible((prev) => ({ ...prev, alert: false }));
-            }}
-            onClose={() => {
-              setModalVisible((prev) => ({ ...prev, alert: false }));
-            }}
+            onConfirm={() =>
+              setModalVisible((prev) => ({ ...prev, alert: false }))
+            }
+            onClose={() =>
+              setModalVisible((prev) => ({ ...prev, alert: false }))
+            }
           />
         )}
         <CustomModal
@@ -232,7 +250,7 @@ const ThemedModalMenu = ({
             </ThemedText>
             <FlatList
               data={filteredResults}
-              keyExtractor={(item) => item.toString()}
+              keyExtractor={(item) => getId(item)}
               ListHeaderComponent={() =>
                 addSearchBar && (
                   <ThemedTextInput
