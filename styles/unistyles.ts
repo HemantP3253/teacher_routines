@@ -79,6 +79,15 @@ const lightTheme = {
     // Shimmers & Divider Lines
     divider: "rgba(207, 216, 211, 0.60)",
     shimmer: "rgb(231, 236, 233)",
+
+    // Status gradients
+    successGradient: ["rgb(69, 201, 138)", "rgb(35, 155, 104)"] as const,
+
+    warningGradient: ["rgb(242, 215, 107)", "rgb(214, 168, 45)"] as const,
+
+    errorGradient: ["rgb(240, 128, 112)", "rgb(214, 79, 72)"] as const,
+
+    infoGradient: ["rgb(120, 169, 255)", "rgb(66, 105, 213)"] as const,
   },
 
   spacing: {
@@ -193,6 +202,15 @@ const darkTheme = {
     // Shimmers & Divider Lines
     divider: "rgba(78, 102, 87, 0.50)",
     shimmer: "rgb(32, 48, 40)",
+
+    // Status gradients
+    successGradient: ["rgb(93, 230, 163)", "rgb(39, 169, 112)"] as const,
+
+    warningGradient: ["rgb(255, 226, 117)", "rgb(218, 174, 51)"] as const,
+
+    errorGradient: ["rgb(255, 145, 128)", "rgb(224, 82, 75)"] as const,
+
+    infoGradient: ["rgb(143, 187, 255)", "rgb(77, 113, 225)"] as const,
   },
 
   spacing: {
