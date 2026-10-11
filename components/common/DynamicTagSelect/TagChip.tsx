@@ -10,6 +10,7 @@ const TagChip = ({
   fill = true,
   Icon,
   dottedBorder,
+  style,
 }: TagChipProps) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
@@ -20,6 +21,7 @@ const TagChip = ({
     <Pressable
       onPress={onPress}
       style={[
+        style,
         styles.rootContainer,
         selected && !isDotted && styles.selectedRootContainer,
         isDotted && !selected && styles.dottedRootContainer,
@@ -70,6 +72,7 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
     alignSelf: "flex-start",
     height: "100%",
+    width: "100%",
     alignItems: "center",
   },
   iconWrapper: {
