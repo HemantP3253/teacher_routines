@@ -1,10 +1,11 @@
-import { getAllDegreeNames } from "@/data/curricula/university/TU/degreeDataTU";
+import { getAllDegreeNames } from "@/data/curricula/university/TU/tuHelpers";
 import { DynamicRoutineDetails } from "@/interfaces/interfaces";
+import { UniversityProgram } from "@/types/academic";
 import { storage } from "@/utils/storage";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 interface AppSettings {
-  shownDegrees: string[];
+  shownDegrees: UniversityProgram[];
   routineTimeOptions: DynamicRoutineDetails[];
   isDark: boolean;
   userRole?: "admin" | "user";
@@ -52,7 +53,7 @@ interface AppContextType {
     key: K,
     value: AppSettings[K],
   ) => void;
-  allAvailableDegrees: string[];
+  allAvailableDegrees: UniversityProgram[];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
