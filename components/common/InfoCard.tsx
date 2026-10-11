@@ -1,8 +1,8 @@
 import { InfoIcon } from "@/assets/icons";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import ThemedLinearGradient from "../themed/ThemedLinearGradient";
 import ThemedText from "../themed/ThemedText";
-import ThemedView from "../themed/ThemedView";
 
 const InfoCard = ({
   infoText,
@@ -19,33 +19,35 @@ const InfoCard = ({
   if (!infoText) return null;
 
   return (
-    <ThemedView
-      style={[
-        {
-          backgroundColor: colors.info + 80,
-          borderRadius: 8,
-          flexDirection: "row",
-          marginHorizontal: 8,
-          padding: 8,
-        },
-        containerStyle,
-      ]}
+    <ThemedLinearGradient
+      overrideColors={[...colors.infoGradient]}
+      style={[styles.rootContainer, containerStyle]}
     >
-      <InfoIcon style={[{ alignSelf: "flex-start" }, iconStyle]} />
-      <ThemedText
-        type="infoContent"
-        style={[
-          {
-            paddingLeft: 4,
-            maxWidth: "92%",
-          },
-          textStyle,
-        ]}
-      >
+      <InfoIcon
+        height={28}
+        width={28}
+        style={[styles.infoIcon, iconStyle]}
+        fill={colors.infoContent}
+      />
+      <ThemedText type="infoContent" style={[textStyle]}>
         {infoText}
       </ThemedText>
-    </ThemedView>
+    </ThemedLinearGradient>
   );
 };
+
+const styles = StyleSheet.create(({ spacing, radius }) => ({
+  rootContainer: {
+    borderRadius: radius.md,
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: spacing.sm,
+    padding: spacing.sm,
+    gap: spacing.xs,
+  },
+  infoIcon: {
+    alignSelf: "flex-start",
+  },
+}));
 
 export default InfoCard;
