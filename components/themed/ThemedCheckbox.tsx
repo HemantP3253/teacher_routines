@@ -1,6 +1,4 @@
-import { ArrowDownIcon } from "@/assets/icons";
-import SelectedCheckBox from "@/assets/icons/CheckedCheckBox";
-import UncheckedCheckBoxIcon from "@/assets/icons/UncheckedCheckBoxIcon";
+import { ArrowDownIcon, CheckedCheckBox, UncheckedCheckBoxIcon } from "@/assets/icons";
 import { ThemedCheckboxProps } from "@/interfaces/interfaces";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
@@ -46,7 +44,7 @@ const ThemedCheckbox = ({
       >
         <View style={styles.leftContainer}>
           {isChecked ? (
-            <SelectedCheckBox fill={currentColor} />
+            <CheckedCheckBox fill={currentColor} />
           ) : (
             <UncheckedCheckBoxIcon fill={currentColor} />
           )}
