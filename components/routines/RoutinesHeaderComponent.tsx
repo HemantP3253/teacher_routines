@@ -8,97 +8,146 @@ import {
   RoutinesIcon,
 } from "@/assets/icons";
 import { useApp } from "@/contexts/AppContext";
-import { getCurriculumData } from "@/data/curricula/university/TU/degreeDataTU";
-import { level, RoutinesHeaderProps } from "@/interfaces/interfaces";
-import { useMemo, useState } from "react";
-import { useUnistyles } from "react-native-unistyles";
-import { Spacer } from "../common";
+import {
+  getAllCurriculumEntities,
+  getNextCurriculumEntities,
+  getProgramContextById,
+} from "@/data/curricula/university/TU/tuHelpers";
+import { RoutinesHeaderProps } from "@/interfaces/interfaces";
+import {
+  AcademicLevel,
+  UniversityBranch,
+  UniversityProgram,
+} from "@/types/academic";
+import { useState } from "react";
 import DynamicTagSelect from "../common/DynamicTagSelect";
 import { ThemedModalMenu, ThemedText, ThemedView } from "../themed";
 import ActionableHeaderCard from "./ActionableHeaderCard";
 
-const stepConfig = {
-  "Degree Name": { key: "degreeName", requiredKey: null },
-  Branch: { key: "branch", requiredKey: "Degree Name" },
-  Term: { key: "term", requiredKey: "Degree Name" },
-  "Batch and Section": { key: "batchAndSection", requiredKey: "Term" },
-};
-
-type StepType = keyof typeof stepConfig;
+type menuSteps = "Program" | "Branch" | "Term" | "Batch and Section";
 
 const RoutinesHeaderComponent = ({
-  data,
-  setData,
-  currentQueryContext,
+  selectedProgram,
+  selectedBranch,
+  selectedAcademicLevel,
+  selectedBatchAndSectionId,
+  onProgramChange,
+  onBranchChange,
+  onAcademicLevelChange,
+  onBatchAndSectionChange,
   onDynamicRoutineSelect,
 }: RoutinesHeaderProps) => {
-  const { theme } = useUnistyles();
-  const { allAvailableDegrees, settings } = useApp();
-  const activeMenuSteps: StepType[] = [
-    "Degree Name",
+  const { programs } = getAllCurriculumEntities();
+  const { settings } = useApp();
+  const activeMenuSteps: menuSteps[] = [
+    "Program",
     "Branch",
     "Term",
     "Batch and Section",
   ];
 
-  const handleSelectValue = (step: StepType, value: string) => {
-    setData((prev) => {
-      const updated = { ...prev };
+  const selectedContext = selectedProgram
+    ? getProgramContextById(selectedProgram?.id)
+    : undefined;
 
-      if (step === "Degree Name") {
-        updated.degreeName = value;
-        updated.branch = "";
-        updated.term = "";
-        updated.batchAndSection = "";
-      } else if (step === "Branch") {
-        updated.branch = value;
-        updated.term = "";
-        updated.batchAndSection = "";
-      } else if (step === "Term") {
-        updated.term = value;
-        updated.batchAndSection = "";
-      } else if (step === "Batch and Section") updated.batchAndSection = value;
+  const hasBranches = selectedProgram?.hasBranches;
 
-      return updated;
-    });
+  const getDisplaySummary = () => {
+    if (!selectedProgram) return undefined;
+    if ((hasBranches && !selectedBranch) || !selectedAcademicLevel)
+      return selectedProgram.shortCode;
+
+    const term = selectedAcademicLevel.name.split(" ")[0];
+    const branchText = hasBranches ? selectedBranch?.name + " • " : "";
+    const typeLabel = selectedProgram.termType === "semester" ? "Sem" : "Year";
+
+    return `${selectedProgram.shortCode} • ${branchText}${term} ${typeLabel}`;
   };
 
-  const getSelectedValue = (step: StepType): string => {
-    if (step === "Degree Name") return data.degreeName;
-    if (step === "Branch") return data.branch || "";
-    if (step === "Term") return data.term;
-    return data.batchAndSection;
-  };
-
-  const allDegreeNames = settings.shownDegrees ?? allAvailableDegrees;
-
-  const displaySummaryString = useMemo(() => {
-    if (!data.degreeName) return "";
-    if (!data.term) return data.degreeName;
-
-    const termSegments = data.term.split(" ");
-    const termNumber = termSegments[0] || "";
-    const isSemester = data.term.toLowerCase().includes("semester");
-    const typeLabel = isSemester ? "Sem" : "Year";
-
-    return `${data.degreeName} • ${termNumber} ${typeLabel}`;
-  }, [data.degreeName, data.term]);
-
-  const hasBranches = useMemo(() => {
-    if (!data.degreeName || data.degreeName === "") return false;
-    return (
-      getCurriculumData({ ...currentQueryContext, level: "branch" }).length !==
-      0
-    );
-  }, [currentQueryContext, data.degreeName]);
+  const summaryText = getDisplaySummary();
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-  const getIcon = (step: StepType) => {
-    if (step === "Degree Name") return DegreeIcon;
-    if (step === "Branch") return AltRouteIcon;
-    if (step === "Term") return DateRangeIcon;
-    if (step === "Batch and Section") return Groups2Icon;
+  const CurrentStepMenu = ({ currentStep }: { currentStep: menuSteps }) => {
+    switch (currentStep) {
+      case "Program":
+        return (
+          <ThemedModalMenu<UniversityProgram>
+            title={"Select Program"}
+            data={programs}
+            selectedItem={selectedProgram ?? null}
+            onItemSelect={onProgramChange}
+            getId={(item) => item.id}
+            getLabel={(item) => `${item.name} (${item.shortCode})`}
+            iconProperties={{ Icon: DegreeIcon }}
+          />
+        );
+      case "Branch":
+        return hasBranches ? (
+          <ThemedModalMenu<UniversityBranch>
+            title={"Select Branch"}
+            data={
+              getNextCurriculumEntities(
+                selectedContext?.unit.id ?? "",
+                selectedContext?.level.id ?? "",
+                selectedProgram?.id,
+              ) ?? []
+            }
+            selectedItem={selectedBranch ?? null}
+            onItemSelect={onBranchChange}
+            getId={(item) => item.id}
+            getLabel={(item) => item.name}
+            iconProperties={{ Icon: AltRouteIcon }}
+            alertCondition={{
+              visible: !selectedProgram,
+              alertTitle: "Program not selected",
+              alertDescription: "Please select a program first!",
+            }}
+          />
+        ) : undefined;
+      case "Term":
+        const alertType = hasBranches ? "Branch" : "Program";
+        return (
+          <ThemedModalMenu<AcademicLevel>
+            title={"Select Academic Level"}
+            data={
+              getNextCurriculumEntities(
+                selectedContext?.unit.id ?? "",
+                selectedContext?.level.id ?? "",
+                selectedProgram?.id ?? "",
+                selectedBranch?.id ?? "",
+              ) ?? []
+            }
+            selectedItem={selectedAcademicLevel ?? null}
+            onItemSelect={onAcademicLevelChange}
+            getId={(item) => item.id}
+            getLabel={(item) => item.name}
+            iconProperties={{ Icon: DateRangeIcon }}
+            alertCondition={{
+              visible: hasBranches ? !selectedBranch : !selectedProgram,
+              alertTitle: `${alertType} not selected.`,
+              alertDescription: `Please select a ${alertType.toLowerCase()} first!`,
+            }}
+          />
+        );
+      case "Batch and Section":
+        return (
+          <ThemedModalMenu
+            title={"Select Batch and Section"}
+            data={[]}
+            selectedItem={null}
+            onItemSelect={onBatchAndSectionChange}
+            getId={(item) => item}
+            getLabel={(item) => `${item}`}
+            iconProperties={{ Icon: Groups2Icon }}
+            alertCondition={{
+              visible: !selectedAcademicLevel,
+              alertTitle: "Academic level not selected",
+              alertDescription: "Please select an academic level first!",
+            }}
+          />
+        );
+    }
   };
 
   return (
@@ -114,7 +163,7 @@ const RoutinesHeaderComponent = ({
         Admin Dashboard
       </ThemedText>
       <ActionableHeaderCard
-        title="Select Degree Details"
+        title="Select Program Details"
         IconBeforeText={DegreeIcon}
         iconProperties={{
           Icon: isExpanded ? ArrowUpIcon : ArrowDownIcon,
@@ -123,61 +172,14 @@ const RoutinesHeaderComponent = ({
           onPress: () => setIsExpanded(!isExpanded),
         }}
         isDataLoading={false}
-        summaryText={
-          data.degreeName && data.term && !isExpanded
-            ? displaySummaryString
-            : undefined
-        }
+        summaryText={isExpanded ? undefined : summaryText}
+        showBottomBorder={isExpanded}
       >
-        {isExpanded && <Spacer style={{ margin: 8 }} lineVisible />}
         {isExpanded && (
           <>
-            {activeMenuSteps.map((stepName) => {
-              const config = stepConfig[stepName];
-
-              if (stepName === "Branch" && !hasBranches) return null;
-
-              const pickerData =
-                stepName === "Degree Name"
-                  ? allDegreeNames
-                  : getCurriculumData({
-                      ...currentQueryContext,
-                      level: config.key as level,
-                    });
-
-              let isMissingPrerequisite: boolean = false;
-              let alertTitle: string = "Degree Name";
-
-              if (stepName === "Branch")
-                isMissingPrerequisite = !data.degreeName;
-              else if (stepName === "Term")
-                isMissingPrerequisite =
-                  !data.degreeName || (hasBranches && !data.branch);
-              else if (stepName === "Batch and Section")
-                isMissingPrerequisite = !data.term;
-
-              if (stepName === "Term" && hasBranches) alertTitle = "Branch";
-              else if (stepName === "Batch and Section") alertTitle = "Term";
-
-              return (
-                <ThemedModalMenu
-                  addSearchBar={stepName === "Degree Name"}
-                  key={stepName}
-                  data={pickerData}
-                  title={`Select ${stepName}`}
-                  type={stepName}
-                  Icon={getIcon(stepName)}
-                  noFill={!getSelectedValue(stepName)}
-                  item={getSelectedValue(stepName)}
-                  setItem={(item) => handleSelectValue(stepName, item)}
-                  alertCondition={{
-                    visible: isMissingPrerequisite,
-                    alertTitle: `Select ${alertTitle}`,
-                    alertDescription: `Please select "${alertTitle}" before selecting "${stepName}".`,
-                  }}
-                />
-              );
-            })}
+            {activeMenuSteps.map((stepName) => (
+              <CurrentStepMenu key={stepName} currentStep={stepName} />
+            ))}
           </>
         )}
       </ActionableHeaderCard>
