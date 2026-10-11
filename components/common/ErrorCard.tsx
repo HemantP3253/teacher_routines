@@ -1,8 +1,8 @@
 import { ErrorIcon } from "@/assets/icons";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import ThemedLinearGradient from "../themed/ThemedLinearGradient";
 import ThemedText from "../themed/ThemedText";
-import ThemedView from "../themed/ThemedView";
 
 const ErrorCard = ({
   errorText,
@@ -19,31 +19,33 @@ const ErrorCard = ({
   if (!errorText) return null;
 
   return (
-    <ThemedView
-      style={[
-        {
-          alignItems: "center",
-          backgroundColor: colors.error + 95,
-          borderRadius: 8,
-          flexDirection: "row",
-          marginHorizontal: 8,
-          padding: 8,
-        },
-        containerStyle,
-      ]}
+    <ThemedLinearGradient
+      overrideColors={[...colors.errorGradient]}
+      style={[styles.rootContainer, containerStyle]}
     >
       <ErrorIcon
         fill={colors.errorContent}
-        style={[{ alignSelf: "flex-start" }, iconStyle]}
+        style={[styles.infoIcon, iconStyle]}
       />
-      <ThemedText
-        type="errorContent"
-        style={[{ paddingHorizontal: 4 }, textStyle]}
-      >
+      <ThemedText type="errorContent" style={[textStyle]}>
         {errorText}
       </ThemedText>
-    </ThemedView>
+    </ThemedLinearGradient>
   );
 };
+
+const styles = StyleSheet.create(({ spacing, radius }) => ({
+  rootContainer: {
+    borderRadius: radius.md,
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: spacing.sm,
+    padding: spacing.sm,
+    gap: spacing.xs,
+  },
+  infoIcon: {
+    alignSelf: "flex-start",
+  },
+}));
 
 export default ErrorCard;
