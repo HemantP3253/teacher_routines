@@ -2,6 +2,7 @@ import { SearchIcon } from "@/assets/icons";
 import { ActionableHeaderCardProps } from "@/interfaces/interfaces";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { Spacer } from "../common";
 import { ThemedLinearGradient, ThemedText } from "../themed";
 
 const ActionableHeaderCard = ({
@@ -44,7 +45,9 @@ const ActionableHeaderCard = ({
             />
           </View>
         </View>
-        {showBottomBorder && <View style={styles.bottomBorder}></View>}
+        {showBottomBorder && (
+          <Spacer useFullWidth lineType="border" horizontal lineVisible />
+        )}
         {isDataLoading ? <ActivityIndicator size={"large"} /> : children}
         {summaryText && (
           <ThemedText style={styles.summaryText}>{summaryText}</ThemedText>
@@ -54,14 +57,14 @@ const ActionableHeaderCard = ({
   );
 };
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create(({ colors, radius, spacing }) => ({
   rootContainer: {
-    gap: theme.spacing.xs,
+    gap: spacing.xs,
     borderWidth: 1,
-    borderRadius: theme.radius.md,
-    margin: theme.spacing.sm,
-    padding: theme.spacing.md,
-    borderColor: theme.colors.border,
+    borderRadius: radius.md,
+    margin: spacing.sm,
+    padding: spacing.md,
+    borderColor: colors.border,
   },
   headerContainer: {
     flexDirection: "row",
@@ -70,34 +73,29 @@ const styles = StyleSheet.create((theme) => ({
   },
   titleContainer: {
     flexDirection: "row",
-    gap: theme.spacing.sm,
+    gap: spacing.sm,
     alignItems: "center",
-    paddingLeft: theme.spacing.xs,
+    paddingLeft: spacing.xs,
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    color: theme.colors.text,
+    color: colors.text,
   },
   iconContainer: {
     flexDirection: "row",
-    gap: theme.spacing.sm,
+    gap: spacing.sm,
     alignItems: "center",
   },
   summaryText: {
     fontSize: 14,
-    paddingHorizontal: theme.spacing.sm,
+    paddingHorizontal: spacing.sm,
     opacity: 0.7,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
-  },
-  bottomBorder: {
-    borderWidth: 1,
-    borderColor: theme.colors.accent,
-    margin: theme.spacing.sm,
+    color: colors.textSecondary,
   },
   secondaryIcon: {
-    marginRight: theme.spacing.sm,
+    marginRight: spacing.sm,
   },
 }));
 
