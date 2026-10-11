@@ -11,32 +11,37 @@ import ThemedText from "./ThemedText";
 import ThemedView from "./ThemedView";
 
 const ThemedRadioButtonMenu = <T,>({
-  data,
-  onSelect,
   title,
+  data,
+  selectedItem,
+  onItemSelect,
   getId,
   getLabel,
   getSubLabel,
-  initialSelection,
-  sortList,
+  sortType,
   alwaysShowSubLabel,
 }: ThemedRadioButtonMenuProps<T>) => {
   const { colors } = useUnistyles().theme;
 
-  const [selectedId, setSelectedId] = useState<string>(initialSelection ?? "");
+  const [selectedId, setSelectedId] = useState<string | undefined>(
+    selectedItem ? getId(selectedItem) : undefined,
+  );
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
   useEffect(() => {
-    if (initialSelection) {
-      setSelectedId(initialSelection);
+    if (selectedItem) {
+      setSelectedId(getId(selectedItem));
     }
-  }, [initialSelection]);
+  }, [selectedItem]);
 
   const sortedData = useMemo(() => {
-    return sortList
-      ? [...data].sort((a, b) => getLabel(a).localeCompare(getLabel(b)))
-      : data;
-  }, [data, sortList, getLabel]);
+    if (!sortType) return data;
+
+    const direction = sortType === "ascending" ? 1 : -1;
+    return [...data].sort(
+      (a, b) => direction * getLabel(a).localeCompare(getLabel(b)),
+    );
+  }, [data, sortType]);
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedIds((prev) =>
@@ -67,7 +72,7 @@ const ThemedRadioButtonMenu = <T,>({
                 key={id}
                 onPress={() => {
                   setSelectedId(id);
-                  onSelect?.(id);
+                  onItemSelect?.(id);
                 }}
                 onLongPress={() => !alwaysShowSubLabel && toggleExpand(id)}
                 style={[
