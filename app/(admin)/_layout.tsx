@@ -1,22 +1,27 @@
 import { HomeIcon, OptionsIcon, RoutinesIcon } from "@/assets/icons";
 import { FloatingTabBar, TabButton } from "@/components/common";
+import { useBlurContext } from "@/contexts/BlurContext";
+import { BlurTargetView } from "expo-blur";
 import { Tabs, usePathname, useRouter } from "expo-router";
+import { StyleSheet } from "react-native-unistyles";
 
 const _Layout = () => {
+  const { targetRef, blurMethod } = useBlurContext();
   const pathname = usePathname();
   const router = useRouter();
 
   return (
     <>
-      <Tabs
-        screenOptions={{
-          tabBarShowLabel: false,
-          headerShown: false,
-          tabBarStyle: { display: "none" },
-        }}
-      />
+      <BlurTargetView ref={targetRef} style={StyleSheet.absoluteFill}>
+        <Tabs
+          screenOptions={{
+            headerShown: false,
+            tabBarStyle: { display: "none" },
+          }}
+        />
+      </BlurTargetView>
 
-      <FloatingTabBar>
+      <FloatingTabBar blurTarget={targetRef}>
         <TabButton
           focused={pathname === "/routines"}
           title="Routines"
