@@ -28,7 +28,7 @@ const ThemedPressable = ({
               borderWidth: noFill ? 1 : 0,
               paddingHorizontal: 4,
               marginHorizontal: 4,
-              height: 32,
+              paddingVertical: 6,
               justifyContent: "center",
             },
         typeof style === "function" ? style(state) : style,
