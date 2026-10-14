@@ -1,38 +1,27 @@
 import { AssignmentIcon } from "@/assets/icons";
 import { SubjectCardProps } from "@/interfaces/interfaces";
 import { calculateFullPeriodTime } from "@/utils/dateUtils";
-import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { ThemedAlertWindow, ThemedText } from "../themed";
+import { ThemedAlertWindow, ThemedLinearGradient, ThemedText } from "../themed";
 import AssignTeacherModal from "./AssignTeacherModal";
 
 const SubjectCard = ({
-  subjectName,
-  startTime,
-  duration,
-  teacherId,
-  teacherName,
+  subject,
+  durationInfo,
+  teacherInfo,
   onTeacherChange,
   errorInfo,
 }: SubjectCardProps) => {
   const { colors } = useUnistyles().theme;
-
-  const nameSegments = subjectName.includes(":")
-    ? subjectName.split(":")
-    : [subjectName, ""];
-  const courseCode = nameSegments[0].trim();
-  const courseTitle = nameSegments[1].trim() || courseCode;
-
   const [visible, setVisible] = useState<boolean>(false);
 
   return (
     <View style={styles.rootView}>
       {/* Gradient View for the subtle background in the card */}
-      <LinearGradient
-        colors={[colors.surface, colors.surfaceElevated]}
-        start={{ x: 0, y: 0 }}
+      <ThemedLinearGradient
+        type="surface"
         end={{ x: 0, y: 1 }}
         style={styles.cardContainer}
       >
@@ -40,21 +29,24 @@ const SubjectCard = ({
         <View>
           {/* Subject Time */}
           <ThemedText style={styles.timeContainer}>
-            {!startTime || !duration
+            {!durationInfo
               ? "Time not selected"
-              : calculateFullPeriodTime(startTime, Number(duration))}
+              : calculateFullPeriodTime(
+                  durationInfo.startTime,
+                  Number(durationInfo.duration),
+                )}
           </ThemedText>
 
           {/*  Subject Name */}
-          <ThemedText style={styles.titleText}>{courseTitle}</ThemedText>
+          <ThemedText style={styles.titleText}>{subject.name}</ThemedText>
 
           {/*  Subject Code */}
-          <ThemedText style={styles.codeText}>{courseCode}</ThemedText>
+          <ThemedText style={styles.codeText}>{subject.code}</ThemedText>
 
           {/* Assigned Status  */}
           <ThemedText style={styles.teacherAssignedText}>
-            {teacherId !== "" && teacherName !== ""
-              ? `Teacher: ${teacherName}`
+            {teacherInfo?.teacherId
+              ? `Teacher: ${teacherInfo?.teacherName}`
               : "Not assigned"}
           </ThemedText>
         </View>
@@ -63,7 +55,7 @@ const SubjectCard = ({
         <AssignmentIcon
           height={32}
           width={32}
-          fillItem={!!teacherId}
+          fillItem={!!teacherInfo}
           fill={colors.secondary}
           style={styles.icon}
           onPress={() => setVisible(true)}
@@ -88,7 +80,7 @@ const SubjectCard = ({
             }}
           />
         )}
-      </LinearGradient>
+      </ThemedLinearGradient>
     </View>
   );
 };
