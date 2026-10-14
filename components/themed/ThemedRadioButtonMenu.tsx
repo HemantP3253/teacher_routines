@@ -4,6 +4,7 @@ import {
   RadioButtonUncheckedIcon,
 } from "@/assets/icons";
 import { ThemedRadioButtonMenuProps } from "@/interfaces/interfaces";
+import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
@@ -35,13 +36,8 @@ const ThemedRadioButtonMenu = <T,>({
   }, [selectedItem]);
 
   const sortedData = useMemo(() => {
-    if (!sortType) return data;
-
-    const direction = sortType === "ascending" ? 1 : -1;
-    return [...data].sort(
-      (a, b) => direction * getLabel(a).localeCompare(getLabel(b)),
-    );
-  }, [data, sortType]);
+    return sortByLabel(data, getLabel, sortType);
+  }, [data, getLabel, sortType]);
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedIds((prev) =>

@@ -5,6 +5,7 @@ import {
   UncheckedCheckBoxIcon,
 } from "@/assets/icons";
 import { ThemedCheckboxMenuProps } from "@/interfaces/interfaces";
+import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
@@ -39,13 +40,8 @@ const ThemedCheckboxMenu = <T,>({
   }, [initialSelection]);
 
   const sortedData = useMemo(() => {
-    if (!sortType) return data;
-
-    const direction = sortType === "ascending" ? 1 : -1;
-    return [...data].sort(
-      (a, b) => direction * getLabel(b).localeCompare(getLabel(a)),
-    );
-  }, [data, sortType]);
+    return sortByLabel(data, getLabel, sortType);
+  }, [data, getLabel, sortType]);
 
   const isSubmitDisabled = useMemo(() => {
     return selectedItems.length < minSelection;
