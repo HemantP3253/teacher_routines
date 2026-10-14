@@ -1,6 +1,7 @@
 import { ErrorIcon, SuccessIcon } from "@/assets/icons";
 import { ThemedModalMenuProps } from "@/interfaces/interfaces";
-import React, { useCallback, useMemo, useState } from "react";
+import { sortByLabel } from "@/utils/sortUtils";
+import { useCallback, useMemo, useState } from "react";
 import { FlatList, Pressable, View, ViewStyle } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import CustomModal from "../common/CustomModal";
@@ -14,6 +15,7 @@ import ThemedView from "./ThemedView";
 
 const ThemedModalMenu = <T,>({
   data,
+  sortType,
   selectedItem,
   onItemSelect,
   title,
@@ -69,11 +71,10 @@ const ThemedModalMenu = <T,>({
     }
   }, [alertCondition?.visible]);
 
-  const sortedData = useMemo(() => {
-    return [...data].sort((a, b) =>
-      getLabel(a).toString().localeCompare(getLabel(b).toString()),
-    );
-  }, [data]);
+  const sortedData = useMemo(
+    () => sortByLabel(data, getLabel, sortType),
+    [data, getLabel, sortType],
+  );
 
   const filteredResults = useMemo(() => {
     return sortedData.filter((value) =>
@@ -82,38 +83,49 @@ const ThemedModalMenu = <T,>({
         .toLowerCase()
         .includes(searchText.toLowerCase()),
     );
-  }, [sortedData, searchText]);
+  }, [sortedData, searchText, getLabel]);
 
   const renderItem = useCallback(
-    ({ item }: { item: T }) => {
-      return (
-        <ThemedView
-          style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
+    ({ item }: { item: T }) => (
+      <ThemedView
+        style={{
+          backgroundColor: colors.surfaceElevated,
+          padding: 8,
+        }}
+      >
+        <ThemedPressable
+          onPress={() => {
+            onItemSelect?.(item);
+            setModalVisible((prev) => ({
+              ...prev,
+              mainModal: false,
+            }));
+          }}
+          style={{
+            paddingVertical: 8,
+            width: "100%",
+            alignItems: "stretch",
+            justifyContent: "center",
+          }}
         >
-          <ThemedPressable
-            onPress={() => {
-              onItemSelect?.(item);
-              setModalVisible((prev) => ({
-                ...prev,
-                mainModal: false,
-              }));
+          <ThemedText
+            type="primaryContent"
+            style={{
+              textAlign: "center",
+              fontWeight: "600",
+              flexShrink: 1,
             }}
           >
-            <ThemedText
-              type="primaryContent"
-              style={{ textAlign: "center", fontWeight: "600" }}
-            >
-              {getLabel(item)}
-            </ThemedText>
+            {getLabel(item)}
+          </ThemedText>
 
-            {getSublabel && (
-              <ThemedText type="text">{getSublabel(item)}</ThemedText>
-            )}
-          </ThemedPressable>
-        </ThemedView>
-      );
-    },
-    [onItemSelect],
+          {getSublabel && (
+            <ThemedText type="text">{getSublabel(item)}</ThemedText>
+          )}
+        </ThemedPressable>
+      </ThemedView>
+    ),
+    [onItemSelect, getLabel, getSublabel, colors.surfaceElevated],
   );
 
   return (
