@@ -1,388 +1,286 @@
-import { ArrowDownIcon } from "@/assets/icons";
-import { ErrorCard, InfoCard } from "@/components/common";
 import {
-  ChooseTimeComponent,
-  RoutinesFooterComponent,
-  SubjectCard,
-} from "@/components/routines";
+  AltRouteIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  DateRangeIcon,
+  DegreeIcon,
+  Groups2Icon,
+  RoutinesIcon,
+} from "@/assets/icons";
+import { useApp } from "@/contexts/AppContext";
 import {
-  ThemedModalMenu,
-  ThemedStatusBar,
-  ThemedText,
-  ThemedView,
-} from "@/components/themed";
-import { getCurriculumData } from "@/data/degreeDataTU";
-import { degreeQuery, SubjectData } from "@/interfaces/interfaces";
-import { addSpacesAfterUppercase } from "@/utils/stringUtils";
-import { useEffect, useMemo, useState } from "react";
-import { FlatList, StatusBar, StyleSheet, View } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+  getAllCurriculumEntities,
+  getProgramContextById,
+} from "@/data/curricula/university/TU/tuHelpers";
+import { RoutinesHeaderProps } from "@/interfaces/interfaces";
+import {
+  AcademicLevel,
+  UniversityBranch,
+  UniversityProgram,
+} from "@/types/academic";
+import { useState } from "react";
+import { Spacer } from "../common";
+import DynamicTagSelect from "../common/DynamicTagSelect";
+import { ThemedModalMenu, ThemedText, ThemedView } from "../themed";
+import ActionableHeaderCard from "./ActionableHeaderCard";
 
-type degreeCriteria =
-  | "Faculty"
-  | "DegreeType"
-  | "DegreeName"
-  | "Branch"
-  | "Term"
-  | "Batch"
-  | "Section";
-
-const criteriaMap: Record<
-  degreeCriteria,
-  {
-    listKey: keyof degreeQuery;
-    requiredKey: keyof degreeQuery | null;
-    label: string;
-  }
-> = {
-  Faculty: { listKey: "faculty", requiredKey: null, label: "Faculty" },
-  DegreeType: {
-    listKey: "degreeType",
-    requiredKey: "faculty",
-    label: "Faculty",
-  },
-  DegreeName: {
-    listKey: "degreeName",
-    requiredKey: "degreeType",
-    label: "Degree Type",
-  },
-  Branch: {
-    listKey: "branch",
-    requiredKey: "degreeName",
-    label: "Degree Name",
-  },
-  Term: { listKey: "term", requiredKey: "degreeName", label: "Degree Name" },
-  Batch: { listKey: "batch" as any, requiredKey: "term", label: "Term" },
-  Section: {
-    listKey: "section" as any,
-    requiredKey: "batch" as any,
-    label: "Batch",
-  },
+const stepConfig = {
+  Program: { key: "program", requiredKey: null },
+  Branch: { key: "branch", requiredKey: "Program" },
+  Term: { key: "term", requiredKey: "Program" },
+  "Batch and Section": { key: "batchAndSection", requiredKey: "Term" },
 };
 
-const routines = () => {
-  const { theme } = useUnistyles();
-  const colors = theme.colors;
+type StepType = keyof typeof stepConfig;
 
-  const [degreeData, setDegreeData] = useState<degreeQuery>({
-    faculty: "",
-    degreeType: "",
-    degreeName: "",
-    term: "",
-    level: "faculty",
-  });
-
-  const [subjectData, setSubjectData] = useState<SubjectData[]>([]);
-  const [additionalDegreeData, setAdditionalDegreeData] = useState<{
-    batch: string;
-    section?: string;
-  }>({ batch: "" });
-  const [dynamicTimes, setDynamicTimes] = useState<{
-    startTime: string;
-    endTime: string;
-    maxDuration: string;
-  }>({ startTime: "", endTime: "", maxDuration: "" });
-
-  const hasBranches = useMemo(() => {
-    return getCurriculumData({ ...degreeData, level: "branch" }).length !== 0;
-  }, [degreeData]);
-
-  const currentSubjectsList = useMemo(() => {
-    return getCurriculumData({ ...degreeData, level: "subjects" }) || [];
-  }, [degreeData]);
-
-  const menuSteps = [
-    "Faculty",
-    "DegreeType",
-    "DegreeName",
-    hasBranches ? "Branch" : null,
+const RoutinesHeaderComponent = ({
+  programId,
+  branchId,
+  academicLevelId,
+  batchAndSectionId,
+  onProgramChange,
+  onBranchChange,
+  onAcademicLevelChange,
+  onBatchAndSectionChange,
+}: RoutinesHeaderProps) => {
+  const { programs, branches, academicLevels } = getAllCurriculumEntities();
+  const { allAvailableDegrees, settings } = useApp();
+  const activeMenuSteps: StepType[] = [
+    "Program",
+    "Branch",
     "Term",
-    "Batch",
-    "Section",
-  ].filter(Boolean) as degreeCriteria[];
+    "Batch and Section",
+  ];
 
-  const [refresh, setRefresh] = useState<{
-    tick: number;
-    type: "faculty" | "degreeType" | "degreeName" | "branch" | "term" | "batch";
-  }>({
-    tick: 0,
-    type: "faculty",
-  });
+  const selectedProgram = programs.find((program) => program.id === programId);
+  const hasBranches = selectedProgram?.hasBranches;
+  const selectedBranch = hasBranches
+    ? selectedProgram.branches.find((branch) => branch.id === branchId)
+    : null;
 
-  const [date, setDate] = useState<Date>(new Date());
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [showDropDown, setShowDropDown] = useState<boolean>(false);
+  const levels = hasBranches ? selectedBranch?.levels : selectedProgram?.levels;
+  const selectedAcademicLevel = levels?.find(
+    (academicLevel) => academicLevel.id === academicLevelId,
+  );
 
-  const onRefresh = () => {
-    setIsRefreshing(true);
-    setRefresh((prev) => ({ tick: prev.tick + 1, type: "term" }));
+  const getDisplaySummary = () => {
+    if (!selectedProgram) return undefined;
+    if (!selectedAcademicLevel) return selectedProgram.name;
 
-    setTimeout(() => setIsRefreshing(false), 1000);
+    const term = selectedAcademicLevel.name.split(" ")[0];
+    const branch = hasBranches ? selectedBranch?.name : "";
+    const typeLabel = selectedProgram.termType === "semester" ? "Sem" : "Year";
+
+    return `${selectedProgram.id.toUpperCase()} •${branch ? `${" • " + branch}` : ""} ${term} ${typeLabel}`;
   };
 
-  useEffect(() => {
-    if (refresh.tick > 0) {
-      setDegreeData((prev) => {
-        switch (refresh.type) {
-          case "faculty":
-            return {
-              ...prev,
-              degreeType: "",
-              degreeName: "",
-              branch: undefined,
-              term: "",
-            };
-          case "degreeType":
-            return { ...prev, degreeName: "", branch: undefined, term: "" };
-          case "degreeName":
-            return { ...prev, branch: undefined, term: "" };
-          case "branch":
-            return { ...prev, term: "" };
-          default:
-            return prev;
-        }
-      });
+  const summaryText = getDisplaySummary();
+
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
+  const getIcon = (step: StepType) => {
+    if (step === "Program") return DegreeIcon;
+    if (step === "Branch") return AltRouteIcon;
+    if (step === "Term") return DateRangeIcon;
+    if (step === "Batch and Section") return Groups2Icon;
+  };
+
+  type CurriculumMenuConfig =
+    | {
+        step: "Program";
+        data: UniversityProgram[];
+        item: UniversityProgram | null;
+        onSelect: (item: UniversityProgram) => void;
+      }
+    | {
+        step: "Branch";
+        data: UniversityBranch[];
+        item: UniversityBranch | null;
+        onSelect: (item: UniversityBranch) => void;
+      }
+    | {
+        step: "Term";
+        data: AcademicLevel[];
+        item: AcademicLevel | null;
+        onSelect: (item: AcademicLevel) => void;
+      };
+
+  type CurriculumMenuProps = {
+    config: CurriculumMenuConfig;
+    addSearchBar?: boolean;
+    alertCondition: {
+      visible: boolean;
+      alertTitle: string;
+      alertDescription: string;
+    };
+  };
+
+  function CurriculumStepMenu({
+    config,
+    addSearchBar,
+    alertCondition,
+  }: CurriculumMenuProps) {
+    switch (config.step) {
+      case "Program":
+        return (
+          <ThemedModalMenu<UniversityProgram>
+            data={config.data}
+            item={config.item}
+            setItem={config.onSelect}
+            getId={(item) => item.id}
+            getLabel={(item) => item.name}
+            title="Select Program"
+            type="Program"
+            onSelect={(selectedId) => onProgramChange(selectedId)}
+            iconProperties={{ Icon: DegreeIcon }}
+            addSearchBar={addSearchBar}
+            alertCondition={alertCondition}
+          />
+        );
+
+      case "Branch":
+        return (
+          <ThemedModalMenu<UniversityBranch>
+            data={config.data}
+            item={config.item}
+            setItem={config.onSelect}
+            getId={(item) => item.id}
+            getLabel={(item) => item.name}
+            title="Select Branch"
+            type="Branch"
+            onSelect={(selectedId) => onBranchChange(selectedId)}
+            iconProperties={{ Icon: AltRouteIcon }}
+            alertCondition={alertCondition}
+          />
+        );
+
+      case "Term":
+        return (
+          <ThemedModalMenu<AcademicLevel>
+            data={config.data}
+            item={config.item}
+            setItem={config.onSelect}
+            getId={(item) => item.id}
+            getLabel={(item) => item.name}
+            title="Select Term"
+            type="Term"
+            onSelect={(selectedId) => onAcademicLevelChange(selectedId)}
+            iconProperties={{ Icon: DateRangeIcon }}
+            alertCondition={alertCondition}
+          />
+        );
     }
-  }, [refresh.tick]);
-
-  useEffect(() => {
-    if (currentSubjectsList.length > 0)
-      setSubjectData((prev) => {
-        if (prev.length === currentSubjectsList.length) return prev;
-
-        return currentSubjectsList.map((_, index) => {
-          const splitCode =
-            currentSubjectsList[index]?.split(":")[0]?.trim() || "";
-          return (
-            prev[index] || {
-              subjectCode: splitCode,
-              teacherId: "",
-              teacherName: "",
-              duration: "",
-              startTime: "",
-            }
-          );
-        });
-      });
-  }, [degreeData]);
+  }
 
   return (
-    <ThemedView style={styles.rootContainer}>
-      <ThemedStatusBar />
-
-      <FlatList
-        data={getCurriculumData({
-          ...degreeData,
-          level: "subjects",
-        })}
-        keyExtractor={(item) => item.toString()}
-        onRefresh={onRefresh}
-        refreshing={isRefreshing}
-        renderItem={({ item, index }) => (
-          <SubjectCard
-            subjectName={item}
-            initialData={subjectData[index]}
-            setData={(data: SubjectData) => {
-              setSubjectData((prevArray) => {
-                const newArray = [...prevArray];
-                newArray[index] = { ...newArray[index], ...data };
-                return newArray;
-              });
-            }}
-          />
-        )}
-        ListEmptyComponent={() =>
-          degreeData.subjects?.length === 0 && (
-            <ErrorCard
-              containerStyle={{ margin: 8 }}
-              errorText={"No data found"}
-            />
-          )
-        }
-        ListFooterComponent={() =>
-          getCurriculumData({ ...degreeData, level: "subjects" }).length !==
-            0 && <RoutinesFooterComponent />
-        }
-        showsVerticalScrollIndicator={false}
-        ListFooterComponentStyle={{
-          marginBottom: 64,
-          padding: 4,
+    <ThemedView style={{ backgroundColor: "transparent" }}>
+      <ThemedText
+        style={{
+          fontSize: 24,
+          fontWeight: "bold",
+          textAlign: "center",
+          padding: 8,
         }}
-        ListHeaderComponent={() => (
-          <ThemedView>
-            <ThemedText style={[styles.headingText, { color: colors.primary }]}>
-              Routines Dashboard
-            </ThemedText>
-            {degreeData?.subjects && (
-              <InfoCard
-                containerStyle={{ margin: 8 }}
-                infoText={
-                  "Assign the start times, teachers, and duration for each subject."
+      >
+        Admin Dashboard
+      </ThemedText>
+      <ActionableHeaderCard
+        title="Select Program Details"
+        IconBeforeText={DegreeIcon}
+        iconProperties={{
+          Icon: isExpanded ? ArrowUpIcon : ArrowDownIcon,
+          height: 32,
+          width: 32,
+          onPress: () => setIsExpanded(!isExpanded),
+        }}
+        isDataLoading={false}
+        summaryText={summaryText}
+      >
+        {isExpanded && <Spacer style={{ margin: 8 }} lineVisible />}
+        {isExpanded && (
+          <>
+            {activeMenuSteps.map((stepName) => {
+              const context = getProgramContextById(selectedProgram?.id);
+
+              if (!context) return null;
+              if (stepName === "Branch" && !hasBranches) return null;
+
+              let isMissingPrerequisite: boolean = false;
+              let alertTitle: string = "Program";
+
+              if (stepName === "Branch")
+                isMissingPrerequisite = !selectedProgram;
+              else if (stepName === "Term")
+                isMissingPrerequisite = selectedProgram?.hasBranches
+                  ? !selectedBranch
+                  : !selectedProgram;
+              else if (stepName === "Batch and Section")
+                isMissingPrerequisite = !selectedAcademicLevel;
+
+              if (stepName === "Term" && hasBranches) alertTitle = "Branch";
+              else if (stepName === "Batch and Section") alertTitle = "Term";
+
+              const menuConfig: CurriculumMenuConfig | null = (() => {
+                switch (stepName) {
+                  case "Program":
+                    return {
+                      step: "Program",
+                      data: programs,
+                      item: selectedProgram ?? null,
+                      onSelect: (program) => onProgramChange(program.id),
+                    };
+
+                  case "Branch":
+                    if (!selectedProgram?.hasBranches) return null;
+
+                    return {
+                      step: "Branch",
+                      data: selectedProgram.branches,
+                      item: selectedBranch ?? null,
+                      onSelect: (branch) => onBranchChange(branch.id),
+                    };
+
+                  case "Term":
+                    return {
+                      step: "Term",
+                      data: levels ?? [],
+                      item: selectedAcademicLevel ?? null,
+                      onSelect: (level) => onAcademicLevelChange(level.id),
+                    };
+
+                  case "Batch and Section":
+                    return null;
                 }
-              />
-            )}
-            <ThemedView>
-              {menuSteps.map((type) => {
-                const config = criteriaMap[type];
-                const dataKey = config.listKey;
+              })();
 
-                let prereqKey = config.requiredKey;
-                let alertLabel = config.label;
-                let itemLabel = addSpacesAfterUppercase(type);
+              if (!menuConfig) return null;
 
-                if (type === "Term" && hasBranches) {
-                  prereqKey = "branch";
-                  alertLabel = "Branch";
-                }
-
-                const isMissingPrerequisite = prereqKey
-                  ? !degreeData[prereqKey]
-                  : false;
-
-                return (
-                  <ThemedModalMenu
-                    key={type}
-                    item={
-                      type === "Batch"
-                        ? additionalDegreeData.batch
-                        : type === "Section"
-                          ? additionalDegreeData.section
-                          : (degreeData[dataKey] as string)
-                    }
-                    data={getCurriculumData({
-                      ...degreeData,
-                      level: type === "Batch" ? "faculty" : (dataKey as any),
-                    })}
-                    title={`Select ${itemLabel}`}
-                    type={itemLabel}
-                    noFill={
-                      type === "Batch"
-                        ? !additionalDegreeData.batch
-                        : type === "Section"
-                          ? !additionalDegreeData.section
-                          : !degreeData[dataKey]
-                    }
-                    setItem={(text) => {
-                      if (type === "Batch")
-                        setAdditionalDegreeData((prev) => ({
-                          ...prev,
-                          batch: text,
-                        }));
-                      if (type === "Section")
-                        setAdditionalDegreeData((prev) => ({
-                          ...prev,
-                          section: text,
-                        }));
-                      else
-                        setDegreeData((prev) => ({
-                          ...prev,
-                          level: dataKey as any,
-                          [dataKey as any]: text,
-                        }));
-
-                      setRefresh((prev) => ({
-                        tick: prev.tick + 1,
-                        type: dataKey as any,
-                      }));
-                    }}
-                    alertCondition={{
-                      visible: isMissingPrerequisite,
-                      alertTitle: `${alertLabel.trim()} not selected`,
-                      alertDescription: `Please select ${alertLabel.toLowerCase()} first!`,
-                    }}
-                  />
-                );
-              })}
-
-              {getCurriculumData({ ...degreeData, level: "subjects" })
-                .length !== 0 && (
-                <View>
-                  <InfoCard
-                    containerStyle={{ margin: 8 }}
-                    infoText={
-                      "Assign the start times, teachers, and duration for each subject."
-                    }
-                  />
-                  <ThemedView
-                    style={{
-                      borderWidth: 1,
-                      borderColor: colors.accent,
-                      borderRadius: 8,
-                      margin: 8,
-                      padding: 8,
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <ThemedText
-                        style={{
-                          fontSize: 16,
-                          padding: 4,
-                          color: colors.primary,
-                        }}
-                      >
-                        Choose constant time for all subjects:
-                      </ThemedText>
-
-                      <ArrowDownIcon
-                        onPress={() => setShowDropDown(!showDropDown)}
-                        fill={colors.primary}
-                        transform={[
-                          { rotate: showDropDown ? "180deg" : "0deg" },
-                        ]}
-                        height={32}
-                        width={32}
-                      />
-                    </View>
-                    {showDropDown && (
-                      <ChooseTimeComponent
-                        timeValues={{
-                          startTime: dynamicTimes.startTime,
-                          endTime: dynamicTimes.endTime,
-                          maxDuration: dynamicTimes.maxDuration,
-                        }}
-                        backgroundColor={colors.base100}
-                        setTimeValues={setDynamicTimes}
-                        date={date}
-                        setDate={setDate}
-                      />
-                    )}
-                  </ThemedView>
-                </View>
-              )}
-            </ThemedView>
-          </ThemedView>
+              return (
+                <CurriculumStepMenu
+                  key={stepName}
+                  config={menuConfig}
+                  addSearchBar={stepName === "Program"}
+                  alertCondition={{
+                    visible: isMissingPrerequisite,
+                    alertTitle: `Select ${alertTitle}`,
+                    alertDescription: `Please select "${alertTitle}" before selecting "${stepName}".`,
+                  }}
+                />
+              );
+            })}
+          </>
         )}
+      </ActionableHeaderCard>
+      <DynamicTagSelect
+        Icon={RoutinesIcon}
+        data={settings.routineTimeOptions}
+        getLabel={(item) => item.label}
+        showAddButton
+        title="Select Routine"
+        // onSelect={(index: number) => onDynamicRoutineSelect(index)}
       />
     </ThemedView>
   );
 };
 
-const styles = StyleSheet.create({
-  rootContainer: {
-    paddingTop: StatusBar.currentHeight,
-    height: "100%",
-  },
-  headingText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  labelText: {
-    paddingHorizontal: 8,
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  pressableText: {
-    fontSize: 16,
-    fontWeight: "700",
-    textAlign: "center",
-  },
-});
-
-export default routines;
+export default RoutinesHeaderComponent;
