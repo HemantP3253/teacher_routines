@@ -65,7 +65,8 @@ export const UserSearchProvider = ({ children }: { children: ReactNode }) => {
       const { data, error } = await supabase
         .from("profile_institutes")
         .select(`*, profile:profiles!profile_institutes_profile_id_fkey(*)`)
-        .eq("institute_id", currentInstitute?.id);
+        .eq("institute_id", currentInstitute?.id)
+        .order("updated_at", { ascending: true });
 
       if (error) throw error;
       setAllUsers(data);
