@@ -8,22 +8,23 @@ import {
   UsernameIcon,
 } from "@/assets/icons";
 import { CustomModal, Spacer } from "@/components/common";
+import TagChip from "@/components/common/DynamicTagSelect/TagChip";
 import {
   ThemedCheckboxMenu,
-  ThemedModalMenu,
   ThemedPressable,
   ThemedStatusBar,
   ThemedText,
   ThemedTextInput,
-  ThemedView,
+  ThemedView
 } from "@/components/themed";
 import { useUserInfo } from "@/contexts/UserInfoContext";
 import { useSignUpForm } from "@/hooks/useSignUpForm";
+import { genderType } from "@/interfaces/interfaces";
 import { supabase } from "@/services/supabase";
 import { useAppDatePicker } from "@/utils/pickerUtils";
 import { pad } from "@/utils/stringUtils";
 import { isSignUpFormValid } from "@/utils/validationUtils";
-import React, { useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -39,7 +40,7 @@ import { useUnistyles } from "react-native-unistyles";
 
 // Sign up page code
 const signUp = () => {
-  const genderData = ["Male", "Female", "Others"];
+  const genderData: genderType[] = ["Male", "Female", "Others"];
   const {
     signUpData,
     setSignUpData,
@@ -173,19 +174,43 @@ const signUp = () => {
 
           <Spacer size={8} />
 
-          <ThemedModalMenu
-            title={"Select Gender"}
+          <View style={{ flexDirection: "row" }}>
+            <GenderIcon fill={colors.text} height={24} width={24} />
+            <ThemedText type="text">Select Gender</ThemedText>
+          </View>
+
+          <View style={{ flexDirection: "row", flex: 1 }}>
+            {genderData.map((item, index) => (
+              <TagChip
+                label={item}
+                key={index}
+                selected={signUpData.gender === item}
+                onPress={() =>
+                  setSignUpData((prev) => ({ ...prev, gender: item }))
+                }
+                style={{ flex: 1 }}
+              />
+            ))}
+          </View>
+          {/* <ThemedModalMenu
+            title="Select Gender"
             errorText={signUpError.gender}
-            setItem={(gender) => setSignUpData((prev) => ({ ...prev, gender }))}
             data={genderData}
+            selectedItem={signUpData.gender}
+            onItemSelect={(gender) =>
+              setSignUpData((prev) => ({ ...prev, gender: gender }))
+            }
+            getId={(item) => item.toString()}
+            getLabel={(item) => item.toString()}
             type="Gender"
-            Icon={GenderIcon}
+            iconProperties={{
+              Icon: GenderIcon,
+            }}
             noFill
             onPressOut={() => {
               setSignUpError((prev) => ({ ...prev, gender: "" }));
             }}
-            item={signUpData.gender}
-          />
+          /> */}
 
           <Spacer size={8} />
 
@@ -230,7 +255,7 @@ const signUp = () => {
             secureTextEntry={true}
             title="Password"
             maxLength={128}
-            infoText={`Password must have at least one uppercase letter\nPassword must have at least one symbol character\nPassword must have at least one number\nPassword must not contain spaces`}
+            infoText={`Password must contain:\n● At least one uppercase letter\n● At least one symbol character\n● At least one number\n● Must not contain spaces`}
           />
 
           <ThemedTextInput
