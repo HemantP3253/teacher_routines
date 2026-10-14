@@ -1,9 +1,13 @@
-import { BlurView } from "expo-blur";
+import { BlurView, BlurViewProps } from "expo-blur";
 import { ReactNode } from "react";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-const FloatingTabBar = ({ children }: { children?: ReactNode }) => {
+interface FloatingTabBarProps extends BlurViewProps {
+  children?: ReactNode;
+}
+
+const FloatingTabBar = ({ children, ...props }: FloatingTabBarProps) => {
   const { rt } = useUnistyles();
 
   return (
@@ -13,6 +17,7 @@ const FloatingTabBar = ({ children }: { children?: ReactNode }) => {
         tint={rt.themeName === "light" ? "light" : "dark"}
         style={styles.tabBar}
         blurMethod="dimezisBlurView"
+        {...props}
       >
         {children}
       </BlurView>
