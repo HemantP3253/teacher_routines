@@ -46,13 +46,14 @@ const Home = () => {
           onPress: () => router.push("/(misc)/approveUsers"),
         }}
         isDataLoading={isLoading}
+        showBottomBorder
       >
         {users.pending.length === 0 ? (
           <ThemedText
+            type="text"
             style={{
-              paddingHorizontal: 8,
-              fontWeight: "700",
-              color: colors.warning,
+              paddingHorizontal: 4,
+              fontWeight: "500",
               fontSize: 16,
             }}
           >
@@ -60,11 +61,6 @@ const Home = () => {
           </ThemedText>
         ) : (
           users.pending
-            ?.sort((a, b) => {
-              if (a < b) return 1;
-              if (a > b) return -1;
-              return 0;
-            })
             .slice(0, 3)
             .map((user) => (
               <UserActionCard
