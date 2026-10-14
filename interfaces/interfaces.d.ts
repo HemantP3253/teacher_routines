@@ -1,7 +1,8 @@
 import { LightTheme } from "@/assets/theme/Themes";
+import { AcademicLevel, CurriculumSubject, UniversityBranch, UniversityProgram } from "@/types/academic";
 import { Tables } from "@/types/database";
 import { LinearGradientProps } from "expo-linear-gradient";
-import React, { FC, ReactNode, SetStateAction, SVGProps } from "react";
+import React, { FC, ReactNode, RefObject, SetStateAction, SVGProps } from "react";
 import {
   GestureResponderEvent,
   ModalProps,
@@ -11,11 +12,14 @@ import {
   TextInput,
   TextInputProps,
   TextProps,
+  View,
   ViewProps,
   ViewStyle
 } from "react-native";
 import { SvgProps } from "react-native-svg";
 import { UnistylesThemes } from "react-native-unistyles";
+
+type sortType = "ascending" | "descending"
 
 type ThemeColors = UnistylesThemes[keyof UnistylesThemes]['colors'];
 
@@ -40,7 +44,8 @@ type MembershipStatus = "approved" | "rejected" | "pending"
 interface ThemedViewProps extends ViewProps {}
 
 interface ThemedLinearGradientProps extends Omit< LinearGradientProps, "colors"> {
-  type?: "background" | "surface" | "surfaceElevated" | "primary" | "secondary" | "accent"
+  overrideColors?: [ColorValue, ColorValue, ...ColorValue[]];
+type?: "background" | "surface" | "surfaceElevated" | "primary" | "secondary" | "accent"
 }
 
 interface ThemedPressableProps extends PressableProps extends ViewProps {
@@ -168,25 +173,34 @@ interface LogInErrorProps {
   password: string;
 }
 
-interface ThemedModalMenuProps extends PressableProps extends ViewProps {
-  data: string[];
+interface ThemedModalMenuProps<T> extends PressableProps extends ViewProps {
+  data: readonly T[];
+  sortType?: sortType;
+  selectedItem: T | null;
+  onItemSelect?: (selectedId: any) => void;
+
   title: string;
-  addSearchBar?: boolean;
-  error?: boolean;
-  setItem: React.Dispatch<React.SetStateAction<any>>;
   type?: string;
-  setModalVisibility?: React.Dispatch<React.SetStateAction<boolean>>;
-  item?: string;
-  cancelable?;
-  noFill?;
-  Icon?: FC<CustomSvgProps>;
+
+  getId: (item: T) => string;
+  getLabel: (item: T) => string;
+  getSublabel?: (item: T) => string;
+  noFill?: boolean;
+  addSearchBar?: boolean;
   errorText?: string;
+
   alertCondition?: {
     visible: boolean;
     alertTitle: string;
     alertDescription?: string;
   };
+
+  cancelable?: boolean;
+  addSearchBar?: boolean;
+  pressableStyle?: StyleProp<ViewStyle>;
+
   iconProperties?: {
+    Icon?: FC<CustomSvgProps>;
     iconFill?;
     showIconOnly?;
     iconFillColor?: color;
@@ -194,8 +208,6 @@ interface ThemedModalMenuProps extends PressableProps extends ViewProps {
     width?: number;
     size?: number;
   }
-  hideItemType?;
-  pressableStyle?: StyleProp<ViewStyle>
 }
 
 interface ThemedModalInputProps extends PressableProps extends ViewProps {
@@ -277,6 +289,7 @@ interface CustomModalProps extends ModalProps {
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   children?: ReactNode;
   blurBackground?: boolean;
+  blurTarget?: RefObject<View | null>
 }
 
 interface ThemedAlertWindowProps {
@@ -377,12 +390,12 @@ interface InstituteData {
 interface ThemedRadioButtonMenuProps<T> {
   title?: string;
   data: T[];
-  initialSelection?: string;
-  onSelect?: (selectedId: any) => void;
+  selectedItem?: T;
+  onItemSelect?: (selectedId: any) => void;
   getId: (item: T) => string;
   getLabel: (item: T) => string;
   getSubLabel?: (item: T) => string | undefined;
-  sortList?: boolean;
+  sortType?: sortType;
   alwaysShowSubLabel?: boolean;
 }
 
@@ -398,27 +411,20 @@ interface ThemedCheckboxProps {
 interface ThemedCheckboxMenuProps<T> {
   title?: string;
   data: T[];
-  initialSelection?: string[];
+  initialSelection?: T[];
   minSelection?: number;
-  onSubmit?: (selected: string[]) => void;
+  onSubmit?: (selected: T[]) => void;
   getId: (item: T) => string;
   getLabel: (item: T) => string;
   getSubLabel?: (item: T) => string | undefined;
   addSearchBar?: boolean;
+  sortType?: sortType;
 }
 
 interface AssignTeacherModalProps {
   visible: boolean;
   onClose: () => void;
   onSelectTeacher: (teacherId: string, teacherName: string) => void;
-}
-
-interface RoutineData {
-  degreeName: string;
-  branch?: string;
-  term: string;
-  batchAndSection: string;
-  dayOfWeek: string;
 }
 
 interface RoutineDataStructure {
@@ -463,11 +469,24 @@ interface QueryContext {
   level: level;
 }
 
+interface RoutineData {
+  program: UniversityProgram | undefined;
+  branch?: UniversityBranch | undefined;
+  academicLevel: AcademicLevel | undefined;
+  batchAndSectionId?: string | undefined;
+}
+
 interface RoutinesHeaderProps {
-  data: RoutineData;
-  setData: React.Dispatch<React.SetStateAction<RoutineData>>;
-  currentQueryContext: QueryContext;
-  onDynamicRoutineSelect: (id: number) => void;
+  selectedProgram: UniversityProgram | undefined;
+  selectedBranch: UniversityBranch | undefined;
+  selectedAcademicLevel: AcademicLevel| undefined;
+  selectedBatchAndSectionId: string | undefined;
+
+  onProgramChange: (program: UniversityProgram) => void;
+  onBranchChange: (branch: UniversityBranch) => void;
+  onAcademicLevelChange: (academicLevel: AcademicLevel) => void;
+  onBatchAndSectionChange: (batchAndSectionId: string) => void;
+  onDynamicRoutineSelect: (index: number) => void;
 }
 
 interface TagChipProps {
@@ -477,6 +496,8 @@ interface TagChipProps {
   onPress?: ((event: GestureResponderEvent) => void) | null | undefined;
   fill?: boolean;
   dottedBorder?: boolean;
+  style?: StyleProp<ViewStyle>;
+  contentStyle?: StyleProp<ViewStyle>;
 }
 
 interface DynamicTagSelectProps<T> {
@@ -503,11 +524,15 @@ interface DynamicRoutineDetails {
 }
 
 interface SubjectCardProps {
-  subjectName: string;
-  startTime: string;
-  duration: string;
-  teacherId: string;
-  teacherName: string;
+  subject: CurriculumSubject;
+  durationInfo?: {
+    startTime: string;
+    duration: string;
+  }
+  teacherInfo?: {
+    teacherId: string;
+    teacherName: string;
+  }
   onTeacherChange: (teacherId: string, teacherName: string) => void;
   errorInfo?: {
     title: string;
