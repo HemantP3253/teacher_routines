@@ -63,6 +63,7 @@ const styles = StyleSheet.create(({ colors, radius, spacing }) => ({
     borderWidth: 1,
     borderRadius: radius.md,
     margin: spacing.sm,
+    alignItems: "stretch",
     padding: spacing.md,
     borderColor: colors.border,
   },
