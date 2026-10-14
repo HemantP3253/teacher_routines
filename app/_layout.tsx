@@ -4,6 +4,7 @@ import "../styles/unistyles";
 void null;
 
 import { AppProvider } from "@/contexts/AppContext";
+import { BlurProvider } from "@/contexts/BlurContext";
 import {
   InstituteInfoProvider,
   useInstituteInfo,
@@ -102,7 +103,9 @@ const RootLayout = () => {
     <UserInfoProvider>
       <InstituteInfoProvider>
         <AppProvider>
-          <AppNavigationLayout />
+          <BlurProvider>
+            <AppNavigationLayout />
+          </BlurProvider>
         </AppProvider>
       </InstituteInfoProvider>
     </UserInfoProvider>
