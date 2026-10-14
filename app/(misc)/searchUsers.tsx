@@ -7,6 +7,7 @@ import {
   ThemedTextInput,
 } from "@/components/themed";
 import { useUserSearch } from "@/contexts/UserSearchContext";
+import { SearchUser } from "@/interfaces/interfaces";
 import { useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
 import {
@@ -62,21 +63,22 @@ const searchUsers = () => {
   const filteredUsers = useMemo(() => {
     const query = searchParams.searchText.trim().toLowerCase();
 
-    if (!query || query.length < 3) return [];
+    if (query.length < 3 || !userData?.length) return [];
 
-    return userData?.filter((user) => {
+    const getSearchValue = (user: SearchUser) => {
+      switch (searchParams.searchType) {
+        case "Name":
+          return user.profile.full_name;
+        case "Username":
+          return user.profile.username;
+        case "Phone":
+          return user.profile.phone;
+      }
+    };
+    return userData.filter((user) => {
       if (!user.profile_id) return false;
 
-      if (searchParams.searchType === "Name") {
-        return user.profile.full_name.toLowerCase().includes(query);
-      }
-      if (searchParams.searchType === "Username") {
-        return user.profile.username.toLowerCase().includes(query);
-      }
-      if (searchParams.searchType === "Phone") {
-        return user.profile.phone.toLowerCase().includes(query);
-      }
-      return false;
+      return getSearchValue(user)?.toLowerCase().includes(query) ?? false;
     });
   }, [searchParams.searchText, searchParams.searchType, userData]);
 
@@ -120,6 +122,8 @@ const searchUsers = () => {
           <View style={{ flexDirection: "row", marginHorizontal: 8, gap: 6 }}>
             {(["Name", "Username", "Phone"] as searchType[]).map((type) => (
               <TagChip
+                style={{ flex: 1 }}
+                contentStyle={{ width: "100%" }}
                 key={type}
                 label={type}
                 fill={searchParams?.searchType === type}
