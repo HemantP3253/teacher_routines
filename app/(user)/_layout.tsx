@@ -1,26 +1,27 @@
-import {
-  ClassIcon,
-  HomeIcon,
-  UsernameIcon
-} from "@/assets/icons";
+import { ClassIcon, HomeIcon, UsernameIcon } from "@/assets/icons";
 import { FloatingTabBar, TabButton } from "@/components/common";
+import { useBlurContext } from "@/contexts/BlurContext";
+import { BlurTargetView } from "expo-blur";
 import { Tabs, usePathname, useRouter } from "expo-router";
 
 const _Layout = () => {
+  const { targetRef } = useBlurContext();
   const pathname = usePathname();
   const router = useRouter();
 
   return (
     <>
-      <Tabs
-        screenOptions={{
-          tabBarShowLabel: false,
-          headerShown: false,
-          tabBarStyle: { display: "none" },
-        }}
-      />
+      <BlurTargetView ref={targetRef}>
+        <Tabs
+          screenOptions={{
+            tabBarShowLabel: false,
+            headerShown: false,
+            tabBarStyle: { display: "none" },
+          }}
+        />
+      </BlurTargetView>
 
-      <FloatingTabBar>
+      <FloatingTabBar blurTarget={targetRef}>
         <TabButton
           focused={pathname === "/classes"}
           title="Classes"
