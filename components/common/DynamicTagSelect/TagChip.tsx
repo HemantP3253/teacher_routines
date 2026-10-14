@@ -7,6 +7,7 @@ const TagChip = ({
   label = "Item",
   selected = false,
   onPress,
+  contentStyle,
   fill = true,
   Icon,
   dottedBorder,
@@ -28,7 +29,7 @@ const TagChip = ({
       ]}
     >
       <ThemedLinearGradient
-        style={[styles.chipBase]}
+        style={[styles.chipBase, contentStyle]}
         type={selected ? "primary" : "surfaceElevated"}
         end={{ x: 0, y: 1 }}
       >
@@ -72,7 +73,6 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
     alignSelf: "flex-start",
     height: "100%",
-    width: "100%",
     alignItems: "center",
   },
   iconWrapper: {
