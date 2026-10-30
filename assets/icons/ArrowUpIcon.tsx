@@ -1,7 +1,13 @@
-import * as React from "react";
-import Svg, { Path, SvgProps } from "react-native-svg";
-const ArrowUpIcon = (props: SvgProps) => (
-  <Svg width={24} height={24} viewBox="0 -960 960 960" {...props}>
+import { CustomSvgProps } from "@/types/common";
+import Svg, { Path } from "react-native-svg";
+
+const ArrowUpIcon = (props: CustomSvgProps) => (
+  <Svg
+    width={props.size ?? props.width ?? 24}
+    height={props.size ?? props.height ?? 24}
+    viewBox="0 -960 960 960"
+    {...props}
+  >
     <Path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z" />
   </Svg>
 );

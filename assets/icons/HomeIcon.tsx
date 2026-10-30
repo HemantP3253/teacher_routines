@@ -1,8 +1,8 @@
-import { CustomSvgProps } from "@/interfaces/interfaces";
+import { CustomSvgProps } from "@/types/common";
 import Svg, { Path } from "react-native-svg";
 
 const HomeIcon = (props: CustomSvgProps) => (
-  <Svg width={24} height={24} viewBox="0 -960 960 960" {...props}>
+  <Svg width={props.size ?? props.width ?? 24} height={props.size ?? props.height ?? 24} viewBox="0 -960 960 960" {...props}>
     {props.fillItem ? (
       <Path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z" />
     ) : (

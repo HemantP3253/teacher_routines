@@ -1,7 +1,14 @@
-import * as React from "react";
-import Svg, { Path, SvgProps } from "react-native-svg";
-const ExclamationIcon = (props: SvgProps) => (
-  <Svg width={24} height={24} fill="#FFF" viewBox="0 -960 960 960" {...props}>
+import { CustomSvgProps } from "@/types/common";
+import Svg, { Path } from "react-native-svg";
+
+const ExclamationIcon = (props: CustomSvgProps) => (
+  <Svg
+    width={props.size ?? props.width ?? 24}
+    height={props.size ?? props.height ?? 24}
+    fill="#FFF"
+    viewBox="0 -960 960 960"
+    {...props}
+  >
     <Path d="M440-400v-360h80v360h-80Zm0 200v-80h80v80h-80Z" />
   </Svg>
 );
