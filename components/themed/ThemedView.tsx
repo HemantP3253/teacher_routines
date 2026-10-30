@@ -1,8 +1,7 @@
-import { ThemedViewProps } from "@/interfaces/interfaces";
-import { View } from "react-native";
+import { View, ViewProps } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
-const ThemedView = ({ style, ...otherProps }: ThemedViewProps) => {
+const ThemedView = ({ style, ...otherProps }: ViewProps) => {
   const { theme } = useUnistyles();
 
   const colors = theme.colors;
