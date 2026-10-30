@@ -1,8 +1,7 @@
-import { ThemedStatusBarProps } from "@/interfaces/interfaces";
-import { StatusBar } from "react-native";
+import { StatusBar, StatusBarProps } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
-const ThemedStatusBar = ({ ...props }: ThemedStatusBarProps) => {
+const ThemedStatusBar = ({ ...props }: StatusBarProps) => {
   const { theme, rt } = useUnistyles();
   return (
     <StatusBar
