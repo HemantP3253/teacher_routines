@@ -9,7 +9,7 @@ import { useUnistyles } from "react-native-unistyles";
 
 type UserStatus = "Pending" | "Approved" | "Rejected" | "All";
 
-const approveUsers = () => {
+const ApproveUsers = () => {
   const { theme } = useUnistyles();
   const { users, isLoading, updateMembershipStatus } = useUserSearch();
   const colors = theme.colors;
@@ -111,4 +111,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default approveUsers;
+export default ApproveUsers;
