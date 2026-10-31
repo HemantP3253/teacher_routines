@@ -7,7 +7,7 @@ import {
   ThemedTextInput,
 } from "@/components/themed";
 import { useUserSearch } from "@/contexts/UserSearchContext";
-import { SearchUser } from "@/interfaces/interfaces";
+import { InstituteMember } from "@/types/common";
 import { useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
 import {
@@ -16,14 +16,13 @@ import {
   Platform,
   ScrollView,
   StatusBar,
-  StyleSheet,
   View,
 } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 type searchType = "Name" | "Username" | "Phone";
 
-const searchUsers = () => {
+const SearchUsers = () => {
   const { title } = useLocalSearchParams();
   const { users, isLoading, updateMembershipStatus } = useUserSearch();
   const { colors } = useUnistyles().theme;
@@ -65,7 +64,7 @@ const searchUsers = () => {
 
     if (query.length < 3 || !userData?.length) return [];
 
-    const getSearchValue = (user: SearchUser) => {
+    const getSearchValue = (user: InstituteMember) => {
       switch (searchParams.searchType) {
         case "Name":
           return user.profile.full_name;
@@ -83,22 +82,13 @@ const searchUsers = () => {
   }, [searchParams.searchText, searchParams.searchType, userData]);
 
   return (
-    <ThemedLinearGradient
-      style={[{ paddingTop: StatusBar.currentHeight }, StyleSheet.absoluteFill]}
-    >
+    <ThemedLinearGradient style={styles.rootContainer}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView>
-          <ThemedText
-            type="text"
-            style={{
-              fontSize: 24,
-              fontWeight: "bold",
-              textAlign: "center",
-            }}
-          >
+          <ThemedText type="text" style={styles.headingText}>
             {title ? `Search ${title} Users` : "Search Users"}
           </ThemedText>
           <ThemedTextInput
@@ -115,11 +105,11 @@ const searchUsers = () => {
             onSubmitEditing={() => handleSearchSubmit()}
           />
 
-          <ThemedText style={{ padding: 8, fontWeight: "bold", fontSize: 16 }}>
+          <ThemedText style={styles.searchByText} type="text">
             Search By:
           </ThemedText>
 
-          <View style={{ flexDirection: "row", marginHorizontal: 8, gap: 6 }}>
+          <View style={styles.searchByContainer}>
             {(["Name", "Username", "Phone"] as searchType[]).map((type) => (
               <TagChip
                 style={{ flex: 1 }}
@@ -143,11 +133,11 @@ const searchUsers = () => {
               />
             ) : searchParams.searchText.trim().length >= 3 &&
               filteredUsers?.length === 0 ? (
-              <ThemedText style={{ color: colors.text, padding: 8 }}>
-                No results found for "{searchParams.searchText}"
+              <ThemedText style={styles.searchHintText} type="text">
+                {`No results found for "${searchParams.searchText}"`}
               </ThemedText>
             ) : searchParams.searchText.trim().length < 3 ? (
-              <ThemedText style={{ color: colors.text, padding: 8 }}>
+              <ThemedText style={styles.searchHintText} type="text">
                 Type at least 3 characters to search...
               </ThemedText>
             ) : (
@@ -169,7 +159,19 @@ const searchUsers = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(({ spacing }) => ({
+  rootContainer: {
+    paddingTop: StatusBar.currentHeight,
+    ...StyleSheet.absoluteFill,
+  },
+  headingText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  searchByText: { padding: spacing.sm, fontWeight: "bold", fontSize: 16 },
+  searchByContainer: { flexDirection: "row", marginHorizontal: 8, gap: 6 },
+  searchHintText: { padding: spacing.sm },
   pressable: {
     flex: 1,
     alignItems: "center",
@@ -178,6 +180,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
-});
+}));
 
-export default searchUsers;
+export default SearchUsers;
