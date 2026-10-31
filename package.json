@@ -39,10 +39,10 @@
     "expo-linear-gradient": "~57.0.2",
     "expo-linking": "~57.0.13",
     "expo-local-authentication": "~57.0.3",
-    "expo-notifications": "~57.0.23",
+    "expo-notifications": "~57.0.24",
     "expo-print": "~57.0.2",
     "expo-router": "~57.0.27",
-    "expo-sharing": "~57.0.23",
+    "expo-sharing": "~57.0.24",
     "expo-splash-screen": "~57.0.10",
     "expo-status-bar": "~57.0.1",
     "expo-symbols": "~57.0.3",
@@ -59,7 +59,7 @@
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
     "react-native-svg": "15.15.4",
-    "react-native-unistyles": "3.2.5",
+    "react-native-unistyles": "^3.7.0",
     "react-native-web": "^0.21.0",
     "react-native-worklets": "0.10.1"
   },
@@ -78,5 +78,12 @@
   "allowScripts": {
     "esbuild@0.28.2": true,
     "unrs-resolver@1.12.2": true
+  },
+  "overrides": {
+    "@babel/runtime": "^7.26.10",
+    "decode-uri-component": "^0.5.1",
+    "glob": "^14.0.2",
+    "minimatch": "^11.0.1",
+    "zod": "^4.6.6"
   }
 }
