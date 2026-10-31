@@ -1,8 +1,6 @@
-import { Tables } from "@/types/database";
+import { InstituteData } from "@/types/common";
 import { getCurrentUserId } from "./authService";
 import { supabase } from "./supabase";
-
-type InstituteData = Tables<"institutes">;
 
 export const fetchAllInstitutes = async (): Promise<InstituteData[]> => {
   try {
