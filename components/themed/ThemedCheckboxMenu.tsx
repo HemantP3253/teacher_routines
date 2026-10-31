@@ -4,9 +4,9 @@ import {
   SelectAllIcon,
   UncheckedCheckBoxIcon,
 } from "@/assets/icons";
-import { ThemedCheckboxMenuProps } from "@/interfaces/interfaces";
+import { SortType } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import Spacer from "../common/Spacer";
@@ -14,6 +14,19 @@ import ThemedCheckbox from "./ThemedCheckbox";
 import ThemedPressable from "./ThemedPressable";
 import ThemedText from "./ThemedText";
 import ThemedView from "./ThemedView";
+
+interface ThemedCheckboxMenuProps<T> {
+  title?: string;
+  data: T[];
+  initialSelection?: T[];
+  minSelection?: number;
+  onSubmit?: (selected: T[]) => void;
+  getId: (item: T) => string;
+  getLabel: (item: T) => string;
+  getSubLabel?: (item: T) => string | undefined;
+  addSearchBar?: boolean;
+  sortType?: SortType;
+}
 
 const ThemedCheckboxMenu = <T,>({
   data,
@@ -32,12 +45,14 @@ const ThemedCheckboxMenu = <T,>({
     initialSelection ?? [],
   );
 
-  useEffect(() => {
-    const isDifferent =
-      initialSelection?.length !== selectedItems.length ||
-      !initialSelection.every((item) => selectedItems.includes(item));
-    if (isDifferent && initialSelection) setSelectedItems(initialSelection);
-  }, [initialSelection]);
+  const [previousInitialSelection, setPreviousInitialSelection] = useState<
+    T[] | undefined
+  >(initialSelection);
+
+  if (initialSelection !== previousInitialSelection) {
+    setPreviousInitialSelection(initialSelection);
+    setSelectedItems(initialSelection ?? []);
+  }
 
   const sortedData = useMemo(() => {
     return sortByLabel(data, getLabel, sortType);
@@ -61,13 +76,13 @@ const ThemedCheckboxMenu = <T,>({
     setSelectedItems((prev) =>
       prev.length === 0 ? sortedData.map((item) => item) : [],
     );
-  }, [sortedData, getId]);
+  }, [sortedData]);
 
   const handleInverseSelection = useCallback(() => {
     setSelectedItems((prev) =>
       sortedData.filter((item) => !prev.includes(item)).map((item) => item),
     );
-  }, [sortedData, getId]);
+  }, [sortedData]);
 
   const getSelectedText = () => {
     const postfix = "selected";
