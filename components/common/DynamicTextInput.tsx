@@ -3,7 +3,7 @@ import {
   CalendarInfoIcon,
   ScheduleIcon,
 } from "@/assets/icons";
-import { DynamicTextInputProps, formatType } from "@/interfaces/interfaces";
+import { FormatType, InputField } from "@/types/common";
 import {
   formatDateInput,
   formatDateTimeInput,
@@ -21,7 +21,7 @@ import {
 } from "@/utils/pickerUtils";
 import { pad } from "@/utils/stringUtils";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import React, { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import {
@@ -30,6 +30,17 @@ import {
   ThemedText,
   ThemedTextInput,
 } from "../themed";
+
+interface DynamicTextInputProps {
+  inputFields: InputField[];
+  extraInputs?: {
+    inputFields: InputField[];
+    captionText: string;
+  };
+  optionalInputFields?: InputField[];
+  onSubmit?: (inputs: string[]) => void;
+  defaultValues?: string[];
+}
 
 const DynamicTextInput = ({
   inputFields,
@@ -42,6 +53,10 @@ const DynamicTextInput = ({
   const [textValues, setTextValues] = useState<string[]>(() => {
     return defaultValues || Array(inputFields.length).fill("");
   });
+
+  const [previousTextValues, setPreviousTextValues] = useState<
+    string[] | undefined
+  >(defaultValues);
 
   const [activePickerIndex, setActivePickerIndex] = useState<number | null>(
     null,
@@ -115,16 +130,15 @@ const DynamicTextInput = ({
     });
   }, [textValues, inputFields]);
 
-  useEffect(() => {
-    if (defaultValues) {
-      setTextValues(defaultValues);
-    } else {
-      setTextValues(Array(inputFields.length).fill(""));
-    }
-  }, [JSON.stringify(defaultValues)]);
+  if (defaultValues !== previousTextValues && defaultValues !== undefined) {
+    setTextValues(defaultValues);
+    setPreviousTextValues(defaultValues);
+  } else {
+    setTextValues(Array(inputFields.length).fill(""));
+  }
 
   const formatData = (
-    inputFormatType: formatType,
+    inputFormatType: FormatType,
     input: string,
     precision?: number,
   ): string => {
