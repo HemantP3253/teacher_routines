@@ -96,7 +96,7 @@ const OptionsScreen = () => {
           selectedItem={currentTheme}
           getId={(item) => item}
           getLabel={(item) => item}
-          getSubLabel={(item) =>
+          getSublabel={(item) =>
             item === "Use System Theme"
               ? "Automatically assigns dark mode and light mode according to the system theme"
               : undefined
