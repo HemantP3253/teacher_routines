@@ -1,6 +1,22 @@
-import { ThemedTextProps } from "@/interfaces/interfaces";
-import { Text } from "react-native";
+import { Text, TextProps } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
+
+type textType =
+  | "text"
+  | "textSecondary"
+  | "textDisabled"
+  | "primaryContent"
+  | "secondaryContent"
+  | "accentContent"
+  | "disabledContent"
+  | "warningContent"
+  | "successContent"
+  | "errorContent"
+  | "infoContent";
+
+interface ThemedTextProps extends TextProps {
+  type?: textType;
+}
 
 const ThemedText = ({ style, type, ...otherProps }: ThemedTextProps) => {
   const { theme } = useUnistyles();

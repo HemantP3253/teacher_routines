@@ -1,8 +1,17 @@
-import { ThemedOptionsCardProps } from "@/interfaces/interfaces";
-import { Pressable, Switch } from "react-native";
+import { CustomSvgProps } from "@/types/common";
+import { FC } from "react";
+import { Pressable, PressableProps, Switch } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import ThemedText from "./ThemedText";
 import ThemedView from "./ThemedView";
+
+interface ThemedOptionsCardProps extends PressableProps {
+  Icon?: FC<CustomSvgProps>;
+  label: string;
+  description?: string;
+  switchValue?: boolean;
+  switchOnValueChange?: () => void;
+}
 
 const ThemedOptionsCard = ({
   Icon,
@@ -11,6 +20,7 @@ const ThemedOptionsCard = ({
   switchValue,
   onPress,
   label,
+  ...props
 }: ThemedOptionsCardProps) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
@@ -19,6 +29,7 @@ const ThemedOptionsCard = ({
     <Pressable
       onPress={onPress ? onPress : switchOnValueChange}
       style={{ flexDirection: "row", alignItems: "center", minHeight: 32 }}
+      {...props}
     >
       {Icon && (
         <ThemedView style={{ marginLeft: 8 }}>

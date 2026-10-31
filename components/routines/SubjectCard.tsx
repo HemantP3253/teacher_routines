@@ -1,11 +1,29 @@
 import { AssignmentIcon } from "@/assets/icons";
-import { SubjectCardProps } from "@/interfaces/interfaces";
+import { CurriculumSubject } from "@/types/academic";
 import { calculateFullPeriodTime } from "@/utils/dateUtils";
 import { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { ThemedAlertWindow, ThemedLinearGradient, ThemedText } from "../themed";
 import AssignTeacherModal from "./AssignTeacherModal";
+
+interface SubjectCardProps {
+  subject: CurriculumSubject;
+  durationInfo?: {
+    startTime: string;
+    duration: string;
+  };
+  teacherInfo?: {
+    teacherId: string;
+    teacherName: string;
+  };
+  onTeacherChange: (teacherId: string, teacherName: string) => void;
+  errorInfo?: {
+    title: string;
+    description: string;
+    showError?: boolean;
+  };
+}
 
 const SubjectCard = ({
   subject,

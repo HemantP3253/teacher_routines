@@ -1,7 +1,11 @@
-import { ThemedPressableProps } from "@/interfaces/interfaces";
 import { useState } from "react";
-import { Pressable } from "react-native";
+import { Pressable, PressableProps } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
+
+interface ThemedPressableProps extends PressableProps {
+  noFill?: boolean;
+  inline?: boolean;
+}
 
 const ThemedPressable = ({
   style,

@@ -3,13 +3,19 @@ import {
   RadioButtonCheckedIcon,
   RadioButtonUncheckedIcon,
 } from "@/assets/icons";
-import { ThemedRadioButtonMenuProps } from "@/interfaces/interfaces";
+import { MenuProps } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import ThemedText from "./ThemedText";
 import ThemedView from "./ThemedView";
+
+interface ThemedRadioButtonMenuProps<T> extends MenuProps<T> {
+  selectedItem?: T;
+  onItemSelect?: (selectedId: any) => void;
+  alwaysShowSubLabel?: boolean;
+}
 
 const ThemedRadioButtonMenu = <T,>({
   title,
@@ -18,22 +24,15 @@ const ThemedRadioButtonMenu = <T,>({
   onItemSelect,
   getId,
   getLabel,
-  getSubLabel,
+  getSublabel,
   sortType,
   alwaysShowSubLabel,
 }: ThemedRadioButtonMenuProps<T>) => {
   const { colors } = useUnistyles().theme;
 
-  const [selectedId, setSelectedId] = useState<string | undefined>(
-    selectedItem ? getId(selectedItem) : undefined,
-  );
-  const [expandedIds, setExpandedIds] = useState<string[]>([]);
+  const currentSelectedId = selectedItem ? getId(selectedItem) : undefined;
 
-  useEffect(() => {
-    if (selectedItem) {
-      setSelectedId(getId(selectedItem));
-    }
-  }, [selectedItem]);
+  const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
   const sortedData = useMemo(() => {
     return sortByLabel(data, getLabel, sortType);
@@ -56,9 +55,9 @@ const ThemedRadioButtonMenu = <T,>({
           {sortedData.map((item: T) => {
             const id = getId(item);
             const label = getLabel(item);
-            const subLabel = getSubLabel?.(item);
+            const subLabel = getSublabel?.(item);
 
-            const isChecked = selectedId === id;
+            const isChecked = currentSelectedId === id;
             let isExpanded = alwaysShowSubLabel
               ? true
               : expandedIds.includes(id);
@@ -67,7 +66,6 @@ const ThemedRadioButtonMenu = <T,>({
               <Pressable
                 key={id}
                 onPress={() => {
-                  setSelectedId(id);
                   onItemSelect?.(id);
                 }}
                 onLongPress={() => !alwaysShowSubLabel && toggleExpand(id)}

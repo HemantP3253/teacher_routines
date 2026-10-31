@@ -1,10 +1,20 @@
 import { AddIcon, ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
 import { ActionableHeaderCard } from "@/components/routines";
-import { DynamicTagSelectProps } from "@/interfaces/interfaces";
+import { IconProperties, MenuProps } from "@/types/common";
 import { useState } from "react";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import TagChip from "./TagChip";
+
+interface DynamicTagSelectProps<T> extends MenuProps<T> {
+  showAddButton?: boolean;
+  showDropDown?: boolean;
+  Icon?: IconProperties["Icon"];
+  onSelect?: (index: number) => void;
+  addButtonProperties?: {
+    onPress: () => void;
+  };
+}
 
 const DynamicTagSelect = <T,>({
   data,
@@ -12,6 +22,7 @@ const DynamicTagSelect = <T,>({
   title,
   showDropDown = true,
   Icon,
+  getId,
   getLabel,
   onSelect,
   addButtonProperties,
@@ -21,7 +32,7 @@ const DynamicTagSelect = <T,>({
   const [isExpanded, setIsExpanded] = useState<boolean>(
     showDropDown ? false : true,
   );
-  const [selectedTag, setSelectedTag] = useState<number>(0);
+  const [selectedTag, setSelectedTag] = useState<T | undefined>(data[0]);
 
   return (
     <ActionableHeaderCard
@@ -35,7 +46,9 @@ const DynamicTagSelect = <T,>({
       }}
       isDataLoading={false}
       showBottomBorder={isExpanded}
-      summaryText={!isExpanded ? getLabel(data[selectedTag]) : undefined}
+      summaryText={
+        !isExpanded && selectedTag ? getLabel(selectedTag) : undefined
+      }
     >
       {isExpanded && (
         <>
@@ -51,15 +64,17 @@ const DynamicTagSelect = <T,>({
           >
             {data.map((item, index) => {
               const label = getLabel(item);
+              const id = getId(item);
+
               return (
                 <TagChip
-                  key={index}
+                  key={id}
                   label={label}
                   onPress={() => {
                     onSelect?.(index);
-                    setSelectedTag(index);
+                    setSelectedTag(item);
                   }}
-                  selected={selectedTag === index}
+                  selected={selectedTag === item}
                 />
               );
             })}

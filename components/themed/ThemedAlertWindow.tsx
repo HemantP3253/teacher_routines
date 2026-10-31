@@ -1,4 +1,3 @@
-import { ThemedAlertWindowProps } from "@/interfaces/interfaces";
 import React from "react";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
@@ -7,6 +6,17 @@ import Spacer from "../common/Spacer";
 import ThemedPressable from "./ThemedPressable";
 import ThemedText from "./ThemedText";
 import ThemedView from "./ThemedView";
+
+interface ThemedAlertWindowProps {
+  title: string;
+  description?: string;
+  okButton?: boolean;
+  cancelButton?: boolean;
+  visible: boolean;
+  setVisible?: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
+  onConfirm?: () => void;
+}
 
 const ThemedAlertWindow = ({
   title,
@@ -54,7 +64,7 @@ const ThemedAlertWindow = ({
           {title}
         </ThemedText>
 
-        <Spacer lineVisible lineColor={colors.accent} />
+        <Spacer line={{ color: colors.accent }} />
 
         <ThemedText
           style={{

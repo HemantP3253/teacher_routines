@@ -1,9 +1,21 @@
-import { ArrowDownIcon, CheckedCheckBox, UncheckedCheckBoxIcon } from "@/assets/icons";
-import { ThemedCheckboxProps } from "@/interfaces/interfaces";
+import {
+  ArrowDownIcon,
+  CheckedCheckBox,
+  UncheckedCheckBoxIcon,
+} from "@/assets/icons";
 import { useState } from "react";
-import { Pressable, View } from "react-native";
+import { Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import ThemedText from "./ThemedText";
+
+interface ThemedCheckboxProps {
+  label: string;
+  alwaysShowSubLabel?: boolean;
+  subLabel?: string;
+  style?: StyleProp<ViewStyle>;
+  onPress?: () => void;
+  isChecked?: boolean;
+}
 
 const ThemedCheckbox = ({
   label,

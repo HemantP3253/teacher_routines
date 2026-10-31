@@ -1,12 +1,17 @@
 import { SearchIcon } from "@/assets/icons";
 import { useUserSearch } from "@/contexts/UserSearchContext";
-import { AssignTeacherModalProps } from "@/interfaces/interfaces";
 import { useMemo, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { CustomModal, Spacer } from "../common";
 import { ThemedText, ThemedTextInput, ThemedView } from "../themed";
 import UserActionCard from "./UserActionCard";
+
+interface AssignTeacherModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onSelectTeacher: (teacherId: string, teacherName: string) => void;
+}
 
 const AssignTeacherModal = ({
   visible,
@@ -53,7 +58,7 @@ const AssignTeacherModal = ({
           onChangeText={setSearchText}
         />
 
-        <Spacer lineVisible />
+        <Spacer line={{ type: "divider" }} />
 
         {isLoading ? (
           <ActivityIndicator

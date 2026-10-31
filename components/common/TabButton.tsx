@@ -1,9 +1,22 @@
-import { TabIconProps } from "@/interfaces/interfaces";
-import { Pressable, View } from "react-native";
+import { CustomSvgProps } from "@/types/common";
+import { FC } from "react";
+import { Pressable, PressableProps, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import ThemedText from "../themed/ThemedText";
 
-const TabButton = ({ focused, Icon, title, onPress }: TabIconProps) => {
+interface TabIconProps extends PressableProps {
+  focused: boolean;
+  Icon: FC<CustomSvgProps>;
+  title: string;
+}
+
+const TabButton = ({
+  focused,
+  Icon,
+  title,
+  onPress,
+  ...props
+}: TabIconProps) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
   const tabItemColor = colors.primary;
@@ -12,6 +25,7 @@ const TabButton = ({ focused, Icon, title, onPress }: TabIconProps) => {
     <Pressable
       onPress={onPress}
       style={[styles.unfocusedContainer, focused && styles.focusedContainer]}
+      {...props}
     >
       <View style={styles.iconContainer}>
         <Icon height={24} width={24} fill={tabItemColor} fillItem={focused} />

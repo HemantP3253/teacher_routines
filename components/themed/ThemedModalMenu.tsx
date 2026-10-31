@@ -1,8 +1,16 @@
 import { ErrorIcon, SuccessIcon } from "@/assets/icons";
-import { ThemedModalMenuProps } from "@/interfaces/interfaces";
+import { AlertCondition, CustomSvgProps, MenuProps } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
-import { useCallback, useMemo, useState } from "react";
-import { FlatList, Pressable, View, ViewStyle } from "react-native";
+import { FC, useCallback, useMemo, useState } from "react";
+import {
+  ColorValue,
+  FlatList,
+  Pressable,
+  PressableProps,
+  StyleProp,
+  View,
+  ViewStyle,
+} from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import CustomModal from "../common/CustomModal";
 import ErrorCard from "../common/ErrorCard";
@@ -12,6 +20,31 @@ import ThemedPressable from "./ThemedPressable";
 import ThemedText from "./ThemedText";
 import ThemedTextInput from "./ThemedTextInput";
 import ThemedView from "./ThemedView";
+
+interface ThemedModalMenuProps<T> extends MenuProps<T>, PressableProps {
+  selectedItem: T | null;
+  onItemSelect?: (selectedId: any) => void;
+  type?: string;
+
+  noFill?: boolean;
+  addSearchBar?: boolean;
+  errorText?: string;
+
+  alertCondition?: AlertCondition;
+
+  cancelable?: boolean;
+  pressableStyle?: StyleProp<ViewStyle>;
+
+  iconProperties?: {
+    Icon?: FC<CustomSvgProps>;
+    iconFill?: boolean;
+    showIconOnly?: boolean;
+    iconFillColor?: ColorValue;
+    height?: number;
+    width?: number;
+    size?: number;
+  };
+}
 
 const ThemedModalMenu = <T,>({
   data,
@@ -170,11 +203,7 @@ const ThemedModalMenu = <T,>({
                     ? colors.error + 80
                     : `${colors.primary}DA`,
               },
-              props.style
-                ? typeof props.style === "function"
-                  ? props.style(state)
-                  : props.style
-                : undefined,
+              pressableStyle,
             ]}
           >
             {iconProperties?.Icon && (
@@ -217,9 +246,9 @@ const ThemedModalMenu = <T,>({
         )}
         {alertCondition && (
           <ThemedAlertWindow
-            title={alertCondition?.alertTitle ?? "Action Required"}
+            title={alertCondition?.title ?? "Action Required"}
             description={
-              alertCondition?.alertDescription ??
+              alertCondition?.description ??
               "Please select a required field first."
             }
             visible={modalVisible.alert}

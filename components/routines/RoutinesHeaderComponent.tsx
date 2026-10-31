@@ -13,7 +13,6 @@ import {
   getNextCurriculumEntities,
   getProgramContextById,
 } from "@/data/curricula/university/TU/tuHelpers";
-import { RoutinesHeaderProps } from "@/interfaces/interfaces";
 import {
   AcademicLevel,
   UniversityBranch,
@@ -25,6 +24,19 @@ import { ThemedModalMenu, ThemedText, ThemedView } from "../themed";
 import ActionableHeaderCard from "./ActionableHeaderCard";
 
 type menuSteps = "Program" | "Branch" | "Term" | "Batch and Section";
+
+interface RoutinesHeaderProps {
+  selectedProgram: UniversityProgram | undefined;
+  selectedBranch: UniversityBranch | undefined;
+  selectedAcademicLevel: AcademicLevel | undefined;
+  selectedBatchAndSectionId: string | undefined;
+
+  onProgramChange: (program: UniversityProgram) => void;
+  onBranchChange: (branch: UniversityBranch) => void;
+  onAcademicLevelChange: (academicLevel: AcademicLevel) => void;
+  onBatchAndSectionChange: (batchAndSectionId: string) => void;
+  onDynamicRoutineSelect: (index: number) => void;
+}
 
 const RoutinesHeaderComponent = ({
   selectedProgram,
@@ -100,8 +112,8 @@ const RoutinesHeaderComponent = ({
             iconProperties={{ Icon: AltRouteIcon }}
             alertCondition={{
               visible: !selectedProgram,
-              alertTitle: "Program not selected",
-              alertDescription: "Please select a program first!",
+              title: "Program not selected",
+              description: "Please select a program first!",
             }}
           />
         ) : undefined;
@@ -125,8 +137,8 @@ const RoutinesHeaderComponent = ({
             iconProperties={{ Icon: DateRangeIcon }}
             alertCondition={{
               visible: hasBranches ? !selectedBranch : !selectedProgram,
-              alertTitle: `${alertType} not selected.`,
-              alertDescription: `Please select a ${alertType.toLowerCase()} first!`,
+              title: `${alertType} not selected.`,
+              description: `Please select a ${alertType.toLowerCase()} first!`,
             }}
           />
         );
@@ -142,8 +154,8 @@ const RoutinesHeaderComponent = ({
             iconProperties={{ Icon: Groups2Icon }}
             alertCondition={{
               visible: !selectedAcademicLevel,
-              alertTitle: "Academic level not selected",
-              alertDescription: "Please select an academic level first!",
+              title: "Academic level not selected",
+              description: "Please select an academic level first!",
             }}
           />
         );
@@ -185,6 +197,7 @@ const RoutinesHeaderComponent = ({
       </ActionableHeaderCard>
       <DynamicTagSelect
         Icon={RoutinesIcon}
+        getId={(item) => `${item.id}`}
         data={settings.routineTimeOptions}
         getLabel={(item) => item.label}
         showAddButton

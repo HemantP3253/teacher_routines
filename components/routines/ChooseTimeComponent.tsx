@@ -1,6 +1,6 @@
 import { useAssignTimeModal } from "@/hooks/useAssignTimeModal";
-import { ChooseTimeComponentProps } from "@/interfaces/interfaces";
 import { formatNumberInput } from "@/utils/formatters";
+import { SetStateAction } from "react";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import {
@@ -9,6 +9,22 @@ import {
   ThemedTextInput,
   ThemedView,
 } from "../themed";
+
+type TimeValues = {
+  startTime: string;
+  endTime: string;
+  maxDuration: string;
+};
+
+interface ChooseTimeComponentProps {
+  timeValues: TimeValues;
+  setTimeValues: React.Dispatch<SetStateAction<TimeValues>>;
+  date: Date;
+  setDate: React.Dispatch<SetStateAction<Date>>;
+  onClose?: () => void;
+  onSubmit?: (startTime: string, endTime: string, maxDuration: string) => void;
+  backgroundColor?: string;
+}
 
 const ChooseTimeComponent = ({
   timeValues,

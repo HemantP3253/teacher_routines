@@ -1,9 +1,23 @@
 import { SearchIcon } from "@/assets/icons";
-import { ActionableHeaderCardProps } from "@/interfaces/interfaces";
+import { IconProperties } from "@/types/common";
+import { ReactNode } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { Spacer } from "../common";
 import { ThemedLinearGradient, ThemedText } from "../themed";
+
+interface ActionableHeaderCardProps {
+  title: string;
+  IconBeforeText?: IconProperties["Icon"];
+  iconProperties: IconProperties;
+  searchButtonProperties?: {
+    onPress: () => void;
+  };
+  showBottomBorder?: boolean;
+  isDataLoading?: boolean;
+  children?: ReactNode;
+  summaryText?: string;
+}
 
 const ActionableHeaderCard = ({
   title,
@@ -36,17 +50,19 @@ const ActionableHeaderCard = ({
                 fill={colors.textSecondary}
               />
             )}
-            <Icon
-              height={height ?? 24}
-              width={width ?? 24}
-              onPress={onPress}
-              style={styles.secondaryIcon}
-              fill={colors.primary}
-            />
+            {Icon && (
+              <Icon
+                height={height ?? 24}
+                width={width ?? 24}
+                onPress={onPress}
+                style={styles.secondaryIcon}
+                fill={colors.primary}
+              />
+            )}
           </View>
         </View>
         {showBottomBorder && (
-          <Spacer useFullWidth lineType="border" horizontal lineVisible />
+          <Spacer useFullWidth line={{ type: "border" }} horizontal />
         )}
         {isDataLoading ? <ActivityIndicator size={"large"} /> : children}
         {summaryText && (

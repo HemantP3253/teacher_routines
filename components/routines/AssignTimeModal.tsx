@@ -1,5 +1,4 @@
 import { useAssignTimeModal } from "@/hooks/useAssignTimeModal";
-import { AssignTimeModalProps } from "@/interfaces/interfaces";
 import { formatNumberInput } from "@/utils/formatters";
 import {
   Keyboard,
@@ -16,6 +15,13 @@ import {
   ThemedTextInput,
   ThemedView,
 } from "../themed";
+
+interface AssignTimeModalProps {
+  visible: boolean;
+  title: string;
+  onClose?: () => void;
+  onSubmit?: (time: string, duration: string) => void;
+}
 
 const AssignTimeModal = ({
   visible,

@@ -1,12 +1,20 @@
 import { getAllDegreeNames } from "@/data/curricula/university/TU/tuHelpers";
-import { DynamicRoutineDetails } from "@/interfaces/interfaces";
 import { UniversityProgram } from "@/types/academic";
 import { storage } from "@/utils/storage";
 import { createContext, ReactNode, useContext, useState } from "react";
 
+interface RoutineOption {
+  id: number;
+  label: string;
+  startTime: string;
+  endTime: string;
+  duration: string;
+  activeDays: string;
+}
+
 interface AppSettings {
   shownDegrees: UniversityProgram[];
-  routineTimeOptions: DynamicRoutineDetails[];
+  routineTimeOptions: RoutineOption[];
   isDark: boolean;
   userRole?: "admin" | "user";
   settingsVersion: number;

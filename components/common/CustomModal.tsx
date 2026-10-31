@@ -1,12 +1,21 @@
-import { CustomModalProps } from "@/interfaces/interfaces";
 import { BlurView } from "expo-blur";
+import { ReactNode, RefObject } from "react";
 import {
   KeyboardAvoidingView,
   Modal,
+  ModalProps,
   Platform,
   Pressable,
   StyleSheet,
+  View,
 } from "react-native";
+
+interface CustomModalProps extends ModalProps {
+  modalVisible: boolean;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  children?: ReactNode;
+  blurTarget?: RefObject<View | null>;
+}
 
 const CustomModal = ({
   modalVisible,
@@ -41,6 +50,7 @@ const CustomModal = ({
             }}
             tint="systemThickMaterialDark"
             intensity={10}
+            blurTarget={props.blurTarget}
             blurMethod="dimezisBlurView"
           >
             <Pressable

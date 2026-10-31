@@ -1,7 +1,24 @@
 import { ThemedLinearGradient, ThemedText } from "@/components/themed";
-import { TagChipProps } from "@/interfaces/interfaces";
-import { Pressable, View } from "react-native";
+import { IconProperties } from "@/types/common";
+import {
+  GestureResponderEvent,
+  Pressable,
+  StyleProp,
+  View,
+  ViewStyle,
+} from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
+
+interface TagChipProps {
+  label: string;
+  selected?: boolean;
+  Icon?: IconProperties["Icon"];
+  onPress?: ((event: GestureResponderEvent) => void) | null | undefined;
+  fill?: boolean;
+  dottedBorder?: boolean;
+  style?: StyleProp<ViewStyle>;
+  contentStyle?: StyleProp<ViewStyle>;
+}
 
 const TagChip = ({
   label = "Item",
