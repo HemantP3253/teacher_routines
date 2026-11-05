@@ -34,7 +34,7 @@ create table public.routines (
   --
   -- The application is responsible for generating a globally
   -- unique ID before synchronization.
-  id bigint primary key,
+  id uuid primary key default gen_random_uuid(),
 
   -- Institutes where this routine takes place.
   institute_id uuid not null
@@ -66,11 +66,7 @@ create table public.routines (
   -- Institute-specific batch.
   -- Kept as text because batch identifiers may not always
   -- be purely numeric.
-  batch text not null,
-
-  -- Institutes-specific section.
-  -- Examples: A, B, C
-  section text,
+  batchAndSection text not null,
 
   -- Standardized subject identifier from the application's
   -- subject catalog.
