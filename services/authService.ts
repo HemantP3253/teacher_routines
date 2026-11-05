@@ -1,3 +1,4 @@
+import { LogInProps } from "@/types/common";
 import { Tables } from "@/types/database";
 import { supabase } from "./supabase";
 
@@ -33,3 +34,36 @@ export const getUserProfileById = async (
 
   return userProfile;
 };
+
+export const handleLogout = async () => {
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error logging out: ", error.message);
+    }
+  } catch (error) {
+    console.error("Unexpected error while logging out: ", error);
+  }
+};
+
+export async function handleLogin(
+  loginData: LogInProps,
+  type: "password",
+): Promise<any>;
+
+export async function handleLogin(loginData: LogInProps, type: "password") {
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: loginData.usernameOrEmail,
+      password: loginData.password,
+    });
+
+    if (error instanceof Error) return error.message;
+    else if (error) return "Something went wrong. Please try again later.";
+  } catch (error: any) {
+    console.log(
+      `Error while logging in. Type of login: [${type}]`,
+      error.message,
+    );
+  }
+}
