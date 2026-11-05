@@ -16,7 +16,6 @@ interface AppSettings {
   shownDegrees: UniversityProgram[];
   routineTimeOptions: RoutineOption[];
   isDark: boolean;
-  userRole?: "admin" | "user";
   settingsVersion: number;
 }
 
@@ -51,7 +50,6 @@ const DEFAULT_SETTINGS: AppSettings = {
     },
   ],
   isDark: false,
-  userRole: "user",
   settingsVersion: SETTINGS_VERSION,
 };
 
