@@ -1,7 +1,7 @@
-import OptionsScreen from "@/components/screens/optionsScreen";
+import Options from "@/components/screens/Options/index";
 
 const options = () => {
-  return <OptionsScreen />;
+  return <Options />;
 };
 
 export default options;
