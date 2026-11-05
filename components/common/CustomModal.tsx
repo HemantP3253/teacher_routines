@@ -6,7 +6,6 @@ import {
   ModalProps,
   Platform,
   Pressable,
-  StyleSheet,
   View,
 } from "react-native";
 
@@ -36,31 +35,37 @@ const CustomModal = ({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <Pressable
-          style={[StyleSheet.absoluteFill]}
-          onPress={() => setModalVisible(false)}
+        <BlurView
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 20,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+          onResponderStart={() => setModalVisible(false)}
+          tint="systemThickMaterialDark"
+          intensity={10}
+          blurTarget={props.blurTarget}
+          blurMethod="dimezisBlurView"
         >
-          <BlurView
+          <Pressable
             style={{
               flex: 1,
+              width: "100%",
               justifyContent: "center",
               alignItems: "center",
-              padding: 20,
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
             }}
-            tint="systemThickMaterialDark"
-            intensity={10}
-            blurTarget={props.blurTarget}
-            blurMethod="dimezisBlurView"
+            onPress={() => setModalVisible(false)}
           >
             <Pressable
-              style={{ width: "100%", maxWidth: 400 }}
+              style={{ width: "100%" }}
               onPress={(e) => e.stopPropagation()}
             >
               {children}
             </Pressable>
-          </BlurView>
-        </Pressable>
+          </Pressable>
+        </BlurView>
       </KeyboardAvoidingView>
     </Modal>
   );
