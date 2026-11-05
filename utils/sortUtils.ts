@@ -1,4 +1,4 @@
-import { sortType } from "@/interfaces/interfaces";
+import { SortType } from "@/types/common";
 
 /**
  * Sorts any type of array using the label
@@ -13,7 +13,7 @@ import { sortType } from "@/interfaces/interfaces";
 export function sortByLabel<T>(
   data: readonly T[],
   getLabel: (item: T) => string,
-  sortType?: sortType,
+  sortType?: SortType,
 ): readonly T[] {
   if (!sortType) return data;
 
