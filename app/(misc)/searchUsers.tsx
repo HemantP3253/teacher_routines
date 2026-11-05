@@ -9,7 +9,7 @@ import {
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { InstituteMember } from "@/types/common";
 import { useLocalSearchParams } from "expo-router";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -59,12 +59,8 @@ const SearchUsers = () => {
     return users.all;
   }, [users, title]);
 
-  const filteredUsers = useMemo(() => {
-    const query = searchParams.searchText.trim().toLowerCase();
-
-    if (query.length < 3 || !userData?.length) return [];
-
-    const getSearchValue = (user: InstituteMember) => {
+  const getSearchValue = useCallback(
+    (user: InstituteMember) => {
       switch (searchParams.searchType) {
         case "Name":
           return user.profile.full_name;
@@ -73,13 +69,21 @@ const SearchUsers = () => {
         case "Phone":
           return user.profile.phone;
       }
-    };
+    },
+    [searchParams.searchType],
+  );
+
+  const filteredUsers = useMemo(() => {
+    const query = searchParams.searchText.trim().toLowerCase();
+
+    if (query.length < 3 || !userData?.length) return [];
+
     return userData.filter((user) => {
       if (!user.profile_id) return false;
 
       return getSearchValue(user)?.toLowerCase().includes(query) ?? false;
     });
-  }, [searchParams.searchText, searchParams.searchType, userData]);
+  }, [searchParams.searchText, userData, getSearchValue]);
 
   return (
     <ThemedLinearGradient style={styles.rootContainer}>
