@@ -43,7 +43,6 @@ const CustomModal = ({
             padding: 20,
             backgroundColor: "rgba(0, 0, 0, 0.5)",
           }}
-          onResponderStart={() => setModalVisible(false)}
           tint="systemThickMaterialDark"
           intensity={10}
           blurTarget={props.blurTarget}
