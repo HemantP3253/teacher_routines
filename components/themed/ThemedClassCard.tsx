@@ -1,10 +1,22 @@
-import { ThemedClassCardProps } from "@/interfaces/interfaces";
 import { calculateFullPeriodTime } from "@/utils/dateUtils";
 import { termToFormattedString } from "@/utils/stringUtils";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import ThemedText from "./ThemedText";
 import ThemedView from "./ThemedView";
+
+interface ThemedClassCardProps {
+  class: {
+    degreeName: string;
+    semester?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+    section?: string;
+    year?: 1 | 2 | 3 | 4;
+    totalYears: 1 | 2 | 3 | 4 | 5;
+  };
+  durationInMinutes?: number;
+  startTime: string;
+  subject: string;
+}
 
 const ThemedClassCard = ({ ...props }: ThemedClassCardProps) => {
   const { theme } = useUnistyles();
