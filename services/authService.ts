@@ -1,6 +1,18 @@
 import { LogInProps } from "@/types/common";
 import { Tables } from "@/types/database";
+import { storage } from "@/utils/storage";
 import { supabase } from "./supabase";
+
+/**
+ * Get the stored auth key for the user
+ *
+ * Uses the MMKV storage to get the saved auth key for the user.
+ *
+ * @returns the auth key saved in mmkv storage or null value
+ */
+export const getStoredUserId = (): string | null => {
+  return storage.getString("supabase-local-auth-key") ?? null;
+};
 
 export const getCurrentUserId = async (): Promise<string | null> => {
   const {
