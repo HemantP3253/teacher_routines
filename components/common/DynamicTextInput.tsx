@@ -3,7 +3,6 @@ import {
   CalendarInfoIcon,
   ScheduleIcon,
 } from "@/assets/icons";
-import { FormatType, InputField } from "@/types/common";
 import {
   formatDateInput,
   formatDateTimeInput,
@@ -30,6 +29,45 @@ import {
   ThemedText,
   ThemedTextInput,
 } from "../themed";
+import InfoCard from "./InfoCard";
+
+export type FormatType =
+  | "whole-number"
+  | "name"
+  | "phone"
+  | "decimal-number"
+  | "date"
+  | "time"
+  | "dateAndTime"
+  | "email"
+  | "username";
+
+type InputType =
+  | {
+      inputFormatType: "date";
+      showPicker: "date";
+    }
+  | {
+      inputFormatType: "time";
+      showPicker: "time";
+    }
+  | {
+      inputFormatType: "dateAndTime";
+      showPicker: "dateAndTime";
+    }
+  | {
+      inputFormatType?: Exclude<FormatType, "date" | "time" | "dateAndTime">;
+      showPicker?: never;
+    };
+
+type InputField = InputType & {
+  title: string;
+  blendColor?: string;
+  precision?: number;
+  isSensitiveText?: boolean;
+  isNullable?: boolean;
+  infoText?: string;
+};
 
 interface DynamicTextInputProps {
   inputFields: InputField[];
@@ -168,6 +206,7 @@ const DynamicTextInput = ({
     }
   };
 
+  // TODO: Implement extra input fields with caption text
   return (
     <ScrollView style={styles.scrollContainer}>
       <KeyboardAvoidingView
@@ -176,39 +215,45 @@ const DynamicTextInput = ({
         <View>
           {inputFields.map((input, index) => {
             return (
-              <ThemedTextInput
-                key={`${input.title}-${index}`}
-                title={input.title}
-                blendColor={input.blendColor ?? undefined}
-                value={textValues[index] || ""}
-                secureTextEntry={input.isSensitiveText}
-                onChangeText={(value) => {
-                  const formattedText = input?.inputFormatType
-                    ? formatData(input.inputFormatType, value, input.precision)
-                    : value;
+              <View key={`${input.title}-${index}`}>
+                <ThemedTextInput
+                  title={input.title}
+                  blendColor={input.blendColor ?? undefined}
+                  value={textValues[index] || ""}
+                  secureTextEntry={input.isSensitiveText}
+                  onChangeText={(value) => {
+                    const formattedText = input?.inputFormatType
+                      ? formatData(
+                          input.inputFormatType,
+                          value,
+                          input.precision,
+                        )
+                      : value;
 
-                  handleTextChange(formattedText, index);
-                }}
-                customComponent={
-                  input.showPicker && (
-                    <ThemedPressable
-                      noFill
-                      style={styles.pickerButton}
-                      onPress={() => handleOpenPicker(index)}
-                    >
-                      {input.showPicker === "date" && (
-                        <CalendarInfoIcon fill={colors.primary} />
-                      )}
-                      {input.showPicker === "time" && (
-                        <ScheduleIcon fill={colors.primary} />
-                      )}
-                      {input.showPicker === "dateAndTime" && (
-                        <CalendarClockIcon fill={colors.primary} />
-                      )}
-                    </ThemedPressable>
-                  )
-                }
-              />
+                    handleTextChange(formattedText, index);
+                  }}
+                  customComponent={
+                    input.showPicker && (
+                      <ThemedPressable
+                        noFill
+                        style={styles.pickerButton}
+                        onPress={() => handleOpenPicker(index)}
+                      >
+                        {input.showPicker === "date" && (
+                          <CalendarInfoIcon fill={colors.primary} />
+                        )}
+                        {input.showPicker === "time" && (
+                          <ScheduleIcon fill={colors.primary} />
+                        )}
+                        {input.showPicker === "dateAndTime" && (
+                          <CalendarClockIcon fill={colors.primary} />
+                        )}
+                      </ThemedPressable>
+                    )
+                  }
+                />
+                {input.infoText && <InfoCard infoText={input.infoText} />}
+              </View>
             );
           })}
 
