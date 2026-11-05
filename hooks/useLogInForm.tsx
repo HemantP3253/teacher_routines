@@ -1,4 +1,4 @@
-import { LogInErrorProps, LogInProps } from "@/interfaces/interfaces";
+import { LogInErrorProps, LogInProps } from "@/types/common";
 import { formatPasswordInput } from "@/utils/formatters";
 import { useState } from "react";
 
@@ -6,8 +6,6 @@ export const useLogInForm = () => {
   const [logInData, setLogInData] = useState<LogInProps>({
     usernameOrEmail: "",
     password: "",
-    is_admin: false,
-    error: false,
   });
 
   const [logInError, setLogInError] = useState<LogInErrorProps>({
