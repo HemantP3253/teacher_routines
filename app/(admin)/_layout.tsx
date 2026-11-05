@@ -5,7 +5,7 @@ import { BlurTargetView } from "expo-blur";
 import { Tabs, usePathname, useRouter } from "expo-router";
 import { StyleSheet } from "react-native-unistyles";
 
-const _Layout = () => {
+const AdminLayout = () => {
   const { targetRef, blurMethod } = useBlurContext();
   const pathname = usePathname();
   const router = useRouter();
@@ -21,7 +21,7 @@ const _Layout = () => {
         />
       </BlurTargetView>
 
-      <FloatingTabBar blurTarget={targetRef}>
+      <FloatingTabBar blurTarget={targetRef} blurMethod={blurMethod}>
         <TabButton
           focused={pathname === "/routines"}
           title="Routines"
@@ -45,4 +45,4 @@ const _Layout = () => {
   );
 };
 
-export default _Layout;
+export default AdminLayout;

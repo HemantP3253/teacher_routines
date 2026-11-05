@@ -4,8 +4,8 @@ import { useBlurContext } from "@/contexts/BlurContext";
 import { BlurTargetView } from "expo-blur";
 import { Tabs, usePathname, useRouter } from "expo-router";
 
-const _Layout = () => {
-  const { targetRef } = useBlurContext();
+const UserLayout = () => {
+  const { targetRef, blurMethod } = useBlurContext();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -21,7 +21,7 @@ const _Layout = () => {
         />
       </BlurTargetView>
 
-      <FloatingTabBar blurTarget={targetRef}>
+      <FloatingTabBar blurTarget={targetRef} blurMethod={blurMethod}>
         <TabButton
           focused={pathname === "/classes"}
           title="Classes"
@@ -45,4 +45,4 @@ const _Layout = () => {
   );
 };
 
-export default _Layout;
+export default UserLayout;
