@@ -8,10 +8,10 @@ import {
   ThemedView,
 } from "@/components/themed";
 import { useLogInForm } from "@/hooks/useLogInForm";
-import { supabase } from "@/services/supabase";
+import { handleLogin } from "@/services/authService";
 import { checkLogInFormValidity } from "@/utils/validationUtils";
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Keyboard,
@@ -22,7 +22,7 @@ import {
 } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
-const landing = () => {
+const Login = () => {
   const {
     logInData,
     setLogInData,
@@ -84,24 +84,13 @@ const landing = () => {
               return;
 
             setIsSubmitting(true);
-
-            try {
-              const { data, error } = await supabase.auth.signInWithPassword({
-                email: logInData.usernameOrEmail,
-                password: logInData.password,
+            const error = await handleLogin(logInData, "password");
+            if (error)
+              setLogInError({
+                usernameOrEmail: error.message,
+                password: error.message,
               });
-
-              if (error) {
-                setLogInError({
-                  usernameOrEmail: error.message,
-                  password: error.message,
-                });
-                setIsSubmitting(false); // Only reset if there's an error
-              }
-              // DO NOT reset isSubmitting if success; let the navigation handle it
-            } catch (e) {
-              setIsSubmitting(false);
-            }
+            setIsSubmitting(false);
           }}
         >
           {isSubmitting ? (
@@ -113,7 +102,7 @@ const landing = () => {
           )}
         </ThemedPressable>
 
-        <Spacer size={20} lineVisible />
+        <Spacer size={20} line={{ type: "divider" }} />
 
         <ThemedText type="text" style={styles.headingText}>
           New here?{" "}
@@ -130,7 +119,8 @@ const landing = () => {
         <ThemedView style={{ flexDirection: "row" }}>
           <ThemedPressable
             onPress={() => {
-              /* TODO */
+              // TODO: Add forgot password logic here
+              // Something like this: await supabase.auth.resetPasswordForEmail()
             }}
             style={{ flex: 1 }}
           >
@@ -172,4 +162,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default landing;
+export default Login;
