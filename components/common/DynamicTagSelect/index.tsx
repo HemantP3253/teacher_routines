@@ -1,38 +1,42 @@
 import { AddIcon, ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
 import { ActionableHeaderCard } from "@/components/routines";
 import { IconProperties, MenuProps } from "@/types/common";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import TagChip from "./TagChip";
 
 interface DynamicTagSelectProps<T> extends MenuProps<T> {
-  showAddButton?: boolean;
   showDropDown?: boolean;
+  initialValue?: T;
   Icon?: IconProperties["Icon"];
   onSelect?: (index: number) => void;
-  addButtonProperties?: {
+  defaultAddButton?: {
+    label?: string;
     onPress: () => void;
   };
+  renderAddButton?: () => ReactNode;
 }
 
 const DynamicTagSelect = <T,>({
   data,
-  showAddButton = false,
   title,
+  initialValue,
   showDropDown = true,
   Icon,
   getId,
   getLabel,
   onSelect,
-  addButtonProperties,
+  defaultAddButton,
 }: DynamicTagSelectProps<T>) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
   const [isExpanded, setIsExpanded] = useState<boolean>(
     showDropDown ? false : true,
   );
-  const [selectedTag, setSelectedTag] = useState<T | undefined>(data[0]);
+  const [selectedTag, setSelectedTag] = useState<T | undefined>(
+    initialValue || data[0],
+  );
 
   return (
     <ActionableHeaderCard
@@ -79,14 +83,14 @@ const DynamicTagSelect = <T,>({
               );
             })}
 
-            {showAddButton && (
+            {defaultAddButton && (
               <TagChip
                 Icon={AddIcon}
                 dottedBorder
-                label={"Add New Item"}
+                label={defaultAddButton?.label ?? "Add New Item"}
                 selected={false}
                 fill={false}
-                onPress={addButtonProperties?.onPress}
+                onPress={defaultAddButton?.onPress}
               />
             )}
           </View>
