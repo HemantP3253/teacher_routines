@@ -7,8 +7,8 @@ import {
 } from "@/components/themed";
 import { useUserSearch } from "@/contexts/UserSearchContext";
 import { getGreeting } from "@/utils/stringUtils";
-import { useRouter } from "expo-router";
-import React, { useMemo } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import { Pressable, StatusBar } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
@@ -17,10 +17,9 @@ const Home = () => {
   const colors = theme.colors;
   const router = useRouter();
   const { users, isLoading, updateMembershipStatus } = useUserSearch();
+  const [greeting, setGreeting] = useState<string>();
 
-  const greeting = useMemo(() => {
-    return getGreeting();
-  }, []);
+  useFocusEffect(useCallback(() => setGreeting(getGreeting()), []));
 
   return (
     <ThemedLinearGradient style={styles.rootContainer}>
