@@ -4,21 +4,27 @@ import {
   ApproveIcon,
   ArrowDownIcon,
   ClearIcon,
-  CloseIcon,
-  ExclamationIcon,
   NameIcon,
   PhoneIcon,
   RejectIcon,
-  SuccessIcon,
   UsernameIcon,
 } from "@/assets/icons";
-import { UserActionCardProps } from "@/interfaces/interfaces";
+import { InstituteMember } from "@/types/common";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
-import { capitalizeFirstLettter } from "@/utils/stringUtils";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { ThemedLinearGradient, ThemedText } from "../themed";
+import { StatusCard } from "./StatusCard";
+
+interface UserActionCardProps {
+  user: InstituteMember;
+  showStatus?: boolean;
+  hideIcons?: boolean;
+  keepExpanded?: boolean;
+  onPress?: () => void;
+  onStatusChange?: (status: "approved" | "rejected" | "pending") => void;
+}
 
 const UserActionCard = ({
   user,
@@ -35,31 +41,7 @@ const UserActionCard = ({
     keepExpanded || false,
   );
 
-  const statusColor =
-    status === "pending"
-      ? colors.neutral400
-      : status === "approved"
-        ? colors.success
-        : colors.error;
-
   const iconColour = colors.primary;
-
-  const StatusCard = () => {
-    return (
-      <View style={styles.statusRow}>
-        {status === "pending" ? (
-          <ExclamationIcon fill={statusColor} />
-        ) : status === "approved" ? (
-          <SuccessIcon fill={statusColor} />
-        ) : (
-          <CloseIcon fill={statusColor} />
-        )}
-        <ThemedText style={{ color: statusColor }}>
-          {capitalizeFirstLettter(status)}
-        </ThemedText>
-      </View>
-    );
-  };
 
   return (
     <Pressable
@@ -87,7 +69,7 @@ const UserActionCard = ({
                 />
               )}
             </View>
-            {!showDropDown && showStatus && <StatusCard />}
+            {!showDropDown && showStatus && <StatusCard status={status} />}
           </View>
           {showDropDown && (
             <View>
@@ -119,7 +101,7 @@ const UserActionCard = ({
           )}
         </View>
         <View style={styles.rightColumn}>
-          {showStatus && showDropDown && <StatusCard />}
+          {showStatus && showDropDown && <StatusCard status={status} />}
           <View style={styles.actionButtonsContainer}>
             {!hideIcons && (
               <>
@@ -175,12 +157,7 @@ const styles = StyleSheet.create((theme) => ({
     padding: theme.spacing.xs,
     gap: theme.spacing.xs,
   },
-  statusRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingRight: theme.spacing.sm,
-    gap: theme.spacing.xs,
-  },
+
   cardContainer: {
     borderWidth: 1,
     padding: theme.spacing.xs,
