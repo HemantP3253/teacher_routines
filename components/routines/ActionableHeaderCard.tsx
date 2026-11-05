@@ -23,13 +23,13 @@ const ActionableHeaderCard = ({
   title,
   iconProperties,
   showBottomBorder = false,
-  isDataLoading = true,
+  isDataLoading = false,
   searchButtonProperties,
   children,
   IconBeforeText,
   summaryText,
 }: ActionableHeaderCardProps) => {
-  const { Icon, onPress, height, width } = iconProperties;
+  const { Icon, onPress, height, width, size } = iconProperties;
   const { colors } = useUnistyles().theme;
   return (
     <Pressable onPress={onPress}>
@@ -52,8 +52,9 @@ const ActionableHeaderCard = ({
             )}
             {Icon && (
               <Icon
-                height={height ?? 24}
-                width={width ?? 24}
+                height={height}
+                width={width}
+                size={size}
                 onPress={onPress}
                 style={styles.secondaryIcon}
                 fill={colors.primary}
