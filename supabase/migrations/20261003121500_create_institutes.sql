@@ -29,7 +29,7 @@ create table public.institutes (
   address text,
 
   -- Manually entered affiliated university.
-  affiliated_university text,
+  affiliated_university text not null,
 
   -- Sync metadata
   created_at timestamptz not null default now(),
