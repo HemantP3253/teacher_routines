@@ -3,7 +3,7 @@ import {
   LogInProps,
   SignUpErrorProps,
   SignUpProps,
-} from "@/interfaces/interfaces";
+} from "@/types/common";
 
 export const isSignUpFormValid = (
   signUpData: SignUpProps,
