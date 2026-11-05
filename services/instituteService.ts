@@ -38,9 +38,5 @@ export const getCurrentUserInstitutes = async (): Promise<InstituteData[]> => {
     throw error;
   }
 
-  return (
-    data
-      ?.map(({ institute }) => institute)
-      .filter((institute) => institute !== null) ?? []
-  );
+  return data?.map(({ institute }) => institute) ?? [];
 };
