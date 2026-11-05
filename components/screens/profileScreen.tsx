@@ -80,7 +80,7 @@ const UserProfileScreen = () => {
                 width={96}
               />
             ) : (
-              <UsernameIcon height={96} width={96} fill={colors.primary} />
+              <UsernameIcon size={96} fill={colors.primary} />
             )}
           </ThemedView>
           <ThemedView style={{ flex: 1, alignItems: "flex-end" }}>
@@ -104,9 +104,9 @@ const UserProfileScreen = () => {
               fontSize: 18,
             }}
           >
-            {userInfo.username ? "@" : ""}
+            @
           </ThemedText>
-          {userInfo.username ? userInfo.username : "Username not set"}
+          {userInfo.username}
         </ThemedText>
       </ThemedView>
       <ThemedView
@@ -118,9 +118,7 @@ const UserProfileScreen = () => {
         }}
       >
         <NameIcon fill={colors.primary} />
-        <ThemedText type="text">
-          {userInfo.full_name ? userInfo.full_name : "Name not set"}
-        </ThemedText>
+        <ThemedText type="text">{userInfo.full_name}</ThemedText>
       </ThemedView>
       <ThemedView
         style={{
@@ -132,9 +130,7 @@ const UserProfileScreen = () => {
       >
         <AgeIcon fill={colors.primary} />
         <ThemedText type="text">
-          {userInfo.date_of_birth
-            ? calculateAgeByDOB(userInfo.date_of_birth)
-            : "Date of birth not set"}
+          {calculateAgeByDOB(userInfo.date_of_birth)}
         </ThemedText>
       </ThemedView>
       <ThemedView
@@ -146,9 +142,7 @@ const UserProfileScreen = () => {
         }}
       >
         <GenderIcon fill={colors.primary} />
-        <ThemedText type="text">
-          {userInfo.gender ? userInfo.gender : "Gender not set"}
-        </ThemedText>
+        <ThemedText type="text">{userInfo.gender}</ThemedText>
       </ThemedView>
       <ThemedView
         style={{
@@ -159,9 +153,7 @@ const UserProfileScreen = () => {
         }}
       >
         <PhoneIcon fill={colors.primary} />
-        <ThemedText type="text">
-          {userInfo.phone ? "+977 " + userInfo.phone : "Phone not set"}
-        </ThemedText>
+        <ThemedText type="text">{userInfo.phone}</ThemedText>
       </ThemedView>
       <ThemedView
         style={{
