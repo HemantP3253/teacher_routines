@@ -42,12 +42,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // 3. Export the client securely using your verified environment mappings
+// TODO: use stable key based on userId so that it is unique on different devices
 export const supabase = createClient<Database>(
   supabaseUrl ?? "http://192.168.1.136:54321",
   supabaseAnonKey ?? "",
   {
     auth: {
       storage: mmkvSupabaseStorage,
+      storageKey: "sb-local-auth-key",
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: false,
