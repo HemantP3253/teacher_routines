@@ -2,7 +2,14 @@ import { FC } from "react";
 import { ColorValue } from "react-native";
 import { SvgProps } from "react-native-svg";
 import { UnistylesThemes } from "react-native-unistyles";
+import { AcademicLevel, UniversityBranch, UniversityProgram } from "./academic";
 import { Tables } from "./database";
+
+export type ActiveSubjectInfo = {
+  index: number;
+  subjectId: string;
+  teacherId: string;
+};
 
 export type Days =
   | "Sunday"
@@ -13,19 +20,7 @@ export type Days =
   | "Friday"
   | "Saturday";
 
-export type FormatType =
-  | "whole-number"
-  | "name"
-  | "phone"
-  | "decimal-number"
-  | "date"
-  | "time"
-  | "email"
-  | "username";
-
-export type GenderType = "Male" | "Female" | "Others" | "";
-
-export type MembershipStatus = "approved" | "rejected" | "pending";
+export type GenderType = "Male" | "Female" | "Others";
 
 export type InstituteData = Tables<"institutes">;
 
@@ -33,11 +28,19 @@ export type InstituteMember = Tables<"profile_institutes"> & {
   profile: Tables<"profiles">;
 };
 
+export type LogInErrorProps = Partial<Record<keyof LogInProps, string>>;
+
 export type ProfileInstitutesData = Tables<"profile_institutes">;
+
+export type ProfilesData = Tables<"profiles">;
+
+export type SignUpErrorProps = Partial<Record<keyof SignUpProps, string>>;
 
 export type SortType = "ascending" | "descending";
 
 export type ThemeColors = UnistylesThemes[keyof UnistylesThemes]["colors"];
+
+export type RoutinesData = Tables<"routines">;
 
 export type UserType =
   | "student"
@@ -45,6 +48,7 @@ export type UserType =
   | "department_admin"
   | "institute_admin";
 
+// TODO: Check if this type is used anywhere except ThemedModalMenu, if not move this type to ThemedModalMenu.tsx
 export interface AlertCondition {
   visible: boolean;
   title: string;
@@ -56,15 +60,30 @@ export interface CustomSvgProps extends SvgProps {
   size?: number;
 }
 
-export interface IconProperties {
+type IconDimensions =
+  | {
+      height?: number;
+      width?: number;
+      size?: never;
+    }
+  | {
+      height?: never;
+      width?: never;
+      size: number;
+    };
+
+export type IconProperties = IconDimensions & {
   Icon?: FC<CustomSvgProps>;
   iconFill?: boolean;
+  //TODO: Check if showIconOnly property is used anywhere, if not remove it
   showIconOnly?: boolean;
   iconFillColor?: ColorValue;
-  height?: number;
-  width?: number;
-  size?: number;
   onPress?: () => void;
+};
+
+export interface LogInProps {
+  usernameOrEmail: string;
+  password: string;
 }
 
 export interface MenuProps<T> {
@@ -78,12 +97,21 @@ export interface MenuProps<T> {
   sortType?: SortType;
 }
 
-export interface InputField {
-  title: string;
-  blendColor: string;
-  inputFormatType?: FormatType;
-  precision?: number;
-  isSensitiveText?: boolean;
-  showPicker?: "date" | "time" | "dateAndTime";
-  isNullable?: boolean;
+export interface RoutineFilterData {
+  program: UniversityProgram | undefined;
+  branch?: UniversityBranch | undefined;
+  academicLevel: AcademicLevel | undefined;
+  batchAndSectionId?: string | undefined;
+}
+
+export interface SignUpProps {
+  name: string;
+  dateOfBirth: string;
+  gender: GenderType | "";
+  username: string;
+  email: string;
+  address?: string | null;
+  password: string;
+  confirmPassword: string;
+  phone: string;
 }
