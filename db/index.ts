@@ -1,8 +1,9 @@
 import { Database } from "@nozbe/watermelondb";
 import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
-import College from "./models/College";
-import Profile from "./models/Profile";
-import Routine from "./models/Routine";
+import Institutes from "./models/Institutes";
+import ProfileInstitutes from "./models/Profile_Institutes";
+import Profiles from "./models/Profiles";
+import Routines from "./models/Routines";
 import schema from "./schema";
 
 const adapter = new SQLiteAdapter({
@@ -15,5 +16,5 @@ const adapter = new SQLiteAdapter({
 
 export const database = new Database({
   adapter,
-  modelClasses: [College, Profile, Routine],
+  modelClasses: [Institutes, Profiles, Routines, ProfileInstitutes],
 });
