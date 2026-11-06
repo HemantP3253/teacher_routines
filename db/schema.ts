@@ -53,7 +53,7 @@ export default appSchema({
     tableSchema({
       name: "routines",
       columns: [
-        { name: "batchAndSection", type: "string" },
+        { name: "batch_and_section", type: "string" },
         { name: "created_at", type: "number" },
         { name: "days", type: "string" },
         { name: "deleted_at", type: "number", isOptional: true },
