@@ -5,14 +5,14 @@ export default class Profiles extends Model {
   static table = "profiles";
 
   @text("username") username!: string;
-  @text("avatar_url") avatar_url?: string | null;
-  @text("date_of_birth") date_of_birth!: string;
-  @text("full_name") full_name!: string;
+  @text("avatar_url") avatarUrl?: string | null;
+  @text("date_of_birth") dateOfBirth!: string;
+  @text("full_name") fullName!: string;
   @text("gender") gender!: string;
   @text("phone") phone!: string;
   @text("address") address?: string | null;
 
-  @readonly @date("created_at") created_at!: Date;
-  @readonly @date("updated_at") updated_at!: Date;
-  @date("deleted_at") deleted_at!: Date | null;
+  @readonly @date("created_at") createdAt!: Date;
+  @readonly @date("updated_at") updatedAt!: Date;
+  @date("deleted_at") deletedAt!: Date | null;
 }
