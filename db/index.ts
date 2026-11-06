@@ -1,7 +1,7 @@
 import { Database } from "@nozbe/watermelondb";
 import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
 import Institutes from "./models/Institutes";
-import ProfileInstitutes from "./models/Profile_Institutes";
+import ProfileInstitutes from "./models/ProfileInstitutes";
 import Profiles from "./models/Profiles";
 import Routines from "./models/Routines";
 import schema from "./schema";
