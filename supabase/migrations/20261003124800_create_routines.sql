@@ -66,7 +66,7 @@ create table public.routines (
   -- Institute-specific batch.
   -- Kept as text because batch identifiers may not always
   -- be purely numeric.
-  batchAndSection text not null,
+  batch_and_section text not null,
 
   -- Standardized subject identifier from the application's
   -- subject catalog.
