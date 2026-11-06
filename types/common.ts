@@ -22,23 +22,15 @@ export type Days =
 
 export type GenderType = "Male" | "Female" | "Others";
 
-export type InstituteData = Tables<"institutes">;
-
-export type InstituteMember = Tables<"profile_institutes"> & {
-  profile: Tables<"profiles">;
-};
-
 export type LogInErrorProps = Partial<Record<keyof LogInProps, string>>;
-
-export type ProfileInstitutesData = Tables<"profile_institutes">;
-
-export type ProfilesData = Tables<"profiles">;
 
 export type SignUpErrorProps = Partial<Record<keyof SignUpProps, string>>;
 
 export type SortType = "ascending" | "descending";
 
 export type ThemeColors = UnistylesThemes[keyof UnistylesThemes]["colors"];
+
+export type ThemePreference = "Use System Theme" | "Light Mode" | "Dark Mode";
 
 export type RoutinesData = Tables<"routines">;
 
