@@ -90,9 +90,11 @@ const checkUsernameValidity = (username: string) => {
 };
 
 const checkEmailValidity = (email: string) => {
-  const regexPattern = /.+@.+\.(?=com)/;
+  const regexPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   if (email === "") return "Email is required";
-  if (email.includes(" ") || !regexPattern.test(email)) return "Invalid email";
+  if (!regexPattern.test(email)) return "Invalid email";
+
   return "Success!";
 };
 
