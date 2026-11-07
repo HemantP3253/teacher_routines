@@ -44,9 +44,7 @@
           "android": {
             "theme": "Theme.MaterialComponents.DayNight.NoActionBar",
             "packagingOptions": {
-              "pickFirst": [
-                "**/libc++_shared.so"
-              ]
+              "pickFirst": ["**/libc++_shared.so"]
             }
           }
         }
