@@ -15,15 +15,13 @@ import {
   ThemedStatusBar,
   ThemedText,
   ThemedTextInput,
-  ThemedView
+  ThemedView,
 } from "@/components/themed";
-import { useUserInfo } from "@/contexts/UserInfoContext";
+import { useBlurContext } from "@/contexts/BlurContext";
 import { useSignUpForm } from "@/hooks/useSignUpForm";
-import { genderType } from "@/interfaces/interfaces";
-import { supabase } from "@/services/supabase";
+import { GenderType } from "@/types/common";
 import { useAppDatePicker } from "@/utils/pickerUtils";
 import { pad } from "@/utils/stringUtils";
-import { isSignUpFormValid } from "@/utils/validationUtils";
 import { useMemo, useRef } from "react";
 import {
   Keyboard,
@@ -38,33 +36,32 @@ import {
 import { AdToBs, CalendarPicker } from "react-native-nepali-picker";
 import { useUnistyles } from "react-native-unistyles";
 
-// Sign up page code
-const signUp = () => {
-  const genderData: genderType[] = ["Male", "Female", "Others"];
+const SignUp = () => {
+  const genderData: GenderType[] = ["Male", "Female", "Others"];
   const {
     signUpData,
     setSignUpData,
     signUpError,
-    setSignUpError,
     handleInputChange,
     modalVisible,
     setModalVisible,
+    submitSignUpForm,
     institutes,
   } = useSignUpForm();
-  const { refreshUser } = useUserInfo();
+  const { targetRef, blurMethod } = useBlurContext();
   const inputRefs = useRef<Record<string, TextInput | null>>({});
 
   const { theme, rt } = useUnistyles();
   const colors = theme.colors;
 
-  const now = new Date();
+  const now = useMemo(() => new Date(), []);
   const selectedDate = useMemo(
     () =>
       signUpData.dateOfBirth
         ? new Date(signUpData.dateOfBirth)
         : new Date(now.getFullYear() - 13, now.getMonth(), now.getDate()),
 
-    [signUpData.dateOfBirth],
+    [signUpData.dateOfBirth, now],
   );
 
   const datePicker = useAppDatePicker({
@@ -109,6 +106,7 @@ const signUp = () => {
           <ThemedText type="text" style={styles.labelText}>
             Personal Details
           </ThemedText>
+
           <ThemedTextInput
             ref={(element) => {
               inputRefs.current["fullName"] = element;
@@ -121,6 +119,7 @@ const signUp = () => {
             onChangeText={(name) => {
               handleInputChange("name", name);
             }}
+            blendColor={colors.background}
             autoCapitalize="words"
           />
 
@@ -169,7 +168,7 @@ const signUp = () => {
                 "-",
               ),
             )}
-            theme={rt.themeName == "light" ? "light" : "dark"}
+            theme={rt.themeName === "light" ? "light" : "dark"}
           />
 
           <Spacer size={8} />
@@ -188,6 +187,7 @@ const signUp = () => {
                 onPress={() =>
                   setSignUpData((prev) => ({ ...prev, gender: item }))
                 }
+                contentStyle={{ width: "100%" }}
                 style={{ flex: 1 }}
               />
             ))}
@@ -212,7 +212,7 @@ const signUp = () => {
             }}
           /> */}
 
-          <Spacer size={8} />
+          <Spacer size={8} line={{ type: "divider" }} />
 
           <ThemedText type="text" style={styles.labelText}>
             Account details
@@ -302,6 +302,7 @@ const signUp = () => {
           <CustomModal
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
+            blurTarget={targetRef}
             style={{
               width: "100%",
               alignItems: "center",
@@ -311,11 +312,12 @@ const signUp = () => {
           >
             <View style={{ width: "100%" }}>
               <ThemedCheckboxMenu
+                title="Select Institutes"
                 data={institutes}
                 getId={(item) => item.id}
                 getLabel={(item) => item.name}
-                getSubLabel={(item) =>
-                  `${item.type.charAt(0).toUpperCase()}${item.type.substring(1)} Code: ${item.code}\nAffiliated University: ${item.affiliated_university}\nAddress: ${item.address}`
+                getSublabel={(item) =>
+                  `${item.type.charAt(0).toUpperCase()}${item.type.substring(1)} Code: ${item.code}\nAffiliated University: ${item.affiliatedUniversity}\nAddress: ${item.address}`
                 }
                 onSubmit={(selectedIds) => {
                   setSignUpData((prev) => ({ ...prev, colleges: selectedIds }));
@@ -326,58 +328,7 @@ const signUp = () => {
           </CustomModal>
           <Spacer size={8} />
 
-          <ThemedPressable
-            onPress={async () => {
-              if (!isSignUpFormValid(signUpData, setSignUpData, setSignUpError))
-                return;
-              try {
-                const { data, error: authError } = await supabase.auth.signUp({
-                  email: signUpData.email,
-                  password: signUpData.password,
-                });
-
-                if (authError) {
-                  console.error(
-                    "Sign up error (in signUp.tsx): ",
-                    authError.message,
-                  );
-                  throw authError;
-                }
-
-                const userId = data.user?.id;
-
-                if (!userId) {
-                  console.error(
-                    "Signup succeeded but no user ID was returned.",
-                  );
-                  return;
-                }
-
-                const { error: profileError } = await supabase
-                  .from("profiles")
-                  .insert({
-                    id: userId,
-                    username: signUpData.username,
-                    full_name: signUpData.name,
-                    date_of_birth: signUpData.dateOfBirth,
-                    gender: signUpData.gender,
-                    phone: signUpData.phone,
-                  });
-
-                if (profileError) {
-                  console.error(
-                    "Profile DB Entry Error (in signUp.tsx): ",
-                    profileError.message,
-                  );
-                  return;
-                }
-
-                await refreshUser();
-              } catch (error: any) {
-                console.error("Signup Error (in signUp.tsx): ", error.message);
-              }
-            }}
-          >
+          <ThemedPressable onPress={async () => submitSignUpForm()}>
             <ThemedText type="primaryContent" style={styles.pressableText}>
               Sign Up
             </ThemedText>
@@ -410,4 +361,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default signUp;
+export default SignUp;
