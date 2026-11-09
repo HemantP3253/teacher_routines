@@ -1,5 +1,5 @@
 import { SearchIcon } from "@/assets/icons";
-import { useUserSearch } from "@/contexts/UserSearchContext";
+import { useProfileStore } from "@/store/useProfileStore";
 import { useMemo, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
@@ -18,7 +18,8 @@ const AssignTeacherModal = ({
   onClose,
   onSelectTeacher,
 }: AssignTeacherModalProps) => {
-  const { users, isLoading } = useUserSearch();
+  const approvedProfiles = useProfileStore((state) => state.approvedProfiles);
+  const isLoading = useProfileStore((state) => state.isLoading);
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
@@ -26,14 +27,14 @@ const AssignTeacherModal = ({
 
   const filteredResults = useMemo(() => {
     const query = searchText.trim().toLowerCase();
-    if (!query) return users.approved;
+    if (!query) return approvedProfiles;
 
-    return users.approved.filter(
+    return approvedProfiles.filter(
       (user) =>
-        user.profile.full_name.toLowerCase().includes(query) ||
-        user.profile.username.toLowerCase().includes(query),
+        user.fullName.toLowerCase().includes(query) ||
+        user.username.toLowerCase().includes(query),
     );
-  }, [searchText, users]);
+  }, [searchText, approvedProfiles]);
 
   return (
     <CustomModal modalVisible={visible} setModalVisible={onClose}>
@@ -69,7 +70,7 @@ const AssignTeacherModal = ({
         ) : (
           <FlatList
             data={filteredResults}
-            keyExtractor={(item) => item.profile_id}
+            keyExtractor={(item) => item.id}
             keyboardShouldPersistTaps="handled"
             style={{ marginTop: 12 }}
             ListEmptyComponent={() => (
@@ -88,14 +89,11 @@ const AssignTeacherModal = ({
             )}
             renderItem={({ item: teacher }) => (
               <UserActionCard
-                user={teacher}
+                profile={teacher}
                 hideIcons
                 keepExpanded
                 onPress={() => {
-                  onSelectTeacher(
-                    teacher.profile_id,
-                    teacher.profile.full_name,
-                  );
+                  onSelectTeacher(teacher.id, teacher.fullName);
                   setSearchText("");
                 }}
               />
