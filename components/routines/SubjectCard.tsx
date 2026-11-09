@@ -11,7 +11,7 @@ interface SubjectCardProps {
   subject: CurriculumSubject;
   durationInfo?: {
     startTime: string;
-    duration: string;
+    duration: number;
   };
   teacherInfo?: {
     teacherId: string;
@@ -51,7 +51,7 @@ const SubjectCard = ({
               ? "Time not selected"
               : calculateFullPeriodTime(
                   durationInfo.startTime,
-                  Number(durationInfo.duration),
+                  durationInfo.duration,
                 )}
           </ThemedText>
 
