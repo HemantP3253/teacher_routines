@@ -6,10 +6,11 @@ import {
   ThemedText,
   ThemedTextInput,
 } from "@/components/themed";
-import { useUserSearch } from "@/contexts/UserSearchContext";
-import { InstituteMember } from "@/types/common";
+import { useProfileStore } from "@/store/useProfileStore";
+import { ProfileStatus } from "@/types/common";
+import { LocalProfilesData } from "@/types/localDbTypes";
 import { useLocalSearchParams } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -24,8 +25,13 @@ type searchType = "Name" | "Username" | "Phone";
 
 const SearchUsers = () => {
   const { title } = useLocalSearchParams();
-  const { users, isLoading, updateMembershipStatus } = useUserSearch();
   const { colors } = useUnistyles().theme;
+  const statusMap = useProfileStore((state) => state.statusMap);
+  const isLoading = useProfileStore((state) => state.isLoading);
+  const getProfilesByStatus = useProfileStore(
+    (state) => state.getProfilesByStatus,
+  );
+  const updateUserStatus = useProfileStore((state) => state.updateUserStatus);
 
   const [searchParams, setSearchParams] = useState<{
     searchText: string;
@@ -43,47 +49,37 @@ const SearchUsers = () => {
     }
   };
 
-  const userData = useMemo(() => {
-    if (title === "Pending") {
-      return users.pending;
-    }
-
-    if (title === "Approved") {
-      return users.approved;
-    }
-
-    if (title === "Rejected") {
-      return users.rejected;
-    }
-
-    return users.all;
-  }, [users, title]);
+  const getUserData = () => {
+    if (title === "All" || !title) return getProfilesByStatus();
+    else
+      return getProfilesByStatus(
+        title.toString().toLowerCase() as ProfileStatus,
+      );
+  };
 
   const getSearchValue = useCallback(
-    (user: InstituteMember) => {
+    (profile: LocalProfilesData) => {
       switch (searchParams.searchType) {
         case "Name":
-          return user.profile.full_name;
+          return profile.fullName;
         case "Username":
-          return user.profile.username;
+          return profile.username;
         case "Phone":
-          return user.profile.phone;
+          return profile.phone;
       }
     },
     [searchParams.searchType],
   );
 
-  const filteredUsers = useMemo(() => {
+  const filteredUsers = (() => {
     const query = searchParams.searchText.trim().toLowerCase();
 
-    if (query.length < 3 || !userData?.length) return [];
+    if (query.length < 3 || !getUserData()?.length) return [];
 
-    return userData.filter((user) => {
-      if (!user.profile_id) return false;
-
-      return getSearchValue(user)?.toLowerCase().includes(query) ?? false;
-    });
-  }, [searchParams.searchText, userData, getSearchValue]);
+    return getUserData().filter(
+      (user) => getSearchValue(user)?.toLowerCase().includes(query) ?? false,
+    );
+  })();
 
   return (
     <ThemedLinearGradient style={styles.rootContainer}>
@@ -145,16 +141,20 @@ const SearchUsers = () => {
                 Type at least 3 characters to search...
               </ThemedText>
             ) : (
-              filteredUsers?.map((user) => (
-                <UserActionCard
-                  user={user}
-                  key={user.profile_id}
-                  showStatus={!title || title === "All"}
-                  onStatusChange={(status) =>
-                    updateMembershipStatus(user.profile_id, status)
-                  }
-                />
-              ))
+              filteredUsers?.map((profile) => {
+                const status = statusMap.get(profile.id) as ProfileStatus;
+
+                return (
+                  <UserActionCard
+                    profile={profile}
+                    status={!title || title === "All" ? status : undefined}
+                    key={profile.id}
+                    onStatusChange={(newStatus) =>
+                      updateUserStatus(profile.id, newStatus)
+                    }
+                  />
+                );
+              })
             )}
           </View>
         </ScrollView>

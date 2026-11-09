@@ -1,30 +1,37 @@
 import { ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
 import { ActionableHeaderCard, UserActionCard } from "@/components/routines";
 import { ThemedLinearGradient, ThemedText } from "@/components/themed";
-import { useUserSearch } from "@/contexts/UserSearchContext";
+import { useProfileStore } from "@/store/useProfileStore";
+import { ProfileStatus } from "@/types/common";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StatusBar, StyleSheet } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
-type UserStatus = "Pending" | "Approved" | "Rejected" | "All";
+type FilterType = "Pending" | "Approved" | "Rejected" | "All";
 
 const ApproveUsers = () => {
-  const { theme } = useUnistyles();
-  const { users, isLoading, updateMembershipStatus } = useUserSearch();
-  const colors = theme.colors;
   const router = useRouter();
+  const { theme } = useUnistyles();
+  const colors = theme.colors;
 
-  const [showDropDown, setShowDropDown] = useState<Record<UserStatus, boolean>>(
+  const statusMap = useProfileStore((state) => state.statusMap);
+  const isLoading = useProfileStore((state) => state.isLoading);
+  const getProfilesByStatus = useProfileStore(
+    (state) => state.getProfilesByStatus,
+  );
+  const updateUserStatus = useProfileStore((state) => state.updateUserStatus);
+
+  const [showDropDown, setShowDropDown] = useState<Record<FilterType, boolean>>(
     { Pending: false, Approved: false, Rejected: false, All: false },
   );
 
-  const toggleDropdown = async (status: UserStatus) => {
+  const toggleDropdown = async (status: FilterType) => {
     const nextState = !showDropDown[status];
     setShowDropDown((prev) => ({ ...prev, [status]: nextState }));
   };
 
-  const getHeaderCardIcon = (status: UserStatus) => {
+  const getHeaderCardIcon = (status: FilterType) => {
     return showDropDown[status] ? ArrowUpIcon : ArrowDownIcon;
   };
 
@@ -34,7 +41,7 @@ const ApproveUsers = () => {
     >
       <ThemedLinearGradient style={styles.rootContainer}>
         <ThemedText style={styles.headingText}>User Action Section</ThemedText>
-        {(["Pending", "Approved", "Rejected", "All"] as UserStatus[]).map(
+        {(["Pending", "Approved", "Rejected", "All"] as FilterType[]).map(
           (type) => (
             <ActionableHeaderCard
               key={type}
@@ -55,8 +62,11 @@ const ApproveUsers = () => {
               }}
             >
               {showDropDown[type] &&
-                (users[type.toLowerCase() as keyof typeof users].length ===
-                0 ? (
+                (getProfilesByStatus(
+                  type === "All"
+                    ? undefined
+                    : (type.toString().toLowerCase() as ProfileStatus),
+                ).length === 0 ? (
                   <ThemedText
                     type="text"
                     style={{
@@ -68,18 +78,24 @@ const ApproveUsers = () => {
                     No {type} users found
                   </ThemedText>
                 ) : (
-                  users[type.toLowerCase() as keyof typeof users].map(
-                    (user) => (
+                  getProfilesByStatus(
+                    type === "All"
+                      ? undefined
+                      : (type.toString().toLowerCase() as ProfileStatus),
+                  ).map((profile) => {
+                    const status = statusMap.get(profile.id) as ProfileStatus;
+
+                    return (
                       <UserActionCard
-                        user={user}
-                        key={user.profile_id}
-                        showStatus={type === "All"}
-                        onStatusChange={(status) =>
-                          updateMembershipStatus(user.profile_id, status)
+                        key={profile.id}
+                        profile={profile}
+                        status={type === "All" ? status : undefined}
+                        onStatusChange={(newStatus) =>
+                          updateUserStatus(profile.id, newStatus)
                         }
                       />
-                    ),
-                  )
+                    );
+                  })
                 ))}
             </ActionableHeaderCard>
           ),
