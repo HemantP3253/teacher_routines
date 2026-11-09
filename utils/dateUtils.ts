@@ -124,7 +124,7 @@ interface RangeToSubjectTimeProps {
   times: {
     start: string;
     end: string;
-    duration: string;
+    duration: number;
   };
   breakTime?:
     | {
@@ -135,7 +135,7 @@ interface RangeToSubjectTimeProps {
     | {
         type: "duration";
         start: string;
-        duration: string;
+        duration: number;
       };
   index: number;
 }
