@@ -4,7 +4,7 @@ import {
   SelectAllIcon,
   UncheckedCheckBoxIcon,
 } from "@/assets/icons";
-import { SortType } from "@/types/common";
+import { MenuProps } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
@@ -15,17 +15,11 @@ import ThemedPressable from "./ThemedPressable";
 import ThemedText from "./ThemedText";
 import ThemedView from "./ThemedView";
 
-interface ThemedCheckboxMenuProps<T> {
-  title?: string;
-  data: T[];
+interface ThemedCheckboxMenuProps<T> extends MenuProps<T> {
   initialSelection?: T[];
   minSelection?: number;
   onSubmit?: (selected: T[]) => void;
-  getId: (item: T) => string;
-  getLabel: (item: T) => string;
-  getSubLabel?: (item: T) => string | undefined;
   addSearchBar?: boolean;
-  sortType?: SortType;
 }
 
 const ThemedCheckboxMenu = <T,>({
@@ -37,7 +31,7 @@ const ThemedCheckboxMenu = <T,>({
   sortType,
   getId,
   getLabel,
-  getSubLabel,
+  getSublabel,
 }: ThemedCheckboxMenuProps<T>) => {
   const { colors } = useUnistyles().theme;
 
@@ -132,7 +126,7 @@ const ThemedCheckboxMenu = <T,>({
           {sortedData.map((item: T, index) => {
             const id = getId(item);
             const label = getLabel(item);
-            const subLabel = getSubLabel?.(item);
+            const subLabel = getSublabel?.(item);
 
             const isChecked = selectedItems.some(
               (selected) => getId(selected) === getId(item),
@@ -151,22 +145,28 @@ const ThemedCheckboxMenu = <T,>({
 
           <Spacer />
 
-          <ThemedPressable
-            disabled={isSubmitDisabled}
-            style={isSubmitDisabled && { backgroundColor: colors.disabled }}
-            onPress={() => onSubmit?.(selectedItems)}
-          >
-            <ThemedText
-              style={[
-                isSubmitDisabled
-                  ? { color: colors.disabledContent }
-                  : { color: colors.primaryContent },
-                styles.submitText,
-              ]}
+          {data.length > 0 ? (
+            <ThemedPressable
+              disabled={isSubmitDisabled}
+              style={isSubmitDisabled && { backgroundColor: colors.disabled }}
+              onPress={() => onSubmit?.(selectedItems)}
             >
-              Submit Choices
+              <ThemedText
+                style={[
+                  isSubmitDisabled
+                    ? { color: colors.disabledContent }
+                    : { color: colors.primaryContent },
+                  styles.submitText,
+                ]}
+              >
+                Submit Choices
+              </ThemedText>
+            </ThemedPressable>
+          ) : (
+            <ThemedText type="text" style={styles.noItemsText}>
+              No items available
             </ThemedText>
-          </ThemedPressable>
+          )}
         </View>
       </ThemedView>
     </ScrollView>
@@ -185,6 +185,7 @@ const styles = StyleSheet.create(({ colors, spacing, radius, typography }) => ({
     padding: spacing.xs,
     borderBottomLeftRadius: radius.md,
     borderBottomRightRadius: radius.md,
+    flexShrink: 0,
   },
   titleText: {
     fontSize: typography.h2.fontSize,
@@ -194,12 +195,14 @@ const styles = StyleSheet.create(({ colors, spacing, radius, typography }) => ({
     textAlign: "center",
   },
   selectOptionsContainer: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 4,
   },
   selectAllContainer: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     padding: spacing.sm,
@@ -211,10 +214,15 @@ const styles = StyleSheet.create(({ colors, spacing, radius, typography }) => ({
   },
   checkboxListContainer: {
     gap: spacing.xs,
+    flexShrink: 0,
   },
   submitText: {
     textAlign: "center",
     fontWeight: "bold",
+  },
+  noItemsText: {
+    textAlign: "center",
+    color: colors.disabledContent,
   },
 }));
 
