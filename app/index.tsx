@@ -1,13 +1,12 @@
-import { useInstituteInfo } from "@/contexts/InstituteInfoContext";
+import { useAuthStore } from "@/store/useAuthStore";
 import "../styles/unistyles";
 
 import { Redirect } from "expo-router";
-import React from "react";
 import { ActivityIndicator, View } from "react-native";
 
 export default function EntryPoint() {
-  const { currentMembership, isLoading } = useInstituteInfo();
-
+  const role = useAuthStore((state) => state.userRole);
+  const isLoading = useAuthStore((state) => state.isLoading);
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -16,15 +15,14 @@ export default function EntryPoint() {
     );
   }
 
-  if (!currentMembership) {
+  if (!role) {
     return <Redirect href="/(auth)/login" />;
   }
 
   return (
     <Redirect
       href={
-        currentMembership.role === "department_admin" ||
-        currentMembership.role === "institute_admin"
+        role === "department_admin" || role === "institute_admin"
           ? "/(admin)/home"
           : "/(user)/home"
       }
