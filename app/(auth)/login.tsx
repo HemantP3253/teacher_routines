@@ -84,13 +84,13 @@ const Login = () => {
               return;
 
             setIsSubmitting(true);
-            const error = await handleLogin(logInData, "password");
-            if (error)
-              setLogInError({
-                usernameOrEmail: error.message,
-                password: error.message,
-              });
+            const { message } = await handleLogin(logInData, "password");
             setIsSubmitting(false);
+            if (message)
+              setLogInError({
+                usernameOrEmail: message,
+                password: message,
+              });
           }}
         >
           {isSubmitting ? (
