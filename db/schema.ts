@@ -13,10 +13,9 @@ export default appSchema({
         { name: "deleted_at", type: "number", isOptional: true },
         { name: "full_name", type: "string" },
         { name: "gender", type: "string" },
-        // id is automatically handled by WatermelonDB, removed explicit declaration
         { name: "phone", type: "string" },
         { name: "username", type: "string" },
-        { name: "updated_at", type: "number" }, // Added missing updated_at for completeness
+        { name: "updated_at", type: "number" },
       ],
     }),
 
