@@ -1,5 +1,6 @@
-import { Tables } from "@/types/database";
-import { supabase } from "./supabase";
+import { database } from "@/db";
+import { LocalProfileInstitutesData } from "@/types/localDbTypes";
+import { Q } from "@nozbe/watermelondb";
 
 /**
  * Fetches the current user membership from the database
@@ -9,28 +10,31 @@ import { supabase } from "./supabase";
  *
  * @param instituteId - the id (uuid) of the related institute
  * @param profileId - the id (uuid) of the related user
- * @returns a single object of the user's membership to an institute if it exists, or null
+ * @returns an array of the user's membership to the institutes if it exists
  */
-export const getUserInstituteMembership = async (
+export const getUserInstituteMemberships = async (
   instituteId: string,
   profileId: string,
-): Promise<Tables<"profile_institutes"> | null> => {
-  const { data, error } = await supabase
-    .from("profile_institutes")
-    .select("*")
-    .eq("institute_id", instituteId)
-    .eq("profile_id", profileId)
-    .maybeSingle();
+): Promise<LocalProfileInstitutesData | null> => {
+  try {
+    const profileInstitutesCollection =
+      database.get<LocalProfileInstitutesData>("profile_institutes");
 
-  if (error) {
+    const profileInstitutes = await profileInstitutesCollection
+      .query(
+        Q.where("institute_id", instituteId),
+        Q.where("profile_id", profileId),
+      )
+      .fetch();
+
+    return profileInstitutes[0] ?? null;
+  } catch (error) {
     console.error(
-      "[getUserInstituteMembership] Failed to fetch membership: ",
+      "[getUserInstituteMemberships] Failed to fetch current user institute memberships",
       error,
     );
-    throw error;
+    return null;
   }
-
-  return data;
 };
 
 /**
@@ -42,12 +46,12 @@ export const getUserInstituteMembership = async (
  * @param id - unique identifier
  * @param type - the type of the id provided (use "institute" for filtering by institute id)
  * @returns an array of all the memberships related to the
- * given institute if it exists or null
+ * given institute if it exists
  */
 export function getAllMemberships(
   id: string,
   type: "institute",
-): Promise<Tables<"profile_institutes">[] | null>;
+): Promise<LocalProfileInstitutesData[]>;
 
 /**
  * Fetches all memberships related to the provided user profile
@@ -62,27 +66,31 @@ export function getAllMemberships(
 export function getAllMemberships(
   id: string,
   type: "profile",
-): Promise<Tables<"profile_institutes">[] | null>;
+): Promise<LocalProfileInstitutesData[]>;
 
 export async function getAllMemberships(
   id: string,
   type: "institute" | "profile",
-): Promise<Tables<"profile_institutes">[] | null> {
-  let baseQuery = supabase.from("profile_institutes").select("*");
-  baseQuery =
-    type === "institute"
-      ? baseQuery.eq("institute_id", id)
-      : baseQuery.eq("profile_id", id);
+): Promise<LocalProfileInstitutesData[]> {
+  try {
+    const query =
+      type === "institute"
+        ? Q.where("institute_id", id)
+        : Q.where("profile_id", id);
 
-  const { data, error } = await baseQuery;
+    const profileInstitutesCollection =
+      database.get<LocalProfileInstitutesData>("profile_institutes");
 
-  if (error) {
+    const profileInstitutes = await profileInstitutesCollection
+      .query(query)
+      .fetch();
+
+    return profileInstitutes;
+  } catch (error) {
     console.error(
-      "[getAllMembershipsByInstitute] Failed to fetch membership: ",
+      `[getAllMemberships] Failed to fetch current ${type} institute memberships`,
       error,
     );
-    throw error;
+    return [];
   }
-
-  return data;
 }

@@ -1,42 +1,48 @@
-import { InstituteData } from "@/types/common";
-import { getCurrentUserId } from "./authService";
-import { supabase } from "./supabase";
+import { database } from "@/db";
+import { useAuthStore } from "@/store/useAuthStore";
+import { LocalInstituteData } from "@/types/localDbTypes";
+import { Q } from "@nozbe/watermelondb";
 
-export const fetchAllInstitutes = async (): Promise<InstituteData[]> => {
+export const fetchAllInstitutes = async (): Promise<LocalInstituteData[]> => {
   try {
-    const { data, error } = await supabase.from("institutes").select("*");
+    const institutesCollection = database.get<LocalInstituteData>("institutes");
 
-    if (error) throw error;
+    const localInstitutes = await institutesCollection.query().fetch();
 
-    return data || [];
+    return localInstitutes;
   } catch (error: any) {
     console.error(
       "[fetchAllInstitutes] Failed to fetch all institutes: ",
       error,
     );
-    throw error;
+    return [];
   }
 };
 
-export const getCurrentUserInstitutes = async (): Promise<InstituteData[]> => {
-  const currentUserId = await getCurrentUserId();
+export const getCurrentUserInstitutes = async (): Promise<
+  LocalInstituteData[]
+> => {
+  try {
+    const { userId } = useAuthStore.getState();
 
-  if (!currentUserId) {
+    if (!userId) {
+      console.warn(
+        "[getCurrentUserInstitutes] No active user ID found in store.",
+      );
+      return [];
+    }
+
+    const institutesCollection = database.get<LocalInstituteData>("institutes");
+    const userInstitutes = await institutesCollection
+      .query(Q.where("profile_id", userId))
+      .fetch();
+
+    return userInstitutes;
+  } catch (error) {
+    console.error(
+      "[getCurrentUserInstitutes] Failed to fetch current user institutes",
+      error,
+    );
     return [];
   }
-
-  const { data, error } = await supabase
-    .from("profile_institutes")
-    .select(`institute:institutes (*)`)
-    .eq("profile_id", currentUserId);
-
-  if (error) {
-    console.error(
-      "Unexpected error while fetching current user institutes:",
-      error.message,
-    );
-    throw error;
-  }
-
-  return data?.map(({ institute }) => institute) ?? [];
 };
