@@ -8,7 +8,7 @@ interface StatusCardProps {
   status: string;
 }
 
-export const StatusCard = ({ status }: StatusCardProps) => {
+const StatusCard = ({ status }: StatusCardProps) => {
   const { colors } = useUnistyles().theme;
 
   const statusColor =
@@ -42,3 +42,5 @@ const styles = StyleSheet.create(({ spacing }) => ({
     gap: spacing.xs,
   },
 }));
+
+export default StatusCard;
