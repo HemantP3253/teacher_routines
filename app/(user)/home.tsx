@@ -4,16 +4,12 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/themed";
-import { getGreeting } from "@/utils/stringUtils";
-import { useEffect, useState } from "react";
+import { useDynamicGreeting } from "@/hooks/useDynamicGreeting";
 import { StatusBar, StyleSheet } from "react-native";
 
-const home = () => {
-  const [greeting, setGreeting] = useState<string>("");
+const Home = () => {
+  const greeting = useDynamicGreeting();
 
-  useEffect(() => {
-    setGreeting(getGreeting());
-  }, []);
   return (
     <ThemedLinearGradient style={styles.rootContainer}>
       <ThemedStatusBar />
@@ -52,4 +48,4 @@ const styles = StyleSheet.create({
   infoText: {},
 });
 
-export default home;
+export default Home;
