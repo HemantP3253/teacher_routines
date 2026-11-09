@@ -1,11 +1,17 @@
 import { Model } from "@nozbe/watermelondb";
 import { date, json, readonly, text } from "@nozbe/watermelondb/decorators";
+import { Associations } from "@nozbe/watermelondb/Model";
 
 const sanitizeArray = (jsonArray: any) =>
   Array.isArray(jsonArray) ? jsonArray : [];
 
 export default class Routines extends Model {
   static table = "routines";
+
+  static associations: Associations = {
+    profiles: { type: "belongs_to", key: "teacher_id" },
+    institutes: { type: "belongs_to", key: "institute_id" },
+  } as const;
 
   @text("batch_and_section") batchAndSection!: string;
   @json("days", sanitizeArray) days!: string[];

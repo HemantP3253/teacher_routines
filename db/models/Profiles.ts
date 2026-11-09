@@ -1,8 +1,13 @@
 import { Model } from "@nozbe/watermelondb";
 import { date, readonly, text } from "@nozbe/watermelondb/decorators";
+import { Associations } from "@nozbe/watermelondb/Model";
 
 export default class Profiles extends Model {
   static table = "profiles";
+
+  static associations: Associations = {
+    profile_institutes: { type: "has_many", foreignKey: "profile_id" },
+  } as const;
 
   @text("username") username!: string;
   @text("avatar_url") avatarUrl?: string | null;
