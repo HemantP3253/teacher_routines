@@ -9,17 +9,18 @@ import {
   RejectIcon,
   UsernameIcon,
 } from "@/assets/icons";
-import { InstituteMember } from "@/types/common";
+import { ProfileStatus } from "@/types/common";
+import { LocalProfilesData } from "@/types/localDbTypes";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { ThemedLinearGradient, ThemedText } from "../themed";
-import { StatusCard } from "./StatusCard";
+import StatusCard from "./StatusCard";
 
 interface UserActionCardProps {
-  user: InstituteMember;
-  showStatus?: boolean;
+  profile: LocalProfilesData;
+  status?: ProfileStatus;
   hideIcons?: boolean;
   keepExpanded?: boolean;
   onPress?: () => void;
@@ -27,14 +28,13 @@ interface UserActionCardProps {
 }
 
 const UserActionCard = ({
-  user,
-  showStatus,
+  profile,
+  status,
   hideIcons,
   keepExpanded,
   onPress,
   onStatusChange,
 }: UserActionCardProps) => {
-  const { profile, status } = user;
   const { colors } = useUnistyles().theme;
 
   const [showDropDown, setShowDropDown] = useState<boolean>(
@@ -60,7 +60,7 @@ const UserActionCard = ({
             <View style={styles.nameRow}>
               <NameIcon fill={iconColour} />
               <ThemedText type="text" style={{ paddingRight: 4 }}>
-                {profile.full_name}
+                {profile.fullName}
               </ThemedText>
               {!keepExpanded && (
                 <ArrowDownIcon
@@ -69,7 +69,7 @@ const UserActionCard = ({
                 />
               )}
             </View>
-            {!showDropDown && showStatus && <StatusCard status={status} />}
+            {!showDropDown && status && <StatusCard status={status} />}
           </View>
           {showDropDown && (
             <View>
@@ -83,7 +83,7 @@ const UserActionCard = ({
               <View style={styles.iconInfoContainer}>
                 <AgeIcon fill={iconColour} />
                 <ThemedText type="text">
-                  {calculateAgeByDOB(profile.date_of_birth)}
+                  {calculateAgeByDOB(profile.dateOfBirth)}
                   {", " + profile.gender}
                 </ThemedText>
               </View>
@@ -101,7 +101,7 @@ const UserActionCard = ({
           )}
         </View>
         <View style={styles.rightColumn}>
-          {showStatus && showDropDown && <StatusCard status={status} />}
+          {status && showDropDown && <StatusCard status={status} />}
           <View style={styles.actionButtonsContainer}>
             {!hideIcons && (
               <>
