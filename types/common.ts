@@ -24,6 +24,8 @@ export type GenderType = "Male" | "Female" | "Others";
 
 export type LogInErrorProps = Partial<Record<keyof LogInProps, string>>;
 
+export type ProfileStatus = "approved" | "pending" | "rejected";
+
 export type SignUpErrorProps = Partial<Record<keyof SignUpProps, string>>;
 
 export type SortType = "ascending" | "descending";
@@ -91,9 +93,9 @@ export interface MenuProps<T> {
 
 export interface RoutineFilterData {
   program: UniversityProgram | undefined;
-  branch?: UniversityBranch | undefined;
+  branch: UniversityBranch | undefined;
   academicLevel: AcademicLevel | undefined;
-  batchAndSectionId?: string | undefined;
+  batchAndSection: string | undefined;
 }
 
 export interface SignUpProps {
