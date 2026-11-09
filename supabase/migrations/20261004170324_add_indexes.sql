@@ -3,6 +3,9 @@
 create index profile_institutes_institute_id_idx
 on public.profile_institutes(institute_id);
 
+create index profile_institutes_profile_id_idx
+on public.profile_institutes(profile_id);
+
 create index profile_institutes_approved_profile_idx
 on public.profile_institutes(
   profile_id,
