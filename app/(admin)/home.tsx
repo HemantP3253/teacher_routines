@@ -5,21 +5,23 @@ import {
   ThemedStatusBar,
   ThemedText,
 } from "@/components/themed";
-import { useUserSearch } from "@/contexts/UserSearchContext";
-import { getGreeting } from "@/utils/stringUtils";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useDynamicGreeting } from "@/hooks/useDynamicGreeting";
+import { useProfileStore } from "@/store/useProfileStore";
+import { ProfileStatus } from "@/types/common";
+import { useRouter } from "expo-router";
 import { Pressable, StatusBar } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 const Home = () => {
+  const router = useRouter();
+  const greeting = useDynamicGreeting();
   const { theme } = useUnistyles();
   const colors = theme.colors;
-  const router = useRouter();
-  const { users, isLoading, updateMembershipStatus } = useUserSearch();
-  const [greeting, setGreeting] = useState<string>();
 
-  useFocusEffect(useCallback(() => setGreeting(getGreeting()), []));
+  const pendingProfiles = useProfileStore((state) => state.pendingProfiles);
+  const statusMap = useProfileStore((state) => state.statusMap);
+  const isLoading = useProfileStore((state) => state.isLoading);
+  const updateUserStatus = useProfileStore((state) => state.updateUserStatus);
 
   return (
     <ThemedLinearGradient style={styles.rootContainer}>
@@ -47,7 +49,7 @@ const Home = () => {
         isDataLoading={isLoading}
         showBottomBorder
       >
-        {users.pending.length === 0 ? (
+        {pendingProfiles.length === 0 ? (
           <ThemedText
             type="text"
             style={{
@@ -59,25 +61,28 @@ const Home = () => {
             No pending users found
           </ThemedText>
         ) : (
-          users.pending
-            .slice(0, 3)
-            .map((user) => (
+          pendingProfiles.slice(0, 3).map((profile) => {
+            const status = statusMap.get(profile.id) as ProfileStatus;
+
+            return (
               <UserActionCard
-                user={user}
-                key={user.profile_id}
-                onStatusChange={(status) =>
-                  updateMembershipStatus(user.profile_id, status)
+                key={profile.id}
+                profile={profile}
+                status={status}
+                onStatusChange={(newStatus) =>
+                  updateUserStatus(profile.id, newStatus)
                 }
               />
-            ))
+            );
+          })
         )}
-        {users.pending.length > 3 && (
+        {pendingProfiles.length > 3 && (
           <Pressable
             onPress={() => router.push("/(misc)/approveUsers")}
             style={{ alignItems: "flex-end", padding: 8 }}
           >
             <ThemedText style={{ fontWeight: "600", fontSize: 16 }}>
-              + {users.pending.length - 3} more
+              + {pendingProfiles.length - 3} more
             </ThemedText>
           </Pressable>
         )}
