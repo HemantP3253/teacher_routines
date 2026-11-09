@@ -3,6 +3,7 @@ import { FloatingTabBar, TabButton } from "@/components/common";
 import { useBlurContext } from "@/contexts/BlurContext";
 import { BlurTargetView } from "expo-blur";
 import { Tabs, usePathname, useRouter } from "expo-router";
+import { StyleSheet } from "react-native-unistyles";
 
 const UserLayout = () => {
   const { targetRef, blurMethod } = useBlurContext();
@@ -11,10 +12,9 @@ const UserLayout = () => {
 
   return (
     <>
-      <BlurTargetView ref={targetRef}>
+      <BlurTargetView ref={targetRef} style={StyleSheet.absoluteFill}>
         <Tabs
           screenOptions={{
-            tabBarShowLabel: false,
             headerShown: false,
             tabBarStyle: { display: "none" },
           }}
