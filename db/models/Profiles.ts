@@ -1,5 +1,5 @@
 import { Model } from "@nozbe/watermelondb";
-import { date, readonly, text } from "@nozbe/watermelondb/decorators";
+import { date, text } from "@nozbe/watermelondb/decorators";
 import { Associations } from "@nozbe/watermelondb/Model";
 
 export default class Profiles extends Model {
@@ -17,7 +17,7 @@ export default class Profiles extends Model {
   @text("phone") phone!: string;
   @text("address") address?: string | null;
 
-  @readonly @date("created_at") createdAt!: Date;
-  @readonly @date("updated_at") updatedAt!: Date;
+  @date("created_at") createdAt!: Date;
+  @date("updated_at") updatedAt!: Date;
   @date("deleted_at") deletedAt!: Date | null;
 }

@@ -1,5 +1,5 @@
 import { Model } from "@nozbe/watermelondb";
-import { date, json, readonly, text } from "@nozbe/watermelondb/decorators";
+import { date, json, text } from "@nozbe/watermelondb/decorators";
 import { Associations } from "@nozbe/watermelondb/Model";
 
 const sanitizeArray = (jsonArray: any) =>
@@ -21,7 +21,7 @@ export default class ProfileInstitutes extends Model {
   @text("reviewed_by") reviewedBy?: string | null;
   @date("reviewed_at") reviewedAt?: Date | null;
 
-  @readonly @date("created_at") createdAt!: Date;
-  @readonly @date("updated_at") updatedAt!: Date;
+  @date("created_at") createdAt!: Date;
+  @date("updated_at") updatedAt!: Date;
   @date("deleted_at") deletedAt!: Date | null;
 }
