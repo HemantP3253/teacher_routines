@@ -14,9 +14,12 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/themed";
-import { useUserInfo } from "@/contexts/UserInfoContext";
+import { getUserProfileById } from "@/services/profileService";
+import { useAuthStore } from "@/store/useAuthStore";
+import { LocalProfilesData } from "@/types/localDbTypes";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -27,10 +30,28 @@ import {
 import { useUnistyles } from "react-native-unistyles";
 
 const UserProfileScreen = () => {
-  const { userInfo, isLoading } = useUserInfo();
+  const router = useRouter();
   const { theme } = useUnistyles();
   const colors = theme.colors;
-  const router = useRouter();
+
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const userId = useAuthStore((state) => state.userId);
+  const [userInfo, setUserInfo] = useState<LocalProfilesData | null>(null);
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (!userId) {
+        setUserInfo(null);
+        return;
+      }
+
+      const profile = await getUserProfileById(userId);
+
+      setUserInfo(profile);
+    };
+
+    loadUserProfile();
+  }, [userId]);
 
   if (isLoading)
     return (
@@ -73,9 +94,9 @@ const UserProfileScreen = () => {
         <View style={{ flexDirection: "row" }}>
           <ThemedView style={{ flex: 1 }} />
           <ThemedView style={{ flex: 1, alignItems: "center" }}>
-            {userInfo.avatar_url ? (
+            {userInfo.avatarUrl ? (
               <Image
-                source={{ uri: userInfo.avatar_url }}
+                source={{ uri: userInfo.avatarUrl }}
                 height={96}
                 width={96}
               />
@@ -118,7 +139,7 @@ const UserProfileScreen = () => {
         }}
       >
         <NameIcon fill={colors.primary} />
-        <ThemedText type="text">{userInfo.full_name}</ThemedText>
+        <ThemedText type="text">{userInfo.fullName}</ThemedText>
       </ThemedView>
       <ThemedView
         style={{
@@ -130,7 +151,7 @@ const UserProfileScreen = () => {
       >
         <AgeIcon fill={colors.primary} />
         <ThemedText type="text">
-          {calculateAgeByDOB(userInfo.date_of_birth)}
+          {calculateAgeByDOB(userInfo.dateOfBirth)}
         </ThemedText>
       </ThemedView>
       <ThemedView
@@ -171,5 +192,7 @@ const UserProfileScreen = () => {
     </ThemedLinearGradient>
   );
 };
+
+// TODO: Refactor and add styles here
 
 export default UserProfileScreen;
