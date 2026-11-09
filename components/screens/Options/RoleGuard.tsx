@@ -1,4 +1,4 @@
-import { useInstituteInfo } from "@/contexts/InstituteInfoContext";
+import { useAuthStore } from "@/store/useAuthStore";
 import { UserType } from "@/types/common";
 import { ReactNode } from "react";
 
@@ -8,8 +8,7 @@ interface RoleGuardProps {
 }
 
 export const RoleGuard = ({ allowedRoles, children }: RoleGuardProps) => {
-  const { currentMembership } = useInstituteInfo();
-  const role = currentMembership?.role as UserType | undefined;
+  const role = useAuthStore((state) => state.userRole);
 
   if (!role || !allowedRoles.includes(role)) return null;
 

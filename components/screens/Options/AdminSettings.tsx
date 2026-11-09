@@ -1,13 +1,16 @@
 import { DegreeIcon } from "@/assets/icons";
 import { CustomModal } from "@/components/common";
 import { ThemedCheckboxMenu, ThemedOptionsCard } from "@/components/themed";
-import { useApp } from "@/contexts/AppContext";
+import { useAppStore } from "@/store/useAppStore";
 import { UniversityProgram } from "@/types/academic";
 import { useState } from "react";
 import { View } from "react-native";
 
 const AdminSettings = () => {
-  const { settings, updateSetting, allAvailableDegrees } = useApp();
+  const availableDegrees = useAppStore((state) => state.availablePrograms);
+  const setAvailablePrograms = useAppStore(
+    (state) => state.setAvailablePrograms,
+  );
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -29,7 +32,7 @@ const AdminSettings = () => {
         Icon={DegreeIcon}
         label="Selected Degrees"
         onPress={() => setModalVisible(true)}
-        description={`${getShownDegreesDescription(settings.shownDegrees)}`}
+        description={`${getShownDegreesDescription(availableDegrees)}`}
       />
       <CustomModal
         modalVisible={modalVisible}
@@ -37,14 +40,14 @@ const AdminSettings = () => {
       >
         <ThemedCheckboxMenu
           title="Select Available Degrees"
-          data={allAvailableDegrees}
+          data={availableDegrees}
           minSelection={1}
-          initialSelection={settings.shownDegrees}
+          initialSelection={availableDegrees}
           getId={(item) => item.id}
           getLabel={(item) => item.name}
-          onSubmit={(degreeNames) => {
+          onSubmit={(degrees) => {
             setModalVisible(false);
-            updateSetting("shownDegrees", degreeNames);
+            setAvailablePrograms(degrees);
           }}
         />
       </CustomModal>
