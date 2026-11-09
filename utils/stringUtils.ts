@@ -1,13 +1,3 @@
-export const getGreeting = () => {
-  const currentHour = new Date().getHours();
-
-  if (currentHour <= 5) return "Goodnight";
-  if (currentHour <= 11) return "Good morning";
-  if (currentHour <= 17) return "Good afternoon";
-  if (currentHour <= 21) return "Good evening";
-  return "Goodnight";
-};
-
 export const getColorByString = (str: string) => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
