@@ -1,9 +1,7 @@
-import {
-  InstituteData,
-  SignUpErrorProps,
-  SignUpProps,
-} from "@/interfaces/interfaces";
 import { fetchAllInstitutes } from "@/services/instituteService";
+import { supabase } from "@/services/supabase";
+import { SignUpErrorProps, SignUpProps } from "@/types/common";
+import { LocalInstituteData } from "@/types/localDbTypes";
 import {
   formatDateInput,
   formatNameInput,
@@ -11,8 +9,8 @@ import {
   formatPasswordInput,
   formatUsernameInput,
 } from "@/utils/formatters";
+import { isSignUpFormValid } from "@/utils/validationUtils";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
 
 export const useSignUpForm = () => {
   const [signUpData, setSignUpData] = useState<SignUpProps>({
@@ -25,22 +23,11 @@ export const useSignUpForm = () => {
     password: "",
     confirmPassword: "",
     phone: "",
-    hasError: false,
   });
 
-  const [signUpError, setSignUpError] = useState<SignUpErrorProps>({
-    name: "",
-    dateOfBirth: "",
-    gender: "",
-    username: "",
-    email: "",
-    address: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
-  });
+  const [signUpError, setSignUpError] = useState<SignUpErrorProps>({});
 
-  const [institutes, setInstitutes] = useState<InstituteData[]>([]);
+  const [institutes, setInstitutes] = useState<LocalInstituteData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -51,8 +38,8 @@ export const useSignUpForm = () => {
         const data = await fetchAllInstitutes();
 
         setInstitutes(data);
-      } catch (err) {
-        Alert.alert("Error", "Failed to load colleges. Please try again.");
+      } catch (error: any) {
+        console.error("[useSignUpForm] Failed to load colleges. Error", error);
       } finally {
         setLoading(false);
       }
@@ -88,16 +75,64 @@ export const useSignUpForm = () => {
     return signUpError[error] !== "" && signUpError[error] !== "Success!";
   };
 
+  const submitSignUpForm = async () => {
+    console.log(signUpData);
+
+    if (!isSignUpFormValid(signUpData, setSignUpData, setSignUpError)) {
+      console.log(
+        "Form validation failed. Please correct the errors and try again.",
+      );
+      return;
+    }
+    try {
+      const { data, error: authError } = await supabase.auth.signUp({
+        email: signUpData.email,
+        password: signUpData.password,
+      });
+
+      if (authError) {
+        console.error("Sign up error (in signUp.tsx): ", authError.message);
+        throw authError;
+      }
+
+      const userId = data.user?.id;
+
+      if (!userId) {
+        console.error("Signup succeeded but no user ID was returned.");
+        return;
+      }
+
+      const { error: profileError } = await supabase.from("profiles").insert({
+        id: userId,
+        username: signUpData.username,
+        full_name: signUpData.name,
+        date_of_birth: signUpData.dateOfBirth,
+        gender: signUpData.gender,
+        phone: signUpData.phone,
+      });
+
+      if (profileError) {
+        console.error(
+          "Profile DB Entry Error (in signUp.tsx): ",
+          profileError.message,
+        );
+        return;
+      }
+    } catch (error: any) {
+      console.error("Signup Error (in signUp.tsx): ", error.message);
+    }
+  };
+
   return {
     signUpData,
     setSignUpData,
     signUpError,
-    setSignUpError,
     handleInputChange,
     checkError,
     modalVisible,
     setModalVisible,
     institutes,
     loading,
+    submitSignUpForm,
   };
 };
