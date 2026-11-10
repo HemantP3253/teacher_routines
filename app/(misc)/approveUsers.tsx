@@ -42,63 +42,66 @@ const ApproveUsers = () => {
       <ThemedLinearGradient style={styles.rootContainer}>
         <ThemedText style={styles.headingText}>User Action Section</ThemedText>
         {(["Pending", "Approved", "Rejected", "All"] as FilterType[]).map(
-          (type) => (
-            <ActionableHeaderCard
-              key={type}
-              title={`${type} Users`}
-              iconProperties={{
-                Icon: getHeaderCardIcon(type),
-                onPress: () => toggleDropdown(type),
-              }}
-              showBottomBorder={showDropDown[type]}
-              isDataLoading={isLoading}
-              searchButtonProperties={{
-                onPress: () => {
-                  router.navigate({
-                    pathname: "/(misc)/searchUsers",
-                    params: { title: type },
-                  });
-                },
-              }}
-            >
-              {showDropDown[type] &&
-                (getProfilesByStatus(
-                  type === "All"
-                    ? undefined
-                    : (type.toString().toLowerCase() as ProfileStatus),
-                ).length === 0 ? (
-                  <ThemedText
-                    type="text"
-                    style={{
-                      paddingHorizontal: 8,
-                      fontWeight: "500",
-                      fontSize: 16,
-                    }}
-                  >
-                    No {type} users found
-                  </ThemedText>
-                ) : (
-                  getProfilesByStatus(
-                    type === "All"
-                      ? undefined
-                      : (type.toString().toLowerCase() as ProfileStatus),
-                  ).map((profile) => {
-                    const status = statusMap.get(profile.id) as ProfileStatus;
+          (type) => {
+            const status =
+              type === "All"
+                ? undefined
+                : (type.toString().toLowerCase() as ProfileStatus);
+            const profiles = getProfilesByStatus(status);
 
-                    return (
-                      <UserActionCard
-                        key={profile.id}
-                        profile={profile}
-                        status={type === "All" ? status : undefined}
-                        onStatusChange={(newStatus) =>
-                          updateUserStatus(profile.id, newStatus)
-                        }
-                      />
-                    );
-                  })
-                ))}
-            </ActionableHeaderCard>
-          ),
+            return (
+              <ActionableHeaderCard
+                key={type}
+                title={`${type} Users`}
+                iconProperties={{
+                  Icon: getHeaderCardIcon(type),
+                  onPress: () => toggleDropdown(type),
+                  fill: colors.primary,
+                  height: 24,
+                  width: 24,
+                }}
+                showBottomBorder={showDropDown[type]}
+                isDataLoading={isLoading}
+                searchButtonProperties={{
+                  onPress: () => {
+                    router.navigate({
+                      pathname: "/(misc)/searchUsers",
+                      params: { title: type },
+                    });
+                  },
+                }}
+              >
+                {showDropDown[type] &&
+                  (profiles.length === 0 ? (
+                    <ThemedText
+                      type="text"
+                      style={{
+                        paddingHorizontal: 8,
+                        fontWeight: "500",
+                        fontSize: 16,
+                      }}
+                    >
+                      No {type} users found
+                    </ThemedText>
+                  ) : (
+                    profiles.map((profile) => {
+                      const status = statusMap.get(profile.id) as ProfileStatus;
+
+                      return (
+                        <UserActionCard
+                          key={profile.id}
+                          profile={profile}
+                          status={status}
+                          onStatusChange={(newStatus) =>
+                            updateUserStatus(profile.id, newStatus)
+                          }
+                        />
+                      );
+                    })
+                  ))}
+              </ActionableHeaderCard>
+            );
+          },
         )}
       </ThemedLinearGradient>
     </ScrollView>
