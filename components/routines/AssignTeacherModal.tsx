@@ -18,12 +18,18 @@ const AssignTeacherModal = ({
   onClose,
   onSelectTeacher,
 }: AssignTeacherModalProps) => {
-  const approvedProfiles = useProfileStore((state) =>
-    state.getProfilesByStatus("approved"),
-  );
-  const isLoading = useProfileStore((state) => state.isLoading);
   const { theme } = useUnistyles();
   const colors = theme.colors;
+
+  const allProfiles = useProfileStore((state) => state.allProfiles);
+  const statusMap = useProfileStore((state) => state.statusMap);
+  const isLoading = useProfileStore((state) => state.isLoading);
+
+  const approvedProfiles = useMemo(
+    () =>
+      allProfiles.filter((profile) => statusMap.get(profile.id) === "approved"),
+    [allProfiles, statusMap],
+  );
 
   const [searchText, setSearchText] = useState<string>("");
 
