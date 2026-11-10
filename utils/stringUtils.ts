@@ -70,3 +70,12 @@ export function addSpacesAfterUppercase(
 
 export const capitalizeFirstLettter = (text: string) =>
   `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
+
+export const toIsoString = (
+  val: number | Date | null | undefined,
+): string | null => {
+  if (!val) return null;
+  if (typeof val === "number") return new Date(val).toISOString();
+  if (val instanceof Date) return val.toISOString();
+  return null;
+};
