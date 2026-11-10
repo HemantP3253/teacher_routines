@@ -18,7 +18,9 @@ const Home = () => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
-  const pendingProfiles = useProfileStore((state) => state.pendingProfiles);
+  const pendingProfiles = useProfileStore((state) =>
+    state.getProfilesByStatus("pending"),
+  );
   const statusMap = useProfileStore((state) => state.statusMap);
   const isLoading = useProfileStore((state) => state.isLoading);
   const updateUserStatus = useProfileStore((state) => state.updateUserStatus);
