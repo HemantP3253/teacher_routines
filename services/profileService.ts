@@ -4,6 +4,7 @@ import {
   LocalProfileInstitutesData,
   LocalProfilesData,
 } from "@/types/localDbTypes";
+import { getProfileInstituteId } from "@/utils/profileInstituteUtils";
 import { Q } from "@nozbe/watermelondb";
 
 interface GetProfilesOptions {
@@ -89,7 +90,7 @@ export const updateDbUserStatus = async (
 
     await database.write(async () => {
       const profileInstitutesRecord = await profileInstitutesCollection.find(
-        `${profileId}-${currentInstituteId}`,
+        getProfileInstituteId(profileId, currentInstituteId),
       );
 
       await profileInstitutesRecord.update((profileInstitutes) => {
