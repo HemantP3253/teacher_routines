@@ -9,6 +9,7 @@ import { useDynamicGreeting } from "@/hooks/useDynamicGreeting";
 import { useProfileStore } from "@/store/useProfileStore";
 import { ProfileStatus } from "@/types/common";
 import { useRouter } from "expo-router";
+import { useMemo } from "react";
 import { Pressable, StatusBar } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
@@ -18,12 +19,16 @@ const Home = () => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
-  const pendingProfiles = useProfileStore((state) =>
-    state.getProfilesByStatus("pending"),
-  );
+  const allProfiles = useProfileStore((state) => state.allProfiles);
   const statusMap = useProfileStore((state) => state.statusMap);
   const isLoading = useProfileStore((state) => state.isLoading);
   const updateUserStatus = useProfileStore((state) => state.updateUserStatus);
+
+  const pendingProfiles = useMemo(
+    () =>
+      allProfiles.filter((profile) => statusMap.get(profile.id) === "pending"),
+    [allProfiles, statusMap],
+  );
 
   return (
     <ThemedLinearGradient style={styles.rootContainer}>
