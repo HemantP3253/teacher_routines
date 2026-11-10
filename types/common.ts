@@ -66,14 +66,15 @@ type IconDimensions =
       size: number;
     };
 
-export type IconProperties = IconDimensions & {
-  Icon?: FC<CustomSvgProps>;
-  iconFill?: boolean;
-  //TODO: Check if showIconOnly property is used anywhere, if not remove it
-  showIconOnly?: boolean;
-  iconFillColor?: ColorValue;
-  onPress?: () => void;
-};
+export type IconProperties = IconDimensions &
+  CustomSvgProps & {
+    Icon?: FC<CustomSvgProps>;
+    iconFill?: boolean;
+    //TODO: Check if showIconOnly property is used anywhere, if not remove it
+    showIconOnly?: boolean;
+    iconFillColor?: ColorValue;
+    onPress?: () => void;
+  };
 
 export interface LogInProps {
   usernameOrEmail: string;
