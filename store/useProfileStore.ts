@@ -7,9 +7,6 @@ import { useAuthStore } from "./useAuthStore";
 
 interface ProfileState {
   allProfiles: LocalProfilesData[];
-  approvedProfiles: LocalProfilesData[];
-  pendingProfiles: LocalProfilesData[];
-  rejectedProfiles: LocalProfilesData[];
   statusMap: Map<string, string>;
   isLoading: boolean;
 
@@ -20,24 +17,15 @@ interface ProfileState {
 
 export const useProfileStore = create<ProfileState>()((set, get) => ({
   allProfiles: [],
-  approvedProfiles: [],
-  pendingProfiles: [],
-  rejectedProfiles: [],
   statusMap: new Map(),
   isLoading: false,
 
   getProfilesByStatus: (status) => {
-    const state = get();
-    switch (status) {
-      case "approved":
-        return state.approvedProfiles;
-      case "pending":
-        return state.pendingProfiles;
-      case "rejected":
-        return state.rejectedProfiles;
-      default:
-        return state.allProfiles;
-    }
+    const { allProfiles, statusMap } = get();
+    if (!status) return allProfiles;
+    return allProfiles.filter(
+      (profile) => statusMap.get(profile.id) === status,
+    );
   },
   fetchProfiles: async () => {
     const { currentInstituteId } = useAuthStore.getState();
@@ -59,15 +47,6 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
 
       set({
         allProfiles: allProfiles,
-        approvedProfiles: allProfiles.filter(
-          (profile) => map.get(profile.id) === "approved",
-        ),
-        pendingProfiles: allProfiles.filter(
-          (profile) => map.get(profile.id) === "pending",
-        ),
-        rejectedProfiles: allProfiles.filter(
-          (profile) => map.get(profile.id) === "rejected",
-        ),
         statusMap: map,
         isLoading: false,
       });
