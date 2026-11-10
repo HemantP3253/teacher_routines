@@ -45,6 +45,8 @@ const Home = () => {
         iconProperties={{
           Icon: ArrowForwardIcon,
           onPress: () => router.push("/(misc)/approveUsers"),
+          height: 24,
+          width: 24,
         }}
         isDataLoading={isLoading}
         showBottomBorder
