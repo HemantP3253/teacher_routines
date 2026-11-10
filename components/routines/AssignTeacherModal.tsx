@@ -18,7 +18,9 @@ const AssignTeacherModal = ({
   onClose,
   onSelectTeacher,
 }: AssignTeacherModalProps) => {
-  const approvedProfiles = useProfileStore((state) => state.approvedProfiles);
+  const approvedProfiles = useProfileStore((state) =>
+    state.getProfilesByStatus("approved"),
+  );
   const isLoading = useProfileStore((state) => state.isLoading);
   const { theme } = useUnistyles();
   const colors = theme.colors;
