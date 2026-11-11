@@ -1,6 +1,5 @@
 import { database } from "@/db";
 import { LocalInstituteData } from "@/types/localDbTypes";
-import { Q } from "@nozbe/watermelondb";
 import { supabase } from "./supabase";
 
 export const populateInstitutes = async () => {
@@ -20,48 +19,49 @@ export const populateInstitutes = async () => {
       const institutesCollection =
         database.get<LocalInstituteData>("institutes");
 
-      for (const institute of institutes) {
-        const existingRecords = await institutesCollection
-          .query(Q.where("id", institute.id))
-          .fetch();
+      const localInstitutes = await institutesCollection.query().fetch();
+      const localMap = new Map(localInstitutes.map((item) => [item.id, item]));
 
-        if (existingRecords.length > 0) {
-          const localInstitute = existingRecords[0];
-          await localInstitute.update((record) => {
+      const batchRecords = institutes.map((institute) => {
+        const existingRecord = localMap.get(institute.id);
+
+        const createdAt = institute.created_at
+          ? new Date(institute.created_at)
+          : new Date();
+        const updatedAt = institute.updated_at
+          ? new Date(institute.updated_at)
+          : new Date();
+        const deletedAt = institute.deleted_at
+          ? new Date(institute.deleted_at)
+          : null;
+
+        if (existingRecord) {
+          return existingRecord.prepareUpdate((record) => {
             record.address = institute.address;
             record.affiliatedUniversity = institute.affiliated_university;
             record.code = institute.code;
             record.name = institute.name;
             record.type = institute.type;
 
-            record.updatedAt = institute.updated_at
-              ? new Date(institute.updated_at)
-              : new Date();
-            record.deletedAt = institute.deleted_at
-              ? new Date(institute.deleted_at)
-              : null;
+            record.updatedAt = updatedAt;
+            record.deletedAt = deletedAt;
           });
         } else {
-          await institutesCollection.create((record) => {
+          return institutesCollection.prepareCreate((record) => {
             record._raw.id = institute.id;
             record.address = institute.address;
             record.affiliatedUniversity = institute.affiliated_university;
             record.code = institute.code;
             record.name = institute.name;
             record.type = institute.type;
-
-            record.createdAt = institute.created_at
-              ? new Date(institute.created_at)
-              : new Date();
-            record.updatedAt = institute.updated_at
-              ? new Date(institute.updated_at)
-              : new Date();
-            record.deletedAt = institute.deleted_at
-              ? new Date(institute.deleted_at)
-              : null;
+            record.createdAt = createdAt;
+            record.updatedAt = updatedAt;
+            record.deletedAt = deletedAt;
           });
         }
-      }
+      });
+
+      await database.batch(batchRecords);
     });
   } catch (error) {
     console.error("Error while populating institutes: ", error);
