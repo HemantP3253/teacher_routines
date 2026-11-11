@@ -1,17 +1,9 @@
 import { database } from "@/db";
-import { useAppStore } from "@/store/useAppStore";
 import { LocalInstituteData } from "@/types/localDbTypes";
 import { Q } from "@nozbe/watermelondb";
 import { supabase } from "./supabase";
 
 export const populateInstitutes = async () => {
-  const { institutesLoaded, setInstitutesLoaded } = useAppStore.getState();
-
-  if (institutesLoaded) {
-    console.log("Institutes already populated. Skipping...");
-    return;
-  }
-
   try {
     console.log("First launch detected: Fetching institutes...");
 
@@ -70,11 +62,9 @@ export const populateInstitutes = async () => {
           });
         }
       }
-
-      setInstitutesLoaded(true);
     });
   } catch (error) {
     console.error("Error while populating institutes: ", error);
-    setInstitutesLoaded(false);
+    throw error;
   }
 };
