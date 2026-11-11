@@ -1,5 +1,4 @@
 import { database } from "@/db";
-import { useProfileStore } from "@/store/useProfileStore";
 import {
   LocalProfileInstitutesData,
   LocalProfilesData,
@@ -94,10 +93,6 @@ export const syncDatabase = async () => {
 
       sendCreatedAsUpdated: true,
     });
-
-    console.log("Database synchronization completed successfully.");
-
-    await useProfileStore.getState().fetchProfiles();
   } catch (error) {
     console.error("Failed to synchronize database: ", error);
     throw error;
