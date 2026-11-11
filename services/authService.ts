@@ -8,6 +8,9 @@ import {
   LocalProfileInstitutesData,
   LocalProfilesData,
 } from "@/types/localDbTypes";
+import { mapInstituteData } from "@/utils/mappers/instituteMapper";
+import { mapProfileInstituteData } from "@/utils/mappers/profileInstitutesMapper";
+import { mapProfileData } from "@/utils/mappers/profileMapper";
 import { getProfileInstituteId } from "@/utils/profileInstituteUtils";
 
 export const getCurrentUserId = async (): Promise<string | null> => {
@@ -100,49 +103,25 @@ export async function handleLogin(loginData: LogInProps, type: "password") {
 
       if (!memberData || memberData.length === 0) return;
 
-      // 1. Sync the Profile (take it from the first row since it's the same user)
+      // 1. Sync the Profile (take it from the first profileInstitute since it's the same user)
       const supabaseProfile = memberData[0].profile;
       if (supabaseProfile) {
         try {
           const existingProfile = await profilesCollection.find(authUser.id);
-          await existingProfile.update((profile) => {
-            profile.username = supabaseProfile.username;
-            profile.avatarUrl = supabaseProfile.avatar_url;
-            profile.dateOfBirth = supabaseProfile.date_of_birth;
-            profile.fullName = supabaseProfile.full_name;
-            profile.gender = supabaseProfile.gender;
-            profile.phone = supabaseProfile.phone;
-            profile.address = supabaseProfile.address;
-
-            profile.createdAt = new Date(supabaseProfile.created_at);
-            profile.updatedAt = new Date(supabaseProfile.updated_at);
-            profile.deletedAt = supabaseProfile.deleted_at
-              ? new Date(supabaseProfile.deleted_at)
-              : null;
+          await existingProfile.update((localProfile) => {
+            mapProfileData(supabaseProfile, localProfile);
           });
         } catch {
-          await profilesCollection.create((profile) => {
-            profile._raw.id = supabaseProfile.id;
-            profile.username = supabaseProfile.username;
-            profile.avatarUrl = supabaseProfile.avatar_url;
-            profile.dateOfBirth = supabaseProfile.date_of_birth;
-            profile.fullName = supabaseProfile.full_name;
-            profile.gender = supabaseProfile.gender;
-            profile.phone = supabaseProfile.phone;
-            profile.address = supabaseProfile.address;
-
-            profile.createdAt = new Date(supabaseProfile.created_at);
-            profile.updatedAt = new Date(supabaseProfile.updated_at);
-            profile.deletedAt = supabaseProfile.deleted_at
-              ? new Date(supabaseProfile.deleted_at)
-              : null;
+          await profilesCollection.create((localProfile) => {
+            localProfile._raw.id = supabaseProfile.id;
+            mapProfileData(supabaseProfile, localProfile);
           });
         }
       }
 
       // 2. Loop through every institute and sync them locally
-      for (const row of memberData) {
-        const supabaseInstitute = row.institute;
+      for (const profileInstitute of memberData) {
+        const supabaseInstitute = profileInstitute.institute;
 
         // Upsert Institute
         if (supabaseInstitute) {
@@ -150,73 +129,37 @@ export async function handleLogin(loginData: LogInProps, type: "password") {
             const existingInst = await institutesCollection.find(
               supabaseInstitute.id,
             );
-            await existingInst.update((inst) => {
-              inst.name = supabaseInstitute.name;
-              inst.affiliatedUniversity =
-                supabaseInstitute.affiliated_university;
-              inst.code = supabaseInstitute.code;
-              inst.type = supabaseInstitute.type;
-              inst.address = supabaseInstitute.address;
-
-              inst.createdAt = new Date(supabaseInstitute.created_at);
-              inst.updatedAt = new Date(supabaseInstitute.updated_at);
-              inst.deletedAt = supabaseInstitute.deleted_at
-                ? new Date(supabaseInstitute.deleted_at)
-                : null;
+            await existingInst.update((localInstitute) => {
+              mapInstituteData(supabaseInstitute, localInstitute);
             });
           } catch {
-            await institutesCollection.create((inst) => {
-              inst._raw.id = supabaseInstitute.id;
-              inst.name = supabaseInstitute.name;
-              inst.code = supabaseInstitute.code;
-              inst.type = supabaseInstitute.type;
-              inst.address = supabaseInstitute.address;
-
-              inst.createdAt = new Date(supabaseInstitute.created_at);
-              inst.updatedAt = new Date(supabaseInstitute.updated_at);
-              inst.deletedAt = supabaseInstitute.deleted_at
-                ? new Date(supabaseInstitute.deleted_at)
-                : null;
+            await institutesCollection.create((localInstitute) => {
+              localInstitute._raw.id = supabaseInstitute.id;
+              mapInstituteData(supabaseInstitute, localInstitute);
             });
           }
         }
 
         // Upsert ProfileInstitute Relation
         try {
-          const existingRel = await profileInstitutesCollection.find(
-            getProfileInstituteId(row.profile_id, row.institute_id),
-          );
+          const existingProfileInstitute =
+            await profileInstitutesCollection.find(
+              getProfileInstituteId(
+                profileInstitute.profile_id,
+                profileInstitute.institute_id,
+              ),
+            );
 
-          await existingRel.update((rel) => {
-            rel.profileId = row.profile_id;
-            rel.allowedUnits = row.allowed_units;
-            rel.reviewedAt = row.reviewed_at ? new Date(row.reviewed_at) : null;
-            rel.reviewedBy = row.reviewed_by;
-            rel.instituteId = row.institute_id;
-            rel.role = row.role;
-            rel.status = row.status;
-
-            rel.createdAt = new Date(row.created_at);
-            rel.updatedAt = new Date(row.updated_at);
-            rel.deletedAt = row.deleted_at ? new Date(row.deleted_at) : null;
+          await existingProfileInstitute.update((localProfileInstitute) => {
+            mapProfileInstituteData(profileInstitute, localProfileInstitute);
           });
         } catch {
-          await profileInstitutesCollection.create((rel) => {
-            rel._raw.id = getProfileInstituteId(
-              row.profile_id,
-              row.institute_id,
+          await profileInstitutesCollection.create((localProfileInstitute) => {
+            localProfileInstitute._raw.id = getProfileInstituteId(
+              profileInstitute.profile_id,
+              profileInstitute.institute_id,
             );
-            rel.profileId = row.profile_id;
-            rel.allowedUnits = row.allowed_units;
-            rel.reviewedAt = row.reviewed_at ? new Date(row.reviewed_at) : null;
-            rel.reviewedBy = row.reviewed_by;
-            rel.instituteId = row.institute_id;
-            rel.role = row.role;
-            rel.status = row.status;
-
-            rel.createdAt = new Date(row.created_at);
-            rel.updatedAt = new Date(row.updated_at);
-            rel.deletedAt = row.deleted_at ? new Date(row.deleted_at) : null;
+            mapProfileInstituteData(profileInstitute, localProfileInstitute);
           });
         }
       }
