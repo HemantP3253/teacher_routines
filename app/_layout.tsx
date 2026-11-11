@@ -1,23 +1,21 @@
 import "../styles/unistyles";
 
-// This stops VSCode from reorganizing imports as unistyles is required on the first line.
-void null;
-
-import { AppProvider } from "@/contexts/AppContext";
 import { BlurProvider } from "@/contexts/BlurContext";
-import {
-  InstituteInfoProvider,
-  useInstituteInfo,
-} from "@/contexts/InstituteInfoContext";
-import { UserInfoProvider, useUserInfo } from "@/contexts/UserInfoContext";
-import { UserSearchProvider } from "@/contexts/UserSearchContext";
+import { populateInstitutes } from "@/services/populateInstitutes";
+import { syncDatabase } from "@/services/sync";
+import { useAppStore } from "@/store/useAppStore";
+import { useAppSyncStore } from "@/store/useAppSyncStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useProfileStore } from "@/store/useProfileStore";
+import { ThemeColors } from "@/types/common";
+import NetInfo from "@react-native-community/netinfo";
 import { Stack, useRouter, useSegments } from "expo-router";
-import { useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { useEffect, useRef } from "react";
+import { AppState, View } from "react-native";
+import { UnistylesRuntime, useUnistyles } from "react-native-unistyles";
 
 interface ScreenStackProps {
-  colors: any;
+  colors: ThemeColors;
 }
 
 const ScreenStack = ({ colors }: ScreenStackProps) => {
@@ -25,7 +23,7 @@ const ScreenStack = ({ colors }: ScreenStackProps) => {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: colors.base100 },
+        contentStyle: { backgroundColor: colors.background },
         animation: "slide_from_right",
         fullScreenGestureEnabled: true,
         gestureEnabled: true,
@@ -48,24 +46,47 @@ const ScreenStack = ({ colors }: ScreenStackProps) => {
 };
 
 const AppNavigationLayout = () => {
-  const { userInfo, isLoading: userLoading } = useUserInfo();
-  const { currentMembership, isLoading: instituteLoading } = useInstituteInfo();
-  const isAdmin =
-    currentMembership?.role === "department_admin" ||
-    currentMembership?.role === "institute_admin";
-
   const { colors } = useUnistyles().theme;
   const router = useRouter();
   const segments = useSegments();
 
-  const isLoading = userLoading || instituteLoading;
+  const themePreference = useAppStore((state) => state.themePreference);
+  const isAppActive = useAppSyncStore((state) => state.isAppActive);
+  const isOnline = useAppSyncStore((state) => state.isOnline);
+  const institutesLoaded = useAppSyncStore((state) => state.institutesLoaded);
+  const setIsAppActive = useAppSyncStore((state) => state.setIsAppActive);
+  const setIsOnline = useAppSyncStore((state) => state.setIsOnline);
+  const setInstitutesLoaded = useAppSyncStore(
+    (state) => state.setInstitutesLoaded,
+  );
+  const setIsSyncing = useAppSyncStore((state) => state.setIsSyncing);
+  const userId = useAuthStore((state) => state.userId);
+  const userRole = useAuthStore((state) => state.userRole);
+  const fetchProfiles = useProfileStore((state) => state.fetchProfiles);
 
+  const isPopulatingRef = useRef<boolean>(false);
+  const isSyncedRef = useRef<boolean>(false);
+
+  // Effect responsible for changing themes
   useEffect(() => {
-    if (isLoading) return;
+    if (themePreference === "Use System Theme") {
+      UnistylesRuntime.setAdaptiveThemes(true);
+    } else {
+      UnistylesRuntime.setAdaptiveThemes(false);
+      const rawTheme = themePreference.split(" ")[0].toLowerCase() as
+        | "light"
+        | "dark";
+      UnistylesRuntime.setTheme(rawTheme);
+    }
+  }, [themePreference]);
 
+  // Effect responsible for role-based routing
+  useEffect(() => {
+    const isAdmin =
+      userRole === "department_admin" || userRole === "institute_admin";
     const inAuthGroup = segments[0] === "(auth)";
 
-    if (!userInfo) {
+    if (!userId || !userRole) {
       if (!inAuthGroup) {
         router.replace("/(auth)/login");
       }
@@ -75,40 +96,79 @@ const AppNavigationLayout = () => {
     if (inAuthGroup) {
       router.replace(isAdmin ? "/(admin)/home" : "/(user)/home");
     }
-  }, [userInfo, currentMembership, isLoading, segments[0]]);
+  }, [userId, userRole, segments, router]);
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+  // Effect for checking app state and network changes
+  useEffect(() => {
+    const unsubscribeNet = NetInfo.addEventListener((state) =>
+      setIsOnline((state.isConnected && state.isInternetReachable) ?? false),
     );
-  }
+
+    const subscriptionApp = AppState.addEventListener(
+      "change",
+      (nextAppState) => setIsAppActive(nextAppState === "active"),
+    );
+
+    return () => {
+      unsubscribeNet();
+      subscriptionApp.remove();
+    };
+  }, [setIsAppActive, setIsOnline]);
+
+  // Effect for populating institutes (if not already populated)
+  useEffect(() => {
+    if (
+      !institutesLoaded &&
+      !isPopulatingRef.current &&
+      isOnline &&
+      isAppActive
+    ) {
+      isPopulatingRef.current = true;
+
+      populateInstitutes()
+        .then(() => setInstitutesLoaded(true))
+        .catch((error) => {
+          console.error("Error while populating institutes: ", error);
+          setInstitutesLoaded(false);
+        })
+        .finally(() => {
+          if (!useAppSyncStore.getState().institutesLoaded) {
+            isPopulatingRef.current = false;
+          }
+        });
+    }
+  }, [institutesLoaded, setInstitutesLoaded, isAppActive, isOnline]);
+
+  // Effect for database synchronization
+  useEffect(() => {
+    if (userId && userRole && isAppActive && isOnline && !isSyncedRef.current) {
+      isSyncedRef.current = true;
+      setIsSyncing(true);
+
+      syncDatabase()
+        .then(() => fetchProfiles())
+        .catch((error) => {
+          console.error("Background sync failed:", error);
+          isSyncedRef.current = false;
+        })
+        .finally(() => {
+          setIsSyncing(false);
+        });
+    }
+  }, [fetchProfiles, isAppActive, setIsSyncing, isOnline, userId, userRole]);
 
   return (
     <View style={{ flex: 1 }}>
-      {isAdmin ? (
-        <UserSearchProvider>
-          <ScreenStack colors={colors} />
-        </UserSearchProvider>
-      ) : (
-        <ScreenStack colors={colors} />
-      )}
+      <ScreenStack colors={colors} />
     </View>
   );
 };
 
 const RootLayout = () => {
   return (
-    <UserInfoProvider>
-      <InstituteInfoProvider>
-        <AppProvider>
-          <BlurProvider>
-            <AppNavigationLayout />
-          </BlurProvider>
-        </AppProvider>
-      </InstituteInfoProvider>
-    </UserInfoProvider>
+    <BlurProvider>
+      <AppNavigationLayout />
+    </BlurProvider>
   );
 };
 
