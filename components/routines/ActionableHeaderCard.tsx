@@ -29,48 +29,55 @@ const ActionableHeaderCard = ({
   IconBeforeText,
   summaryText,
 }: ActionableHeaderCardProps) => {
+  const { theme } = useUnistyles();
+  const colors = theme.colors;
+
   const { Icon, onPress, height, width, size } = iconProperties;
-  const { colors } = useUnistyles().theme;
+
   return (
-    <Pressable onPress={onPress}>
-      <ThemedLinearGradient
-        type="surface"
-        end={{ x: 0, y: 1 }}
-        style={styles.rootContainer}
-      >
-        <View style={styles.headerContainer}>
-          <View style={styles.titleContainer}>
-            {IconBeforeText && <IconBeforeText fill={colors.text} />}
-            <ThemedText style={styles.title}>{title}</ThemedText>
-          </View>
-          <View style={styles.iconContainer}>
-            {searchButtonProperties && (
-              <SearchIcon
-                onPress={searchButtonProperties.onPress}
-                fill={colors.textSecondary}
-              />
-            )}
-            {Icon && (
-              <Icon
-                height={height}
-                width={width}
-                size={size}
-                onPress={onPress}
-                style={styles.secondaryIcon}
-                fill={colors.primary}
-              />
-            )}
-          </View>
+    <ThemedLinearGradient
+      type="surface"
+      end={{ x: 0, y: 1 }}
+      style={styles.rootContainer}
+    >
+      <Pressable onPress={onPress} style={styles.headerContainer}>
+        <View style={styles.titleContainer}>
+          {IconBeforeText && <IconBeforeText fill={colors.text} />}
+          <ThemedText style={styles.title}>{title}</ThemedText>
         </View>
-        {showBottomBorder && (
-          <Spacer useFullWidth line={{ type: "border" }} horizontal />
-        )}
-        {isDataLoading ? <ActivityIndicator size={"large"} /> : children}
-        {summaryText && (
-          <ThemedText style={styles.summaryText}>{summaryText}</ThemedText>
-        )}
-      </ThemedLinearGradient>
-    </Pressable>
+        <View style={styles.iconContainer}>
+          {searchButtonProperties && (
+            <SearchIcon
+              onPress={searchButtonProperties.onPress}
+              fill={colors.textSecondary}
+            />
+          )}
+          {Icon && (
+            <Icon
+              height={height}
+              width={width}
+              size={size}
+              style={styles.secondaryIcon}
+              fill={colors.primary}
+            />
+          )}
+        </View>
+      </Pressable>
+
+      {showBottomBorder && (
+        <Spacer useFullWidth line={{ type: "border" }} horizontal />
+      )}
+
+      {isDataLoading ? (
+        <ActivityIndicator size={"large"} />
+      ) : (
+        <View style={styles.contentContainer}>{children}</View>
+      )}
+
+      {summaryText && (
+        <ThemedText style={styles.summaryText}>{summaryText}</ThemedText>
+      )}
+    </ThemedLinearGradient>
   );
 };
 
@@ -104,6 +111,9 @@ const styles = StyleSheet.create(({ colors, radius, spacing }) => ({
     flexDirection: "row",
     gap: spacing.sm,
     alignItems: "center",
+  },
+  contentContainer: {
+    width: "100%",
   },
   summaryText: {
     fontSize: 14,
