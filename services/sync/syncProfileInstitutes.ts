@@ -3,7 +3,7 @@ import {
   LocalProfileInstitutesData,
   RawProfileInstituteSyncRecord,
 } from "@/types/localDbTypes";
-import { mapProfileInstituteToRawSync } from "@/utils/mappers/profileInstitutesMapper";
+import { mapProfileInstituteData } from "@/utils/mappers/profileInstitutesMapper";
 import { toIsoString } from "@/utils/stringUtils";
 import { supabase } from "../supabase";
 
@@ -26,7 +26,9 @@ export const pullProfileInstitutes = async (
       ?.filter((item) => item.deleted_at)
       .map((item) => `${item.profile_id}_${item.institute_id}`) || [];
 
-  const createdOrUpdated = active.map(mapProfileInstituteToRawSync);
+  const createdOrUpdated: RawProfileInstituteSyncRecord[] = active.map(
+    (remoteItem) => mapProfileInstituteData(remoteItem),
+  );
 
   return { createdOrUpdated: createdOrUpdated, deleted };
 };

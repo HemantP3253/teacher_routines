@@ -1,5 +1,5 @@
 import { RawInstituteSyncRecord } from "@/types/localDbTypes";
-import { mapInstituteToRawSync } from "@/utils/mappers/instituteMapper";
+import { mapInstituteData } from "@/utils/mappers/instituteMapper";
 import { supabase } from "../supabase";
 
 export const pullInstitutes = async (
@@ -19,8 +19,8 @@ export const pullInstitutes = async (
   const deleted =
     data?.filter((item) => item.deleted_at).map((item) => item.id) || [];
 
-  const createdOrUpdated: RawInstituteSyncRecord[] = active.map(
-    mapInstituteToRawSync,
+  const createdOrUpdated: RawInstituteSyncRecord[] = active.map((record) =>
+    mapInstituteData(record),
   );
 
   return { createdOrUpdated: createdOrUpdated, deleted };

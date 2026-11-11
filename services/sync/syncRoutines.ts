@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import { LocalRoutinesData, RawRoutineSyncRecord } from "@/types/localDbTypes";
-import { mapRoutineToRawSync } from "@/utils/mappers/routineMapper";
+import { mapRoutineData } from "@/utils/mappers/routineMapper";
 import { toIsoString } from "@/utils/stringUtils";
 import { supabase } from "../supabase";
 
@@ -18,7 +18,9 @@ export const pullRoutines = async (
   const deleted =
     data?.filter((item) => item.deleted_at).map((item) => item.id) || [];
 
-  const createdOrUpdated = active.map(mapRoutineToRawSync);
+  const createdOrUpdated: RawRoutineSyncRecord[] = active.map((remoteItem) =>
+    mapRoutineData(remoteItem),
+  );
 
   return { createdOrUpdated: createdOrUpdated, deleted };
 };

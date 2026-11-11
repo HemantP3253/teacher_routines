@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import { LocalProfilesData, RawProfileSyncRecord } from "@/types/localDbTypes";
-import { mapProfileToRawSync } from "@/utils/mappers/profileMapper";
+import { mapProfileData } from "@/utils/mappers/profileMapper";
 import { supabase } from "../supabase";
 
 export const pullProfiles = async (
@@ -17,7 +17,9 @@ export const pullProfiles = async (
   const deleted =
     data?.filter((item) => item.deleted_at).map((item) => item.id) || [];
 
-  const createdOrUpdated = active.map(mapProfileToRawSync);
+  const createdOrUpdated: RawProfileSyncRecord[] = active.map((remoteItem) =>
+    mapProfileData(remoteItem),
+  );
 
   return { createdOrUpdated: createdOrUpdated, deleted };
 };
