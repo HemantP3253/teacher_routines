@@ -41,6 +41,7 @@ export { default as SearchIcon } from "./SearchIcon";
 export { default as SelectAllIcon } from "./SelectAllIcon";
 export { default as SelectIcon } from "./SelectIcon";
 export { default as SuccessIcon } from "./SuccessIcon";
+export { default as SyncIcon } from "./SyncIcon";
 export { default as UncheckedCheckBoxIcon } from "./UncheckedCheckBoxIcon";
 export { default as UsernameIcon } from "./UsernameIcon";
 
