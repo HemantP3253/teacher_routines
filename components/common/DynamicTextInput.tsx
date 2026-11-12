@@ -30,6 +30,7 @@ import {
   ThemedTextInput,
 } from "../themed";
 import InfoCard from "./InfoCard";
+import Spacer from "./Spacer";
 
 export type FormatType =
   | "whole-number"
@@ -67,9 +68,11 @@ type InputField = InputType & {
   isSensitiveText?: boolean;
   isNullable?: boolean;
   infoText?: string;
+  formatter?: (input: string) => any;
 };
 
 interface DynamicTextInputProps {
+  title?: string;
   inputFields: InputField[];
   extraInputs?: {
     inputFields: InputField[];
@@ -81,6 +84,7 @@ interface DynamicTextInputProps {
 }
 
 const DynamicTextInput = ({
+  title,
   inputFields,
   extraInputs,
   onSubmit,
@@ -91,10 +95,6 @@ const DynamicTextInput = ({
   const [textValues, setTextValues] = useState<string[]>(() => {
     return defaultValues || Array(inputFields.length).fill("");
   });
-
-  const [previousTextValues, setPreviousTextValues] = useState<
-    string[] | undefined
-  >(defaultValues);
 
   const [activePickerIndex, setActivePickerIndex] = useState<number | null>(
     null,
@@ -168,13 +168,6 @@ const DynamicTextInput = ({
     });
   }, [textValues, inputFields]);
 
-  if (defaultValues !== previousTextValues && defaultValues !== undefined) {
-    setTextValues(defaultValues);
-    setPreviousTextValues(defaultValues);
-  } else {
-    setTextValues(Array(inputFields.length).fill(""));
-  }
-
   const formatData = (
     inputFormatType: FormatType,
     input: string,
@@ -212,6 +205,16 @@ const DynamicTextInput = ({
       <KeyboardAvoidingView
         behavior={Platform.OS === "android" ? "padding" : "position"}
       >
+        {title && (
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <ThemedText
+              type="text"
+              style={{ fontWeight: "bold", fontSize: 20 }}
+            >
+              {title}
+            </ThemedText>
+          </View>
+        )}
         <View>
           {inputFields.map((input, index) => {
             return (
@@ -222,6 +225,7 @@ const DynamicTextInput = ({
                   value={textValues[index] || ""}
                   secureTextEntry={input.isSensitiveText}
                   onChangeText={(value) => {
+                    if (input.formatter) return input.formatter(value);
                     const formattedText = input?.inputFormatType
                       ? formatData(
                           input.inputFormatType,
@@ -267,6 +271,8 @@ const DynamicTextInput = ({
               />
             </View>
           )}
+
+          <Spacer size={16} />
 
           <View style={styles.actionButtonsContainer}>
             <ThemedPressable
