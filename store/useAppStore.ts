@@ -1,20 +1,9 @@
 import { getAllDegreeNames } from "@/data/curricula/university/TU/tuHelpers";
 import { UniversityProgram } from "@/types/academic";
-import { Days, ThemePreference } from "@/types/common";
+import { RoutineOption, ThemePreference } from "@/types/common";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { zustandStorageAdapter } from "./storageAdapter";
-
-interface RoutineOption {
-  id: number;
-  label: string;
-  startTime: string;
-  endTime: string;
-  breakStartTime?: string;
-  breakEndTime?: string;
-  periodDuration: number;
-  activeDays: Days[];
-}
 
 interface AppState {
   themePreference: ThemePreference;
@@ -67,7 +56,7 @@ const INITIAL_ROUTINE_OPTIONS: RoutineOption[] = [
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       themePreference: "Use System Theme",
       setThemePreference: (themePreference) => set({ themePreference }),
 
