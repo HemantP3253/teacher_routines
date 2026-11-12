@@ -3,9 +3,9 @@ import { useProfileStore } from "@/store/useProfileStore";
 import { useMemo, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import { CustomModal, Spacer } from "../common";
-import { ThemedText, ThemedTextInput, ThemedView } from "../themed";
-import UserActionCard from "./UserActionCard";
+import { CustomModal, Spacer } from "../../common";
+import { ThemedText, ThemedTextInput, ThemedView } from "../../themed";
+import UserActionCard from "../UserActionCard";
 
 interface AssignTeacherModalProps {
   visible: boolean;
