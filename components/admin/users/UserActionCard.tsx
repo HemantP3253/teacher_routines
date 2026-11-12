@@ -15,7 +15,7 @@ import { calculateAgeByDOB } from "@/utils/dateUtils";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { ThemedLinearGradient, ThemedText } from "../themed";
+import { ThemedLinearGradient, ThemedText } from "../../themed";
 import StatusCard from "./StatusCard";
 
 interface UserActionCardProps {

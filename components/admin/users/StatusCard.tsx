@@ -2,7 +2,7 @@ import { CloseIcon, ExclamationIcon, SuccessIcon } from "@/assets/icons";
 import { capitalizeFirstLettter } from "@/utils/stringUtils";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { ThemedText } from "../themed";
+import { ThemedText } from "../../themed";
 
 interface StatusCardProps {
   status: string;
