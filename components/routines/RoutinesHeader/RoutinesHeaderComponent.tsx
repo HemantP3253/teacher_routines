@@ -1,37 +1,37 @@
 import {
-  AltRouteIcon,
-  ArrowDownIcon,
-  ArrowUpIcon,
-  DateRangeIcon,
-  DegreeIcon,
-  RoutinesIcon,
+    AltRouteIcon,
+    ArrowDownIcon,
+    ArrowUpIcon,
+    DateRangeIcon,
+    DegreeIcon,
+    RoutinesIcon,
 } from "@/assets/icons";
 import { useBlurContext } from "@/contexts/BlurContext";
 import {
-  getAllCurriculumEntities,
-  getNextCurriculumEntities,
-  getProgramContextById,
+    getAllCurriculumEntities,
+    getNextCurriculumEntities,
+    getProgramContextById,
 } from "@/data/curricula/university/TU/tuHelpers";
 import { useObservable } from "@/hooks/useObservable";
 import { observeBatchesByProgramId } from "@/services/routineService";
 import { useAppStore } from "@/store/useAppStore";
 import {
-  AcademicLevel,
-  UniversityBranch,
-  UniversityProgram,
+    AcademicLevel,
+    UniversityBranch,
+    UniversityProgram,
 } from "@/types/academic";
 import { of } from "@nozbe/watermelondb/utils/rx";
 import { useCallback, useMemo, useState } from "react";
-import { CustomModal } from "../common";
-import ActionableHeaderCard from "../common/ActionableHeaderCard";
-import DynamicTagSelect from "../common/DynamicTagSelect/index";
-import DynamicTextInput from "../common/DynamicTextInput";
+import { CustomModal } from "../../common";
+import ActionableHeaderCard from "../../common/ActionableHeaderCard";
+import DynamicTagSelect from "../../common/DynamicTagSelect/index";
+import DynamicTextInput from "../../common/DynamicTextInput";
 import {
-  ThemedLinearGradient,
-  ThemedModalMenu,
-  ThemedText,
-  ThemedView,
-} from "../themed";
+    ThemedLinearGradient,
+    ThemedModalMenu,
+    ThemedText,
+    ThemedView,
+} from "../../themed";
 
 type menuSteps = "Program" | "Branch" | "Term" | "Batch and Section";
 
