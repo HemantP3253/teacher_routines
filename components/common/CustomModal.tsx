@@ -58,7 +58,11 @@ const CustomModal = ({
             onPress={() => setModalVisible(false)}
           >
             <Pressable
-              style={{ width: "100%" }}
+              style={{
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
               onPress={(e) => e.stopPropagation()}
             >
               {children}
