@@ -1,4 +1,4 @@
-import Options from "@/components/screens/Options/index";
+import Options from "@/components/screens/options/index";
 
 const options = () => {
   return <Options />;
