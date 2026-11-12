@@ -2,7 +2,6 @@ import { FC } from "react";
 import { ColorValue } from "react-native";
 import { SvgProps } from "react-native-svg";
 import { UnistylesThemes } from "react-native-unistyles";
-import { AcademicLevel, UniversityBranch, UniversityProgram } from "./academic";
 import { Tables } from "./database";
 
 export type ActiveSubjectInfo = {
@@ -11,7 +10,7 @@ export type ActiveSubjectInfo = {
   teacherId: string;
 };
 
-export type Days =
+type Days =
   | "Sunday"
   | "Monday"
   | "Tuesday"
@@ -92,11 +91,15 @@ export interface MenuProps<T> {
   sortType?: SortType;
 }
 
-export interface RoutineFilterData {
-  program: UniversityProgram | undefined;
-  branch: UniversityBranch | undefined;
-  academicLevel: AcademicLevel | undefined;
-  batchAndSection: string | undefined;
+export interface RoutineOption {
+  id: number;
+  label: string;
+  startTime: string;
+  endTime: string;
+  breakStartTime?: string;
+  breakEndTime?: string;
+  periodDuration: number;
+  activeDays: Days[];
 }
 
 export interface SignUpProps {
