@@ -1,132 +1,204 @@
 import { ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
-import { ActionableHeaderCard, UserActionCard } from "@/components/routines";
+import ActionableHeaderCard from "@/components/common/ActionableHeaderCard";
+import { UserActionCard } from "@/components/routines";
 import { ThemedLinearGradient, ThemedText } from "@/components/themed";
 import { useProfileStore } from "@/store/useProfileStore";
-import { ProfileStatus } from "@/types/common";
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { ScrollView, StatusBar, StyleSheet } from "react-native";
+import { ProfileStatus, ThemeColors } from "@/types/common";
+import { LocalProfilesData } from "@/types/localDbTypes";
+import { ImperativeRouter, useRouter } from "expo-router";
+import { memo, useCallback, useMemo, useState, useTransition } from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
 type FilterType = "Pending" | "Approved" | "Rejected" | "All";
+const FILTER_TYPES: FilterType[] = ["Approved", "Pending", "Rejected", "All"];
+
+interface MemoizedUserCardProps {
+  profile: LocalProfilesData;
+  onStatusChange: (id: string, profile: ProfileStatus) => void;
+}
+
+const MemoizedUserCard = memo(function MemoizedUserCard({
+  profile,
+  onStatusChange,
+}: MemoizedUserCardProps) {
+  const status = useProfileStore(
+    useCallback(
+      (state) => state.statusMap.get(profile.id) as ProfileStatus,
+      [profile.id],
+    ),
+  );
+  return (
+    <UserActionCard
+      profile={profile}
+      status={status}
+      onStatusChange={(newStatus) => onStatusChange(profile.id, newStatus)}
+    />
+  );
+});
+
+interface FilterAccordionItemProps {
+  type: FilterType;
+  colors: ThemeColors;
+  isLoading: boolean;
+  updateUserStatus: (id: string, status: ProfileStatus) => void;
+  router: ImperativeRouter;
+}
+
+const FilterAccordionItem = memo(function FilterAccordionItem({
+  type,
+  colors,
+  isLoading,
+  updateUserStatus,
+  router,
+}: FilterAccordionItemProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isContentReady, setIsContentReady] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, startTransition] = useTransition();
+
+  const getProfilesByStatus = useProfileStore(
+    (state) => state.getProfilesByStatus,
+  );
+
+  const profiles = useMemo(() => {
+    const status =
+      type === "All" ? undefined : (type.toLowerCase() as ProfileStatus);
+    return getProfilesByStatus(status);
+  }, [type, getProfilesByStatus]);
+
+  const toggleDropdown = useCallback(() => {
+    if (!isExpanded) {
+      setIsExpanded(true);
+      setIsContentReady(false);
+
+      requestAnimationFrame(() => {
+        startTransition(() => {
+          setIsContentReady(true);
+        });
+      });
+    } else {
+      setIsExpanded(false);
+      setIsContentReady(false);
+    }
+  }, [isExpanded]);
+
+  return (
+    <ActionableHeaderCard
+      title={`${type} Users`}
+      iconProperties={{
+        Icon: isExpanded ? ArrowUpIcon : ArrowDownIcon,
+        onPress: toggleDropdown,
+        fill: colors.primary,
+        height: 24,
+        width: 24,
+      }}
+      showBottomBorder={isExpanded}
+      isDataLoading={isLoading}
+      searchButtonProperties={{
+        onPress: () => {
+          router.navigate({
+            pathname: "/(misc)/searchUsers",
+            params: { title: type },
+          });
+        },
+      }}
+    >
+      {isExpanded && (
+        <View
+          style={{
+            height: 260,
+            width: "100%",
+            overflow: "hidden",
+            justifyContent: isContentReady ? "flex-start" : "center",
+            alignItems: isContentReady ? "stretch" : "center",
+          }}
+        >
+          {!isContentReady ? (
+            <ActivityIndicator size="small" color={colors.primary} />
+          ) : (
+            <ScrollView
+              style={{ flex: 1, width: "100%" }}
+              contentContainerStyle={{ paddingVertical: 4 }}
+              showsVerticalScrollIndicator={true}
+              nestedScrollEnabled={true}
+            >
+              {profiles.length === 0 ? (
+                <ThemedText
+                  type="text"
+                  style={{
+                    padding: 12,
+                    fontWeight: "500",
+                    fontSize: 16,
+                    textAlign: "center",
+                  }}
+                >
+                  No {type} users found
+                </ThemedText>
+              ) : (
+                profiles.map((profile) => (
+                  <MemoizedUserCard
+                    key={profile.id}
+                    profile={profile}
+                    onStatusChange={updateUserStatus}
+                  />
+                ))
+              )}
+            </ScrollView>
+          )}
+        </View>
+      )}
+    </ActionableHeaderCard>
+  );
+});
 
 const ApproveUsers = () => {
   const router = useRouter();
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
-  const statusMap = useProfileStore((state) => state.statusMap);
   const isLoading = useProfileStore((state) => state.isLoading);
-  const getProfilesByStatus = useProfileStore(
-    (state) => state.getProfilesByStatus,
-  );
   const updateUserStatus = useProfileStore((state) => state.updateUserStatus);
 
-  const [showDropDown, setShowDropDown] = useState<Record<FilterType, boolean>>(
-    { Pending: false, Approved: false, Rejected: false, All: false },
-  );
-
-  const toggleDropdown = async (status: FilterType) => {
-    const nextState = !showDropDown[status];
-    setShowDropDown((prev) => ({ ...prev, [status]: nextState }));
-  };
-
-  const getHeaderCardIcon = (status: FilterType) => {
-    return showDropDown[status] ? ArrowUpIcon : ArrowDownIcon;
-  };
-
   return (
-    <ScrollView
-      style={[StyleSheet.absoluteFill, { backgroundColor: colors.background }]}
-    >
-      <ThemedLinearGradient style={styles.rootContainer}>
+    <ThemedLinearGradient style={styles.rootContainer}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 24 }}
+        showsVerticalScrollIndicator={false}
+      >
         <ThemedText style={styles.headingText}>User Action Section</ThemedText>
-        {(["Pending", "Approved", "Rejected", "All"] as FilterType[]).map(
-          (type) => {
-            const status =
-              type === "All"
-                ? undefined
-                : (type.toString().toLowerCase() as ProfileStatus);
-            const profiles = getProfilesByStatus(status);
 
-            return (
-              <ActionableHeaderCard
-                key={type}
-                title={`${type} Users`}
-                iconProperties={{
-                  Icon: getHeaderCardIcon(type),
-                  onPress: () => toggleDropdown(type),
-                  fill: colors.primary,
-                  height: 24,
-                  width: 24,
-                }}
-                showBottomBorder={showDropDown[type]}
-                isDataLoading={isLoading}
-                searchButtonProperties={{
-                  onPress: () => {
-                    router.navigate({
-                      pathname: "/(misc)/searchUsers",
-                      params: { title: type },
-                    });
-                  },
-                }}
-              >
-                {showDropDown[type] &&
-                  (profiles.length === 0 ? (
-                    <ThemedText
-                      type="text"
-                      style={{
-                        paddingHorizontal: 8,
-                        fontWeight: "500",
-                        fontSize: 16,
-                      }}
-                    >
-                      No {type} users found
-                    </ThemedText>
-                  ) : (
-                    profiles.map((profile) => {
-                      const status = statusMap.get(profile.id) as ProfileStatus;
-
-                      return (
-                        <UserActionCard
-                          key={profile.id}
-                          profile={profile}
-                          status={status}
-                          onStatusChange={(newStatus) =>
-                            updateUserStatus(profile.id, newStatus)
-                          }
-                        />
-                      );
-                    })
-                  ))}
-              </ActionableHeaderCard>
-            );
-          },
-        )}
-      </ThemedLinearGradient>
-    </ScrollView>
+        {FILTER_TYPES.map((type) => (
+          <FilterAccordionItem
+            key={type}
+            type={type}
+            colors={colors}
+            isLoading={isLoading}
+            updateUserStatus={updateUserStatus}
+            router={router}
+          />
+        ))}
+      </ScrollView>
+    </ThemedLinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   rootContainer: {
     paddingTop: StatusBar.currentHeight ?? 0,
-    height: "100%",
+    flex: 1,
   },
   headingText: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-  },
-  labelText: {
-    paddingHorizontal: 8,
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  pressableText: {
-    fontSize: 16,
-    fontWeight: "700",
-    textAlign: "center",
+    marginVertical: 12,
   },
 });
 
