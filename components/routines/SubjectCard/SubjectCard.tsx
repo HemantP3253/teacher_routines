@@ -9,7 +9,7 @@ import {
   ThemedLinearGradient,
   ThemedText,
 } from "../../themed";
-import AssignTeacherModal from "../AssignTeacherModal";
+import AssignTeacherModal from "./AssignTeacherModal";
 
 interface SubjectCardProps {
   subject: CurriculumSubject;
