@@ -21,7 +21,7 @@ import {
 import { pad } from "@/utils/stringUtils";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useMemo, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { KeyboardAvoidingView, Platform, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import {
   ThemedCheckbox,
@@ -201,169 +201,167 @@ const DynamicTextInput = ({
 
   // TODO: Implement extra input fields with caption text
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "android" ? "padding" : "position"}
-      >
-        {title && (
-          <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <ThemedText
-              type="text"
-              style={{ fontWeight: "bold", fontSize: 20 }}
-            >
-              {title}
-            </ThemedText>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "android" ? "padding" : "position"}
+    >
+      {title && (
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <ThemedText type="text" style={{ fontWeight: "bold", fontSize: 20 }}>
+            {title}
+          </ThemedText>
+        </View>
+      )}
+      <View>
+        {inputFields.map((input, index) => {
+          return (
+            <View key={`${input.title}-${index}`}>
+              <ThemedTextInput
+                title={input.title}
+                blendColor={input.blendColor ?? undefined}
+                value={textValues[index] || ""}
+                secureTextEntry={input.isSensitiveText}
+                onChangeText={(value) => {
+                  if (input.formatter) return input.formatter(value);
+                  const formattedText = input?.inputFormatType
+                    ? formatData(input.inputFormatType, value, input.precision)
+                    : value;
+
+                  handleTextChange(formattedText, index);
+                }}
+                customComponent={
+                  input.showPicker && (
+                    <ThemedPressable
+                      noFill
+                      style={styles.pickerButton}
+                      onPress={() => handleOpenPicker(index)}
+                    >
+                      {input.showPicker === "date" && (
+                        <CalendarInfoIcon fill={colors.primary} />
+                      )}
+                      {input.showPicker === "time" && (
+                        <ScheduleIcon fill={colors.primary} />
+                      )}
+                      {input.showPicker === "dateAndTime" && (
+                        <CalendarClockIcon fill={colors.primary} />
+                      )}
+                    </ThemedPressable>
+                  )
+                }
+              />
+              {input.infoText && <InfoCard infoText={input.infoText} />}
+            </View>
+          );
+        })}
+
+        {extraInputs?.inputFields && extraInputs.captionText && (
+          <View>
+            <ThemedCheckbox
+              label="Mahendra Multiple Campus, Nepalgunj"
+              subLabel="Sadarline, Nepalgunj - 10, Banke, Lumbini Province, Nepal"
+              style={{ padding: 4 }}
+              alwaysShowSubLabel
+            />
           </View>
         )}
-        <View>
-          {inputFields.map((input, index) => {
-            return (
-              <View key={`${input.title}-${index}`}>
-                <ThemedTextInput
-                  title={input.title}
-                  blendColor={input.blendColor ?? undefined}
-                  value={textValues[index] || ""}
-                  secureTextEntry={input.isSensitiveText}
-                  onChangeText={(value) => {
-                    if (input.formatter) return input.formatter(value);
-                    const formattedText = input?.inputFormatType
-                      ? formatData(
-                          input.inputFormatType,
-                          value,
-                          input.precision,
-                        )
-                      : value;
 
-                    handleTextChange(formattedText, index);
-                  }}
-                  customComponent={
-                    input.showPicker && (
-                      <ThemedPressable
-                        noFill
-                        style={styles.pickerButton}
-                        onPress={() => handleOpenPicker(index)}
-                      >
-                        {input.showPicker === "date" && (
-                          <CalendarInfoIcon fill={colors.primary} />
-                        )}
-                        {input.showPicker === "time" && (
-                          <ScheduleIcon fill={colors.primary} />
-                        )}
-                        {input.showPicker === "dateAndTime" && (
-                          <CalendarClockIcon fill={colors.primary} />
-                        )}
-                      </ThemedPressable>
-                    )
-                  }
-                />
-                {input.infoText && <InfoCard infoText={input.infoText} />}
-              </View>
-            );
-          })}
+        <Spacer size={16} />
 
-          {extraInputs?.inputFields && extraInputs.captionText && (
-            <View>
-              <ThemedCheckbox
-                label="Mahendra Multiple Campus, Nepalgunj"
-                subLabel="Sadarline, Nepalgunj - 10, Banke, Lumbini Province, Nepal"
-                style={{ padding: 4 }}
-                alwaysShowSubLabel
-              />
-            </View>
-          )}
-
-          <Spacer size={16} />
-
-          <View style={styles.actionButtonsContainer}>
-            <ThemedPressable
-              noFill
-              disabled={!isClearable}
-              style={isClearable ? styles.actionButtons : styles.buttonDisabled}
-              onPress={() => setTextValues(Array(inputFields.length).fill(""))}
+        <View style={styles.actionButtonsContainer}>
+          <ThemedPressable
+            noFill
+            disabled={!isClearable}
+            style={[
+              styles.actionButtons,
+              !isClearable && styles.buttonDisabled,
+            ]}
+            onPress={() => setTextValues(Array(inputFields.length).fill(""))}
+          >
+            <ThemedText
+              style={styles.actionButtonsText}
+              type={isClearable ? "text" : "disabledContent"}
             >
-              <ThemedText
-                style={styles.actionButtonsText}
-                type={isClearable ? "text" : "disabledContent"}
-              >
-                Clear All
-              </ThemedText>
-            </ThemedPressable>
+              Clear All
+            </ThemedText>
+          </ThemedPressable>
 
-            <ThemedPressable
-              style={
-                isSubmittable ? styles.actionButtons : styles.buttonDisabled
-              }
-              disabled={!isSubmittable}
-              onPress={() => onSubmit?.(textValues)}
+          <ThemedPressable
+            style={[
+              styles.actionButtons,
+              !isSubmittable && styles.buttonDisabled,
+            ]}
+            disabled={!isSubmittable}
+            onPress={() => onSubmit?.(textValues)}
+          >
+            <ThemedText
+              type={isSubmittable ? "primaryContent" : "disabledContent"}
+              style={styles.actionButtonsText}
             >
-              <ThemedText
-                type={isSubmittable ? "primaryContent" : "disabledContent"}
-                style={styles.actionButtonsText}
-              >
-                Submit
-              </ThemedText>
-            </ThemedPressable>
-          </View>
+              Submit
+            </ThemedText>
+          </ThemedPressable>
         </View>
+      </View>
 
-        {datePicker.visible && (
-          <>
-            {/* DATE or DATE_AND_TIME (First Step) */}
-            {(datePicker.mode === "date" ||
-              (datePicker.mode === "dateAndTime" &&
-                datePicker.dateTimeStep === "date")) && (
-              <>
-                {/* {datePicker.calendarType === "bs" ? (
+      {datePicker.visible && (
+        <>
+          {/* DATE or DATE_AND_TIME (First Step) */}
+          {(datePicker.mode === "date" ||
+            (datePicker.mode === "dateAndTime" &&
+              datePicker.dateTimeStep === "date")) && (
+            <>
+              {/* {datePicker.calendarType === "bs" ? (
                   <NepaliDatePicker
                     value={datePicker.getInitialBsValue()}
                     onSelect={datePicker.handleNepaliDateSelect}
                     onClose={datePicker.closePicker}
                   />
                 ) : ( */}
-                <DateTimePicker
-                  value={currentSelectedDate}
-                  mode="date"
-                  display={Platform.OS === "ios" ? "spinner" : "default"}
-                  onChange={datePicker.handleStandardSelect}
-                />
-                {/* )} */}
-              </>
-            )}
-
-            {/* TIME or DATE_AND_TIME (Second Step) */}
-            {(datePicker.mode === "time" ||
-              (datePicker.mode === "dateAndTime" &&
-                datePicker.dateTimeStep === "time")) && (
               <DateTimePicker
                 value={currentSelectedDate}
-                mode="time"
-                is24Hour={true}
+                mode="date"
                 display={Platform.OS === "ios" ? "spinner" : "default"}
                 onChange={datePicker.handleStandardSelect}
               />
-            )}
-          </>
-        )}
-      </KeyboardAvoidingView>
-    </ScrollView>
+              {/* )} */}
+            </>
+          )}
+
+          {/* TIME or DATE_AND_TIME (Second Step) */}
+          {(datePicker.mode === "time" ||
+            (datePicker.mode === "dateAndTime" &&
+              datePicker.dateTimeStep === "time")) && (
+            <DateTimePicker
+              value={currentSelectedDate}
+              mode="time"
+              is24Hour={true}
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              onChange={datePicker.handleStandardSelect}
+            />
+          )}
+        </>
+      )}
+    </KeyboardAvoidingView>
   );
 };
 
-const styles = StyleSheet.create((theme) => ({
-  scrollContainer: { flex: 1 },
-  actionButtonsContainer: { flexDirection: "row", flex: 1 },
+const styles = StyleSheet.create(({ colors, spacing, radius }) => ({
+  actionButtonsContainer: {
+    flexDirection: "row",
+    width: "100%",
+    gap: spacing.md,
+  },
   actionButtons: {
     alignItems: "center",
+    justifyContent: "center",
     flex: 1,
+    paddingVertical: spacing.md,
   },
   actionButtonsText: {
     textAlign: "center",
     fontWeight: "bold",
   },
   buttonDisabled: {
-    backgroundColor: theme.colors.disabled,
-    flex: 1,
-    alignItems: "center",
+    backgroundColor: colors.disabled,
     borderWidth: 0,
   },
   pickerButton: {
