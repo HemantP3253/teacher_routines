@@ -1,5 +1,5 @@
 import { RoutinesFooterComponent, SubjectCard } from "@/components/routines";
-import RoutinesHeaderComponent from "@/components/routines/RoutinesHeaderComponent";
+import RoutinesHeaderComponent from "@/components/routines/RoutinesHeader/RoutinesHeaderComponent";
 import { ThemedLinearGradient, ThemedText } from "@/components/themed";
 import { getSubjects } from "@/data/curricula/university/TU/tuHelpers";
 import { useAppStore } from "@/store/useAppStore";
