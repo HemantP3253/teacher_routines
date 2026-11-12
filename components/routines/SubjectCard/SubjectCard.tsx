@@ -4,8 +4,12 @@ import { calculateFullPeriodTime } from "@/utils/dateUtils";
 import { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { ThemedAlertWindow, ThemedLinearGradient, ThemedText } from "../themed";
-import AssignTeacherModal from "./AssignTeacherModal";
+import {
+  ThemedAlertWindow,
+  ThemedLinearGradient,
+  ThemedText,
+} from "../../themed";
+import AssignTeacherModal from "../AssignTeacherModal";
 
 interface SubjectCardProps {
   subject: CurriculumSubject;
