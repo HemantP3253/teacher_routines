@@ -1,3 +1,4 @@
+import SyncStatusBanner from "@/components/common/SyncStatusBanner";
 import "../styles/unistyles";
 
 import { BlurProvider } from "@/contexts/BlurContext";
@@ -46,6 +47,7 @@ const AppNavigationLayout = () => {
   return (
     <View style={{ flex: 1 }}>
       <ScreenStack colors={colors} />
+      <SyncStatusBanner />
     </View>
   );
 };
