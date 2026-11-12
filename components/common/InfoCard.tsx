@@ -24,12 +24,13 @@ const InfoCard = ({
       style={[styles.rootContainer, containerStyle]}
     >
       <InfoIcon
-        height={28}
-        width={28}
         style={[styles.infoIcon, iconStyle]}
         fill={colors.infoContent}
       />
-      <ThemedText type="infoContent" style={[textStyle]}>
+      <ThemedText
+        type="infoContent"
+        style={[textStyle, { flexWrap: "wrap", flex: 1 }]}
+      >
         {infoText}
       </ThemedText>
     </ThemedLinearGradient>
@@ -41,7 +42,7 @@ const styles = StyleSheet.create(({ spacing, radius }) => ({
     borderRadius: radius.md,
     flexDirection: "row",
     alignItems: "center",
-    marginHorizontal: spacing.sm,
+    width: "100%",
     padding: spacing.sm,
     gap: spacing.xs,
   },
