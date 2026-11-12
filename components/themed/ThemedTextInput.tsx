@@ -1,19 +1,39 @@
 import { ErrorIcon, SuccessIcon } from "@/assets/icons";
-import { ThemedTextInputProps } from "@/interfaces/interfaces";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { useUnistyles } from "react-native-unistyles";
-
+import { IconProperties } from "@/types/common";
+import React, { useMemo, useState } from "react";
+import { Pressable, Text, TextInput, TextInputProps, View } from "react-native";
+import Animated, {
+  interpolate,
+  interpolateColor,
+  useAnimatedStyle,
+  useDerivedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import ErrorCard from "../common/ErrorCard";
 import InfoCard from "../common/InfoCard";
 import ThemedView from "./ThemedView";
+
+interface ThemedTextInputProps extends TextInputProps {
+  title: string;
+  dateEntry?: boolean;
+  dateValue?: Date;
+  setDateValue?: any;
+  ref?: React.Ref<TextInput> | undefined;
+  secureTextEntry?: boolean;
+  error?: boolean;
+  customComponent?: React.ReactNode;
+  Icon?: IconProperties["Icon"];
+  errorText?: string;
+  infoText?: string;
+  hideErrorText?: boolean;
+  blendColor?: string;
+  timeValues?: {
+    time?: Date;
+    setTime?: any;
+    use24Hours?: boolean;
+  };
+}
 
 const ThemedTextInput = ({
   style,
@@ -37,7 +57,6 @@ const ThemedTextInput = ({
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const hasError = !!errorText && errorText !== "" && errorText !== "Success!";
-
   const hasSuccess = errorText === "Success!";
 
   const borderColor = hasError
@@ -56,17 +75,41 @@ const ThemedTextInput = ({
         ? colors.success
         : colors.text;
 
-  const animatedValue = useRef(
-    new Animated.Value(otherProps.value ? 1 : 0),
-  ).current;
+  const isFloating = focused || !!otherProps.value;
+  const progress = useDerivedValue(() =>
+    withTiming(isFloating ? 1 : 0, { duration: 200 }),
+  );
 
-  useEffect(() => {
-    Animated.timing(animatedValue, {
-      toValue: focused || !!otherProps.value ? 1 : 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  }, [focused, otherProps.value]);
+  const animatedLabelContainerStyle = useAnimatedStyle(() => {
+    return {
+      top: interpolate(progress.value, [0, 1], [14, -10]),
+    };
+  });
+
+  const animatedBackgroundStyle = useAnimatedStyle(() => {
+    const startColor = colors.surface;
+    const endColor = blendColor ?? colors.background;
+
+    return {
+      backgroundColor: interpolateColor(
+        progress.value,
+        [0, 1],
+        [startColor, endColor],
+      ),
+      transform: [
+        {
+          scaleY: interpolate(progress.value, [0, 1], [1, 1.3]),
+        },
+        { translateY: interpolate(progress.value, [0, 1], [0, -1.5]) },
+      ],
+    };
+  });
+
+  const animatedLabelStyle = useAnimatedStyle(() => {
+    return {
+      fontSize: interpolate(progress.value, [0, 1], [16, 14]),
+    };
+  });
 
   return (
     <View>
@@ -84,46 +127,27 @@ const ThemedTextInput = ({
       >
         <Animated.View
           pointerEvents="none"
-          style={{
-            position: "absolute",
-            left: Icon ? 35 : 10,
-            zIndex: 2,
-            top: animatedValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: [14, -10],
-            }),
-          }}
+          style={[
+            {
+              position: "absolute",
+              left: Icon ? 35 : 10,
+              zIndex: 2,
+            },
+            animatedLabelContainerStyle,
+          ]}
         >
-          <View style={StyleSheet.absoluteFill}>
-            <Animated.View
-              style={{
-                flex: 1,
-                backgroundColor: animatedValue.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [
-                    colors.surface,
-                    blendColor ?? colors.background,
-                  ],
-                }),
-              }}
-            />
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: colors.surface,
-              }}
-            />
-          </View>
+          <Animated.View
+            style={[StyleSheet.absoluteFillObject, animatedBackgroundStyle]}
+          />
 
           <Animated.Text
-            style={{
-              paddingHorizontal: 4,
-              fontSize: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [16, 14],
-              }),
-              color: textColor,
-            }}
+            style={[
+              {
+                paddingHorizontal: 4,
+                color: textColor,
+              },
+              animatedLabelStyle,
+            ]}
           >
             {title}
           </Animated.Text>
