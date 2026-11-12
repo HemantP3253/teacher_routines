@@ -1,8 +1,6 @@
 import { database } from "@/db";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LogInProps, UserType } from "@/types/common";
-import { supabase } from "./supabase";
-
 import {
   LocalInstituteData,
   LocalProfileInstitutesData,
@@ -12,6 +10,7 @@ import { mapInstituteData } from "@/utils/mappers/instituteMapper";
 import { mapProfileInstituteData } from "@/utils/mappers/profileInstitutesMapper";
 import { mapProfileData } from "@/utils/mappers/profileMapper";
 import { getProfileInstituteId } from "@/utils/profileInstituteUtils";
+import { supabase } from "./supabase";
 
 export const getCurrentUserId = async (): Promise<string | null> => {
   const {
