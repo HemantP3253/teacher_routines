@@ -81,6 +81,7 @@ interface DynamicTextInputProps {
   optionalInputFields?: InputField[];
   onSubmit?: (inputs: string[]) => void;
   defaultValues?: string[];
+  CustomComponent?: React.ReactNode;
 }
 
 const DynamicTextInput = ({
@@ -89,6 +90,7 @@ const DynamicTextInput = ({
   extraInputs,
   onSubmit,
   defaultValues,
+  CustomComponent,
 }: DynamicTextInputProps) => {
   const { colors } = useUnistyles().theme;
 
@@ -263,6 +265,8 @@ const DynamicTextInput = ({
             />
           </View>
         )}
+
+        {CustomComponent}
 
         <Spacer size={16} />
 
