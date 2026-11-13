@@ -1,6 +1,7 @@
 import { getAllDegreeNames } from "@/data/curricula/university/TU/tuHelpers";
 import { UniversityProgram } from "@/types/academic";
-import { RoutineOption, ThemePreference } from "@/types/common";
+import { ThemePreference } from "@/types/common";
+import { RoutineOption } from "@/types/routines";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { zustandStorageAdapter } from "./storageAdapter";

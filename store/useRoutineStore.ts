@@ -4,7 +4,7 @@ import {
   UniversityBranch,
   UniversityProgram,
 } from "@/types/academic";
-import { RoutineOption } from "@/types/common";
+import { RoutineOption } from "@/types/routines";
 import { create } from "zustand";
 
 interface RoutineState {
