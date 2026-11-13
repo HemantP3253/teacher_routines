@@ -12,7 +12,6 @@ import {
   UniversityProgram,
 } from "@/types/academic";
 import { MenuSteps } from "@/types/routines";
-import BatchAndSectionStep from "./BatchAndSectionStep";
 
 interface StepMenuProps {
   currentStep: MenuSteps;
@@ -95,8 +94,6 @@ const CurrentStepMenu = ({ currentStep }: StepMenuProps) => {
           }}
         />
       );
-    case "Batch and Section":
-      return <BatchAndSectionStep key={selectedProgram?.id ?? "none"} />;
   }
 };
 

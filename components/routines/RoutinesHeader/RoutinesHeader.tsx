@@ -28,12 +28,7 @@ const RoutinesHeader = () => {
   );
   const setRoutineOption = useRoutineStore((state) => state.setRoutineOption);
 
-  const activeMenuSteps: MenuSteps[] = [
-    "Program",
-    "Branch",
-    "Term",
-    "Batch and Section",
-  ];
+  const activeMenuSteps: MenuSteps[] = ["Program", "Branch", "Term"];
 
   const hasBranches = selectedProgram?.hasBranches;
 
