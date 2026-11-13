@@ -152,7 +152,9 @@ const Routines = () => {
 
   if (maxSubjects !== prevMaxSubjects) {
     setPrevMaxSubjects(maxSubjects);
-    trimActiveSubjectsInfo(maxSubjects);
+    if (activeSubjectsInfo.length > maxSubjects) {
+      trimActiveSubjectsInfo(maxSubjects);
+    }
   }
 
   return (
