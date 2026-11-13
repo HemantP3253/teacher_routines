@@ -9,23 +9,24 @@ import { create } from "zustand";
 interface RoutineState {
   // Routine Filters
   selectedProgram: UniversityProgram | null;
+  setProgram: (program: UniversityProgram | null) => void;
+
   selectedBranch: UniversityBranch | null;
+  setBranch: (branch: UniversityBranch | null) => void;
+
   selectedAcademicLevel: AcademicLevel | null;
+  setAcademicLevel: (academicLevel: AcademicLevel | null) => void;
+
   selectedBatchAndSection: string | null;
+  setBatchAndSection: (batchAndSection: string | null) => void;
 
   // Routine Configuration
   selectedRoutineOption: RoutineOption | null;
+  setRoutineOption: (option: RoutineOption | null) => void;
 
   // User selected subjects
   activeSubjectsInfo: ActiveSubjectInfo[];
-
-  // Setter functions.
-  setProgram: (program: UniversityProgram | null) => void;
-  setBranch: (branch: UniversityBranch | null) => void;
-  setAcademicLevel: (academicLevel: AcademicLevel | null) => void;
-  setBatchAndSection: (batchAndSection: string | null) => void;
   setActiveSubjectsInfo: (subjects: ActiveSubjectInfo[]) => void;
-  setRoutineOption: (option: RoutineOption | null) => void;
 
   /**
    * Utility to clear stored routine filters. The filters selected will be cleared, while
