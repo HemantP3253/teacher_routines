@@ -3,8 +3,8 @@ import { IconProperties } from "@/types/common";
 import { ReactNode } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { Spacer } from ".";
 import { ThemedLinearGradient, ThemedText } from "../themed";
+import Spacer from "./Spacer";
 
 interface ActionableHeaderCardProps {
   title: string;
