@@ -14,7 +14,7 @@ import CurrentStepMenu from "./StepMenu";
 
 export type MenuSteps = "Program" | "Branch" | "Term" | "Batch and Section";
 
-const RoutinesHeaderComponent = () => {
+const RoutinesHeader = () => {
   const routineOptions = useAppStore((state) => state.routineOptions);
   const selectedProgram = useRoutineStore((state) => state.selectedProgram);
   const selectedBranch = useRoutineStore((state) => state.selectedBranch);
@@ -113,4 +113,4 @@ const RoutinesHeaderComponent = () => {
   );
 };
 
-export default RoutinesHeaderComponent;
+export default RoutinesHeader;
