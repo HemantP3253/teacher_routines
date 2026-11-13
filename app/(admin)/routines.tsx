@@ -5,6 +5,7 @@ import { ThemedLinearGradient, ThemedText } from "@/components/themed";
 import { getSubjects } from "@/data/curricula/university/TU/tuHelpers";
 import { useAppStore } from "@/store/useAppStore";
 import { useProfileStore } from "@/store/useProfileStore";
+import { useRoutineStore } from "@/store/useRoutineStore";
 import {
   AcademicLevel,
   CurriculumSubject,
@@ -22,43 +23,49 @@ const Routines = () => {
   const routineOptions = useAppStore((state) => state.routineOptions);
   const allProfiles = useProfileStore((state) => state.allProfiles);
   const statusMap = useProfileStore((state) => state.statusMap);
+  const selectedProgram = useRoutineStore((state) => state.selectedProgram);
+  const selectedBranch = useRoutineStore((state) => state.selectedBranch);
+  const selectedAcademicLevel = useRoutineStore(
+    (state) => state.selectedAcademicLevel,
+  );
+  const selectedBatchAndSection = useRoutineStore(
+    (state) => state.selectedBatchAndSection,
+  );
+  const activeSubjects = useRoutineStore((state) => state.activeSubjects);
+  const setProgram = useRoutineStore((state) => state.setProgram);
+  const setBranch = useRoutineStore((state) => state.setBranch);
+  const setAcademicLevel = useRoutineStore((state) => state.setAcademicLevel);
+  const setBatchAndSection = useRoutineStore(
+    (state) => state.setBatchAndSection,
+  );
+  const selectedRoutineOption = useRoutineStore(
+    (state) => state.selectedRoutineOption,
+  );
+  const setActiveSubjects = useRoutineStore((state) => state.setActiveSubjects);
+  const clearRoutine = useRoutineStore((state) => state.clearRoutine);
+
   const approvedProfiles = useMemo(
     () =>
       allProfiles.filter((profile) => statusMap.get(profile.id) === "approved"),
     [allProfiles, statusMap],
   );
 
-  const [selectedCurriculumData, setSelectedCurriculumData] =
-    useState<RoutineFilterData>({
-      program: undefined,
-      branch: undefined,
-      academicLevel: undefined,
-      batchAndSection: undefined,
-    });
-  const [selectedRoutineId, setSelectedRoutineId] = useState<number>(0);
   const subjectList: CurriculumSubject[] = useMemo(
     () =>
       getSubjects(
-        selectedCurriculumData.program?.id || "",
-        selectedCurriculumData.branch?.id,
-        selectedCurriculumData.academicLevel?.id || "",
+        selectedProgram?.id || "",
+        selectedBranch?.id,
+        selectedAcademicLevel?.id || "",
       ),
-    [
-      selectedCurriculumData.program,
-      selectedCurriculumData.branch,
-      selectedCurriculumData.academicLevel,
-    ],
+    [selectedProgram?.id, selectedBranch?.id, selectedAcademicLevel?.id],
   );
 
-  const [activeSubjects, setActiveSubjects] = useState<ActiveSubjectInfo[]>([]);
-  const currentRoutineOption = routineOptions[selectedRoutineId];
-
-  const maxSubjects = currentRoutineOption
+  const maxSubjects = selectedRoutineOption
     ? (RangeToSubjectTime({
         times: {
-          start: currentRoutineOption.startTime,
-          end: currentRoutineOption.endTime,
-          duration: currentRoutineOption.periodDuration,
+          start: selectedRoutineOption.startTime,
+          end: selectedRoutineOption.endTime,
+          duration: selectedRoutineOption.periodDuration,
         },
         index: 0,
       })?.totalSubjects ?? 0)
@@ -98,37 +105,34 @@ const Routines = () => {
       }) => {
     switch (updateType) {
       case "Program":
-        setSelectedCurriculumData({
-          program: data,
-          branch: undefined,
-          academicLevel: undefined,
-          batchAndSection: undefined,
+        setProgram(data);
+        clearRoutine({
+          branch: true,
+          academicLevel: true,
+          batchAndSection: true,
+          activeSubjects: true,
         });
-        setActiveSubjects([]);
         break;
       case "Branch":
-        setSelectedCurriculumData((prev) => ({
-          ...prev,
-          branch: data,
-          academicLevel: undefined,
-          batchAndSection: undefined,
-        }));
-        setActiveSubjects([]);
+        setBranch(data);
+        clearRoutine({
+          academicLevel: true,
+          batchAndSection: true,
+          activeSubjects: true,
+        });
         break;
       case "Academic Level":
-        setSelectedCurriculumData((prev) => ({
-          ...prev,
-          academicLevel: data,
-          batchAndSection: undefined,
-        }));
-        setActiveSubjects([]);
+        setAcademicLevel(data);
+        clearRoutine({
+          batchAndSection: true,
+          activeSubjects: true,
+        });
         break;
       case "Batch and Section":
-        setSelectedCurriculumData((prev) => ({
-          ...prev,
-          batchAndSection: data,
-        }));
-        setActiveSubjects([]);
+        setBatchAndSection(data);
+        clearRoutine({
+          activeSubjects: true,
+        });
         break;
       default:
         break;
@@ -138,13 +142,13 @@ const Routines = () => {
   const computeCurrentSubjectTimes = useCallback(
     (index: number) => {
       const defaultData = undefined;
-      if (!currentRoutineOption) return defaultData;
+      if (!selectedRoutineOption) return defaultData;
 
       const result = RangeToSubjectTime({
         times: {
-          start: currentRoutineOption.startTime,
-          end: currentRoutineOption.endTime,
-          duration: currentRoutineOption.periodDuration,
+          start: selectedRoutineOption.startTime,
+          end: selectedRoutineOption.endTime,
+          duration: selectedRoutineOption.periodDuration,
         },
         index: index,
       });
@@ -153,7 +157,7 @@ const Routines = () => {
         ? { startTime: result.startTime, duration: result.duration }
         : undefined;
     },
-    [currentRoutineOption],
+    [selectedRoutineOption],
   );
 
   const onTeacherChange = useCallback(
