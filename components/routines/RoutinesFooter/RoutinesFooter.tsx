@@ -1,6 +1,6 @@
+import { ThemedPressable, ThemedText } from "@/components/themed";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import { ThemedPressable, ThemedText } from "../themed";
 
 const RoutinesFooterComponent = () => {
   const { theme } = useUnistyles();
