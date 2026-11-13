@@ -39,7 +39,7 @@ const BatchAndSectionStep = () => {
     () => Array.from(new Set([...savedBatches, ...temporaryBatches])),
     [savedBatches, temporaryBatches],
   );
-  const [batchModalVisible, setBatchModalVisible] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const handleBatchSubmit = useCallback(
     (inputs: string[]) => {
@@ -53,7 +53,7 @@ const BatchAndSectionStep = () => {
       );
 
       setBatchAndSection(formattedValue);
-      setBatchModalVisible(false);
+      setModalVisible(false);
     },
     [setBatchAndSection],
   );
@@ -87,7 +87,7 @@ const BatchAndSectionStep = () => {
         getLabel={(item) => item?.toString()}
         defaultAddButton={{
           label: "Add New Batch",
-          onPress: () => setBatchModalVisible(true),
+          onPress: () => setModalVisible(true),
         }}
         onSelect={(index) => {
           const selectedValue = batchAndSections[index];
@@ -98,8 +98,8 @@ const BatchAndSectionStep = () => {
       />
 
       <CustomModal
-        modalVisible={batchModalVisible}
-        setModalVisible={setBatchModalVisible}
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
         blurTarget={targetRef}
       >
         <ThemedLinearGradient
