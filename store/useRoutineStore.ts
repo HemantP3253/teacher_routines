@@ -26,7 +26,11 @@ interface RoutineState {
 
   // User selected subjects
   activeSubjectsInfo: ActiveSubjectInfo[];
+  trimActiveSubjectsInfo: (maxSubjects: number) => void;
   setActiveSubjectsInfo: (subjects: ActiveSubjectInfo[]) => void;
+  upsertActiveSubjectInfo: (subjectInfo: ActiveSubjectInfo) => void;
+  removeActiveSubjectInfo: (index: number) => void;
+  reorderActiveSubjectInfo: (reorderedSubjects: ActiveSubjectInfo[]) => void;
 
   /**
    * Utility to clear stored routine filters. The filters selected will be cleared, while
@@ -70,7 +74,47 @@ export const useRoutineStore = create<RoutineState>((set) => ({
     set({ selectedBatchAndSection: batchAndSection, activeSubjectsInfo: [] }),
 
   setRoutineOption: (option) => set({ selectedRoutineOption: option }),
+
+  trimActiveSubjectsInfo: (maxSubjects) =>
+    set((state) => ({
+      activeSubjectsInfo: state.activeSubjectsInfo.filter(
+        (subject) => subject.index < maxSubjects,
+      ),
+    })),
   setActiveSubjectsInfo: (subjects) => set({ activeSubjectsInfo: subjects }),
+  upsertActiveSubjectInfo: (newInfo) =>
+    set((state) => {
+      const exists = state.activeSubjectsInfo.some(
+        (subject) => subject.subjectId === newInfo.subjectId,
+      );
+
+      if (exists) {
+        return {
+          activeSubjectsInfo: state.activeSubjectsInfo.map((subject) =>
+            subject.index === newInfo.index
+              ? { ...subject, ...newInfo }
+              : subject,
+          ),
+        };
+      }
+
+      return {
+        activeSubjectsInfo: [...state.activeSubjectsInfo, newInfo],
+      };
+    }),
+  removeActiveSubjectInfo: (index) =>
+    set((state) => ({
+      activeSubjectsInfo: state.activeSubjectsInfo.filter(
+        (subject) => subject.index !== index,
+      ),
+    })),
+  reorderActiveSubjectInfo: (reorderedSubjects) =>
+    set({
+      activeSubjectsInfo: reorderedSubjects.map((item, index) => ({
+        ...item,
+        index: index,
+      })),
+    }),
 
   clearRoutine: () => {
     set({
