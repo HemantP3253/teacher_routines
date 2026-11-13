@@ -1,9 +1,9 @@
 import { SearchIcon } from "@/assets/icons";
+import UserActionCard from "@/components/admin/users";
 import { useProfileStore } from "@/store/useProfileStore";
 import { useMemo, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import UserActionCard from "../../admin/users/UserActionCard";
 import { CustomModal, Spacer } from "../../common";
 import { ThemedText, ThemedTextInput, ThemedView } from "../../themed";
 

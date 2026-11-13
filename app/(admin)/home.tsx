@@ -1,5 +1,6 @@
 import { ArrowForwardIcon } from "@/assets/icons";
-import { ActionableHeaderCard, UserActionCard } from "@/components/routines";
+import UserActionCard from "@/components/admin/users";
+import { ActionableHeaderCard } from "@/components/common";
 import {
   ThemedLinearGradient,
   ThemedStatusBar,

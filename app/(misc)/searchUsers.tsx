@@ -1,6 +1,6 @@
 import { SearchIcon } from "@/assets/icons";
+import UserActionCard from "@/components/admin/users";
 import TagChip from "@/components/common/DynamicTagSelect/TagChip";
-import { UserActionCard } from "@/components/routines";
 import {
   ThemedLinearGradient,
   ThemedText,

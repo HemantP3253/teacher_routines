@@ -1,6 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
+import UserActionCard from "@/components/admin/users";
 import ActionableHeaderCard from "@/components/common/ActionableHeaderCard";
-import { UserActionCard } from "@/components/routines";
 import { ThemedLinearGradient, ThemedText } from "@/components/themed";
 import { useProfileStore } from "@/store/useProfileStore";
 import { ProfileStatus, ThemeColors } from "@/types/common";
