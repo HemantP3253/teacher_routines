@@ -2,7 +2,6 @@ import { FC } from "react";
 import { ColorValue } from "react-native";
 import { SvgProps } from "react-native-svg";
 import { UnistylesThemes } from "react-native-unistyles";
-import { Tables } from "./database";
 
 export type ActiveSubjectInfo = {
   index: number;
@@ -32,8 +31,6 @@ export type SortType = "ascending" | "descending";
 export type ThemeColors = UnistylesThemes[keyof UnistylesThemes]["colors"];
 
 export type ThemePreference = "Use System Theme" | "Light Mode" | "Dark Mode";
-
-export type RoutinesData = Tables<"routines">;
 
 export type UserType =
   | "student"
