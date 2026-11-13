@@ -1,4 +1,4 @@
-import RoutinesFooterComponent from "@/components/routines/RoutinesFooter";
+import RoutinesFooter from "@/components/routines/RoutinesFooter";
 import RoutinesHeader from "@/components/routines/RoutinesHeader";
 import SubjectCard from "@/components/routines/SubjectCard";
 import { ThemedLinearGradient, ThemedText } from "@/components/themed";
@@ -253,23 +253,20 @@ const Routines = () => {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={RoutinesHeader}
         renderItem={renderSubjectCard}
-        ListFooterComponent={
-          subjectList.length > 0 ? (
-            <RoutinesFooterComponent />
-          ) : (
-            <ThemedText
-              style={{
-                fontWeight: "600",
-                fontSize: 16,
-                padding: 4,
-                marginHorizontal: 8,
-              }}
-              type="text"
-            >
-              Please select program details.
-            </ThemedText>
-          )
+        ListEmptyComponent={
+          <ThemedText
+            style={{
+              fontWeight: "600",
+              fontSize: 16,
+              padding: 4,
+              marginHorizontal: 8,
+            }}
+            type="text"
+          >
+            Please select program details.
+          </ThemedText>
         }
+        ListFooterComponent={RoutinesFooter}
         ListFooterComponentStyle={{ marginBottom: 128 }}
       />
     </ThemedLinearGradient>
