@@ -30,6 +30,8 @@ const CurrentStepMenu = ({ currentStep }: StepMenuProps) => {
   const setBranch = useRoutineStore((state) => state.setBranch);
   const setAcademicLevel = useRoutineStore((state) => state.setAcademicLevel);
 
+  const clearRoutine = useRoutineStore((state) => state.clearRoutine);
+
   const hasBranches: boolean = selectedProgram?.hasBranches ?? false;
 
   const programContext = getProgramContextById(selectedProgram?.id);
