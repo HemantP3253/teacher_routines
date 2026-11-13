@@ -2,7 +2,7 @@ import { ThemedPressable, ThemedText } from "@/components/themed";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
-const RoutinesFooterComponent = () => {
+const RoutinesFooter = () => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
@@ -40,4 +40,4 @@ const RoutinesFooterComponent = () => {
   );
 };
 
-export default RoutinesFooterComponent;
+export default RoutinesFooter;
