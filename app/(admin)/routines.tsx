@@ -1,5 +1,6 @@
-import { RoutinesFooterComponent, SubjectCard } from "@/components/routines";
-import RoutinesHeaderComponent from "@/components/routines/RoutinesHeader/RoutinesHeader";
+import RoutinesFooterComponent from "@/components/routines/RoutinesFooter";
+import RoutinesHeader from "@/components/routines/RoutinesHeader";
+import SubjectCard from "@/components/routines/SubjectCard";
 import { ThemedLinearGradient, ThemedText } from "@/components/themed";
 import { getSubjects } from "@/data/curricula/university/TU/tuHelpers";
 import { useAppStore } from "@/store/useAppStore";
@@ -10,7 +11,7 @@ import {
   UniversityBranch,
   UniversityProgram,
 } from "@/types/academic";
-import { ActiveSubjectInfo, RoutineFilterData } from "@/types/common";
+import { ActiveSubjectInfo } from "@/types/common";
 import { RangeToSubjectTime } from "@/utils/dateUtils";
 import { FlashList } from "@shopify/flash-list";
 import { useCallback, useMemo, useState } from "react";
@@ -246,42 +247,11 @@ const Routines = () => {
           paddingTop: StatusBar.currentHeight,
         }}
         keyExtractor={(item) => item.id}
-        ListHeaderComponent={
-          <RoutinesHeaderComponent
-            selectedProgram={selectedCurriculumData?.program}
-            selectedBranch={selectedCurriculumData?.branch}
-            selectedAcademicLevel={selectedCurriculumData?.academicLevel}
-            selectedBatchAndSection={selectedCurriculumData?.batchAndSection}
-            onProgramChange={(program) =>
-              updateCurriculumData({ updateType: "Program", data: program })
-            }
-            onBranchChange={(branch) =>
-              updateCurriculumData({ updateType: "Branch", data: branch })
-            }
-            onAcademicLevelChange={(academicLevel) =>
-              updateCurriculumData({
-                updateType: "Academic Level",
-                data: academicLevel,
-              })
-            }
-            onBatchAndSectionChange={(batchAndSection) =>
-              updateCurriculumData({
-                updateType: "Batch and Section",
-                data: batchAndSection,
-              })
-            }
-            onDynamicRoutineSelect={(index) => setSelectedRoutineId(index)}
-          />
-        }
+        ListHeaderComponent={RoutinesHeader}
         renderItem={renderSubjectCard}
         ListFooterComponent={
           subjectList.length > 0 ? (
-            <RoutinesFooterComponent
-              selectedRoutineId={selectedRoutineId}
-              activeSubjects={activeSubjects}
-              routineFilter={selectedCurriculumData}
-              subjectInfo={subjectList}
-            />
+            <RoutinesFooterComponent />
           ) : (
             <ThemedText
               style={{
