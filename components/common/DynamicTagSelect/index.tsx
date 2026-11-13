@@ -8,7 +8,7 @@ import TagChip from "./TagChip";
 
 interface DynamicTagSelectProps<T> extends MenuProps<T> {
   showDropDown?: boolean;
-  initialValue?: T;
+  initialValue: T | null;
   Icon?: IconProperties["Icon"];
   onSelect?: (index: number) => void;
   defaultAddButton?: {
