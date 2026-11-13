@@ -11,8 +11,8 @@ import {
   UniversityBranch,
   UniversityProgram,
 } from "@/types/academic";
+import { MenuSteps } from "@/types/routines";
 import BatchAndSectionStep from "./BatchAndSectionStep";
-import { MenuSteps } from "./RoutinesHeader";
 
 interface StepMenuProps {
   currentStep: MenuSteps;
@@ -29,8 +29,6 @@ const CurrentStepMenu = ({ currentStep }: StepMenuProps) => {
   const setProgram = useRoutineStore((state) => state.setProgram);
   const setBranch = useRoutineStore((state) => state.setBranch);
   const setAcademicLevel = useRoutineStore((state) => state.setAcademicLevel);
-
-  const clearRoutine = useRoutineStore((state) => state.clearRoutine);
 
   const hasBranches: boolean = selectedProgram?.hasBranches ?? false;
 
