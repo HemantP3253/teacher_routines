@@ -6,13 +6,12 @@ import {
 } from "@/assets/icons";
 import { useAppStore } from "@/store/useAppStore";
 import { useRoutineStore } from "@/store/useRoutineStore";
+import { MenuSteps } from "@/types/routines";
 import { useMemo, useState } from "react";
 import ActionableHeaderCard from "../../common/ActionableHeaderCard";
 import DynamicTagSelect from "../../common/DynamicTagSelect/index";
 import { ThemedText, ThemedView } from "../../themed";
 import CurrentStepMenu from "./StepMenu";
-
-export type MenuSteps = "Program" | "Branch" | "Term" | "Batch and Section";
 
 const RoutinesHeader = () => {
   const routineOptions = useAppStore((state) => state.routineOptions);
