@@ -1,30 +1,19 @@
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  DegreeIcon,
-  RoutinesIcon,
-} from "@/assets/icons";
-import { useAppStore } from "@/store/useAppStore";
+import { ArrowDownIcon, ArrowUpIcon, DegreeIcon } from "@/assets/icons";
 import { useRoutineStore } from "@/store/useRoutineStore";
 import { MenuSteps } from "@/types/routines";
 import { useMemo, useState } from "react";
 import ActionableHeaderCard from "../../common/ActionableHeaderCard";
-import DynamicTagSelect from "../../common/DynamicTagSelect/index";
 import { ThemedText, ThemedView } from "../../themed";
 import BatchAndSectionStep from "./BatchAndSectionStep";
+import RoutineOptionSelector from "./RoutineOptionSelector";
 import CurrentStepMenu from "./StepMenu";
 
 const RoutinesHeader = () => {
-  const routineOptions = useAppStore((state) => state.routineOptions);
   const selectedProgram = useRoutineStore((state) => state.selectedProgram);
   const selectedBranch = useRoutineStore((state) => state.selectedBranch);
   const selectedAcademicLevel = useRoutineStore(
     (state) => state.selectedAcademicLevel,
   );
-  const selectedRoutineOption = useRoutineStore(
-    (state) => state.selectedRoutineOption,
-  );
-  const setRoutineOption = useRoutineStore((state) => state.setRoutineOption);
 
   const activeMenuSteps: MenuSteps[] = ["Program", "Branch", "Term"];
 
@@ -78,21 +67,7 @@ const RoutinesHeader = () => {
         )}
       </ActionableHeaderCard>
       <BatchAndSectionStep />
-      <DynamicTagSelect
-        Icon={RoutinesIcon}
-        data={routineOptions}
-        getId={(item) => item.id.toString()}
-        getLabel={(item) => item.label}
-        initialValue={selectedRoutineOption ?? routineOptions?.[0]}
-        defaultAddButton={{
-          label: "Add New Routine",
-          onPress: () => {
-            /* TODO */
-          },
-        }}
-        title="Select Routine"
-        onSelect={(index: number) => setRoutineOption(routineOptions[index])}
-      />
+      <RoutineOptionSelector />
     </ThemedView>
   );
 };
