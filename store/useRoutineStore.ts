@@ -1,10 +1,9 @@
 import {
   AcademicLevel,
-  CurriculumSubject,
   UniversityBranch,
   UniversityProgram,
 } from "@/types/academic";
-import { RoutineOption } from "@/types/routines";
+import { ActiveSubjectInfo, RoutineOption } from "@/types/routines";
 import { create } from "zustand";
 
 interface RoutineState {
@@ -18,14 +17,14 @@ interface RoutineState {
   selectedRoutineOption: RoutineOption | null;
 
   // User selected subjects
-  activeSubjects: CurriculumSubject[];
+  activeSubjectsInfo: ActiveSubjectInfo[];
 
   // Setter functions.
   setProgram: (program: UniversityProgram | null) => void;
   setBranch: (branch: UniversityBranch | null) => void;
   setAcademicLevel: (academicLevel: AcademicLevel | null) => void;
   setBatchAndSection: (batchAndSection: string | null) => void;
-  setActiveSubjects: (subjects: CurriculumSubject[]) => void;
+  setActiveSubjectsInfo: (subjects: ActiveSubjectInfo[]) => void;
   setRoutineOption: (option: RoutineOption | null) => void;
 
   /**
@@ -34,13 +33,7 @@ interface RoutineState {
    *
    * @param filters list of filters for clearing routine state
    */
-  clearRoutine: (filters: {
-    program?: boolean;
-    branch?: boolean;
-    academicLevel?: boolean;
-    batchAndSection?: boolean;
-    activeSubjects?: boolean;
-  }) => void;
+  clearRoutine: () => void;
 }
 
 export const useRoutineStore = create<RoutineState>((set) => ({
@@ -49,29 +42,42 @@ export const useRoutineStore = create<RoutineState>((set) => ({
   selectedAcademicLevel: null,
   selectedBatchAndSection: null,
   selectedRoutineOption: null,
-  activeSubjects: [],
+  activeSubjectsInfo: [],
 
-  setProgram: (program) => set({ selectedProgram: program }),
-  setBranch: (branch) => set({ selectedBranch: branch }),
+  setProgram: (program) =>
+    set({
+      selectedProgram: program,
+      selectedBranch: null,
+      selectedAcademicLevel: null,
+      selectedBatchAndSection: null,
+      activeSubjectsInfo: [],
+    }),
+  setBranch: (branch) =>
+    set({
+      selectedBranch: branch,
+      selectedAcademicLevel: null,
+      selectedBatchAndSection: null,
+      activeSubjectsInfo: [],
+    }),
   setAcademicLevel: (academicLevel) =>
-    set({ selectedAcademicLevel: academicLevel }),
+    set({
+      selectedAcademicLevel: academicLevel,
+      selectedBatchAndSection: null,
+      activeSubjectsInfo: [],
+    }),
   setBatchAndSection: (batchAndSection) =>
-    set({ selectedBatchAndSection: batchAndSection }),
+    set({ selectedBatchAndSection: batchAndSection, activeSubjectsInfo: [] }),
 
   setRoutineOption: (option) => set({ selectedRoutineOption: option }),
-  setActiveSubjects: (subjects) => set({ activeSubjects: subjects }),
+  setActiveSubjectsInfo: (subjects) => set({ activeSubjectsInfo: subjects }),
 
-  clearRoutine: (filters) => {
-    set((state) => ({
-      selectedProgram: filters.program ? null : state.selectedProgram,
-      selectedBranch: filters.branch ? null : state.selectedBranch,
-      selectedAcademicLevel: filters.academicLevel
-        ? null
-        : state.selectedAcademicLevel,
-      selectedBatchAndSection: filters.batchAndSection
-        ? null
-        : state.selectedBatchAndSection,
-      activeSubjects: filters.activeSubjects ? [] : state.activeSubjects,
-    }));
+  clearRoutine: () => {
+    set({
+      selectedProgram: null,
+      selectedBranch: null,
+      selectedAcademicLevel: null,
+      selectedBatchAndSection: null,
+      activeSubjectsInfo: [],
+    });
   },
 }));
