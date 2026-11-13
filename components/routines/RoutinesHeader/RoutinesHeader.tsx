@@ -21,9 +21,6 @@ const RoutinesHeader = () => {
   const selectedAcademicLevel = useRoutineStore(
     (state) => state.selectedAcademicLevel,
   );
-  const selectedBatchAndSection = useRoutineStore(
-    (state) => state.selectedBatchAndSection,
-  );
   const selectedRoutineOption = useRoutineStore(
     (state) => state.selectedRoutineOption,
   );
