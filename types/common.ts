@@ -3,21 +3,6 @@ import { ColorValue } from "react-native";
 import { SvgProps } from "react-native-svg";
 import { UnistylesThemes } from "react-native-unistyles";
 
-export type ActiveSubjectInfo = {
-  index: number;
-  subjectId: string;
-  teacherId: string;
-};
-
-type Days =
-  | "Sunday"
-  | "Monday"
-  | "Tuesday"
-  | "Wednesday"
-  | "Thursday"
-  | "Friday"
-  | "Saturday";
-
 export type GenderType = "Male" | "Female" | "Others";
 
 export type LogInErrorProps = Partial<Record<keyof LogInProps, string>>;
@@ -86,17 +71,6 @@ export interface MenuProps<T> {
   getSublabel?: (item: T) => string | undefined;
 
   sortType?: SortType;
-}
-
-export interface RoutineOption {
-  id: number;
-  label: string;
-  startTime: string;
-  endTime: string;
-  breakStartTime?: string;
-  breakEndTime?: string;
-  periodDuration: number;
-  activeDays: Days[];
 }
 
 export interface SignUpProps {
