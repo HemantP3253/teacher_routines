@@ -13,7 +13,7 @@ export type ActiveSubjectInfo = {
   teacherId: string;
 };
 
-export type MenuSteps = "Program" | "Branch" | "Term" | "Batch and Section";
+export type MenuSteps = "Program" | "Branch" | "Term";
 
 export interface RoutineOption {
   id: number;
