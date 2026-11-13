@@ -8,7 +8,7 @@ import { useRoutineStore } from "@/store/useRoutineStore";
 import { CurriculumSubject } from "@/types/academic";
 import { ActiveSubjectInfo } from "@/types/routines";
 import { RangeToSubjectTime } from "@/utils/dateUtils";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { FlatList, StatusBar } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
@@ -148,14 +148,11 @@ const Routines = () => {
     ],
   );
 
-  const [prevMaxSubjects, setPrevMaxSubjects] = useState<number>(maxSubjects);
-
-  if (maxSubjects !== prevMaxSubjects) {
-    setPrevMaxSubjects(maxSubjects);
+  useEffect(() => {
     if (activeSubjectsInfo.length > maxSubjects) {
       trimActiveSubjectsInfo(maxSubjects);
     }
-  }
+  }, [maxSubjects, activeSubjectsInfo.length, trimActiveSubjectsInfo]);
 
   return (
     <ThemedLinearGradient style={StyleSheet.absoluteFillObject}>
