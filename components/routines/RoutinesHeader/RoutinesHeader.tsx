@@ -66,7 +66,7 @@ const RoutinesHeader = () => {
           </>
         )}
       </ActionableHeaderCard>
-      <BatchAndSectionStep />
+      <BatchAndSectionStep key={selectedProgram?.id ?? "none"} />
       <RoutineOptionSelector />
     </ThemedView>
   );
