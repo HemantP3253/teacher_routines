@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import ActionableHeaderCard from "../../common/ActionableHeaderCard";
 import DynamicTagSelect from "../../common/DynamicTagSelect/index";
 import { ThemedText, ThemedView } from "../../themed";
+import BatchAndSectionStep from "./BatchAndSectionStep";
 import CurrentStepMenu from "./StepMenu";
 
 const RoutinesHeader = () => {
@@ -39,19 +40,10 @@ const RoutinesHeader = () => {
 
     const term = selectedAcademicLevel.name.split(" ")[0];
     const branchText = hasBranches ? selectedBranch?.name + " • " : "";
-    const batch = selectedBatchAndSection
-      ? " • " + selectedBatchAndSection
-      : "";
     const typeLabel = selectedProgram.termType === "semester" ? "Sem" : "Year";
 
-    return `${selectedProgram.shortCode} ${branchText}${term} ${typeLabel}${batch}`;
-  }, [
-    hasBranches,
-    selectedAcademicLevel,
-    selectedBranch,
-    selectedProgram,
-    selectedBatchAndSection,
-  ]);
+    return `${selectedProgram.shortCode} ${branchText}${term} ${typeLabel}`;
+  }, [hasBranches, selectedAcademicLevel, selectedBranch, selectedProgram]);
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
@@ -88,6 +80,7 @@ const RoutinesHeader = () => {
           </>
         )}
       </ActionableHeaderCard>
+      <BatchAndSectionStep />
       <DynamicTagSelect
         Icon={RoutinesIcon}
         data={routineOptions}
