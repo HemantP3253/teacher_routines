@@ -1,4 +1,4 @@
-type Days =
+export type Days =
   | "Sunday"
   | "Monday"
   | "Tuesday"
