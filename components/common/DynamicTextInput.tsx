@@ -23,7 +23,12 @@ import {
 import { pad } from "@/utils/stringUtils";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useMemo, useState } from "react";
-import { KeyboardAvoidingView, Platform, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  KeyboardTypeOptions,
+  Platform,
+  View,
+} from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import {
   ThemedCheckbox,
@@ -68,6 +73,7 @@ type InputType =
 type InputField = InputType & {
   title: string;
   blendColor?: string;
+  keyboardType?: KeyboardTypeOptions;
   precision?: number;
   isSensitiveText?: boolean;
   isNullable?: boolean;
@@ -238,6 +244,7 @@ const DynamicTextInput = ({
 
                   handleTextChange(formattedText, index);
                 }}
+                keyboardType={input.keyboardType}
                 customComponent={
                   input.showPicker && (
                     <ThemedPressable
