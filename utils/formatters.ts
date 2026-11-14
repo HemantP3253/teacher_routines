@@ -297,3 +297,18 @@ export const formatPhoneInput = (phoneString: string): string => {
 
   return cleaned;
 };
+
+/**
+ * Formats string by removing characters that are not letters, and trims spaces.
+ *
+ * @param text - The raw input from the user
+ * @returns The input string stripped of any characters that are not letters
+ *
+ * @example
+ * formatLettersInput("Hello123 A B C");  // Returns "HelloABC"
+ * formatLettersInput("Hello 123Function");  // Returns "HelloFunction"
+ * formatLettersInput("12345648798725");  // Returns ""
+ */
+export const formatLettersInput = (text: string): string => {
+  return text.replace(/[^a-z]/gi, "").trim();
+};
