@@ -119,6 +119,11 @@ const lightTheme = {
       fontWeight: "700",
       lineHeight: 32,
     },
+    h3: {
+      fontSize: 18,
+      fontWeight: "bold",
+      lineHeight: 24,
+    },
     body: {
       fontSize: 16,
       fontWeight: "400",
@@ -241,6 +246,11 @@ const darkTheme = {
       fontSize: 24,
       fontWeight: "700",
       lineHeight: 32,
+    },
+    h3: {
+      fontSize: 18,
+      fontWeight: "bold",
+      lineHeight: 24,
     },
     body: {
       fontSize: 16,
