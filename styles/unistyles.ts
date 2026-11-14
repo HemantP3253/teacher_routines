@@ -9,6 +9,54 @@ const breakpoints = {
   xl: 1200,
 } as const;
 
+const commonElements = {
+  spacing: {
+    xxs: 2,
+    xs: 4,
+    sm: 8,
+    md: 12,
+    lg: 16,
+    xl: 24,
+    "2xl": 32,
+  },
+
+  radius: {
+    sm: 4,
+    md: 8,
+    lg: 12,
+    xl: 16,
+    full: 9999,
+  },
+
+  typography: {
+    h1: {
+      fontSize: 32,
+      fontWeight: "bold",
+      lineHeight: 40,
+    },
+    h2: {
+      fontSize: 24,
+      fontWeight: "bold",
+      lineHeight: 32,
+    },
+    h3: {
+      fontSize: 18,
+      fontWeight: "800",
+      lineHeight: 24,
+    },
+    body: {
+      fontSize: 16,
+      fontWeight: "400",
+      lineHeight: 24,
+    },
+    caption: {
+      fontSize: 14,
+      fontWeight: "400",
+      lineHeight: 18,
+    },
+  },
+};
+
 const lightTheme = {
   colors: {
     // Surfaces
@@ -90,51 +138,7 @@ const lightTheme = {
     infoGradient: ["rgb(120, 169, 255)", "rgb(66, 105, 213)"] as const,
   },
 
-  spacing: {
-    xxs: 2,
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 16,
-    xl: 24,
-    "2xl": 32,
-  },
-
-  radius: {
-    sm: 4,
-    md: 8,
-    lg: 12,
-    xl: 16,
-    full: 9999,
-  },
-
-  typography: {
-    h1: {
-      fontSize: 32,
-      fontWeight: "700",
-      lineHeight: 40,
-    },
-    h2: {
-      fontSize: 24,
-      fontWeight: "700",
-      lineHeight: 32,
-    },
-    h3: {
-      fontSize: 18,
-      fontWeight: "bold",
-      lineHeight: 24,
-    },
-    body: {
-      fontSize: 16,
-      fontWeight: "400",
-      lineHeight: 24,
-    },
-    caption: {
-      fontSize: 13,
-      fontWeight: "400",
-      lineHeight: 18,
-    },
-  },
+  ...commonElements,
 } as const;
 
 const darkTheme = {
@@ -218,51 +222,7 @@ const darkTheme = {
     infoGradient: ["rgb(143, 187, 255)", "rgb(77, 113, 225)"] as const,
   },
 
-  spacing: {
-    xxs: 2,
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 16,
-    xl: 24,
-    "2xl": 32,
-  },
-
-  radius: {
-    sm: 4,
-    md: 8,
-    lg: 12,
-    xl: 16,
-    full: 9999,
-  },
-
-  typography: {
-    h1: {
-      fontSize: 32,
-      fontWeight: "700",
-      lineHeight: 40,
-    },
-    h2: {
-      fontSize: 24,
-      fontWeight: "700",
-      lineHeight: 32,
-    },
-    h3: {
-      fontSize: 18,
-      fontWeight: "bold",
-      lineHeight: 24,
-    },
-    body: {
-      fontSize: 16,
-      fontWeight: "400",
-      lineHeight: 24,
-    },
-    caption: {
-      fontSize: 13,
-      fontWeight: "400",
-      lineHeight: 18,
-    },
-  },
+  ...commonElements,
 } as const;
 
 const appThemes = {
