@@ -7,6 +7,8 @@ import {
   formatDateInput,
   formatDateTimeInput,
   formatEmailInput,
+  formatLettersAndSpacesInput,
+  formatLettersInput,
   formatNameInput,
   formatNumberInput,
   formatPhoneInput,
@@ -41,7 +43,9 @@ export type FormatType =
   | "time"
   | "dateAndTime"
   | "email"
-  | "username";
+  | "username"
+  | "lettersAndSpaces"
+  | "letters";
 
 type InputType =
   | {
@@ -196,6 +200,10 @@ const DynamicTextInput = ({
         return formatTimeInput(input);
       case "username":
         return formatUsernameInput(input);
+      case "letters":
+        return formatLettersInput(input);
+      case "lettersAndSpaces":
+        return formatLettersAndSpacesInput(input);
       default:
         return input;
     }
