@@ -94,6 +94,25 @@ interface DynamicTextInputProps {
   CustomComponent?: React.ReactNode;
 }
 
+const FORMATTERS: Record<
+  FormatType,
+  (input: string, precision?: number) => string
+> = {
+  date: (input) => formatDateInput(input),
+  time: (input) => formatTimeInput(input),
+  dateAndTime: (input) => formatDateTimeInput(input),
+  "whole-number": (input) =>
+    formatNumberInput({ text: input, formatType: "wholeNumber" }),
+  "decimal-number": (input, precision) =>
+    formatNumberInput({ text: input, formatType: "decimalNumber", precision }),
+  email: (input) => formatEmailInput(input),
+  name: (input) => formatNameInput(input),
+  phone: (input) => formatPhoneInput(input),
+  username: (input) => formatUsernameInput(input),
+  letters: (input) => formatLettersInput(input),
+  lettersAndSpaces: (input) => formatLettersAndSpacesInput(input),
+};
+
 const DynamicTextInput = ({
   title,
   inputFields,
@@ -180,41 +199,6 @@ const DynamicTextInput = ({
     });
   }, [textValues, inputFields]);
 
-  const formatData = (
-    inputFormatType: FormatType,
-    input: string,
-    precision?: number,
-  ): string => {
-    switch (inputFormatType) {
-      case "date":
-        return formatDateInput(input);
-      case "decimal-number":
-        return formatNumberInput({
-          text: input,
-          formatType: "decimalNumber",
-          precision: precision,
-        });
-      case "whole-number":
-        return formatNumberInput({ text: input, formatType: "wholeNumber" });
-      case "email":
-        return formatEmailInput(input);
-      case "name":
-        return formatNameInput(input);
-      case "phone":
-        return formatPhoneInput(input);
-      case "time":
-        return formatTimeInput(input);
-      case "username":
-        return formatUsernameInput(input);
-      case "letters":
-        return formatLettersInput(input);
-      case "lettersAndSpaces":
-        return formatLettersAndSpacesInput(input);
-      default:
-        return input;
-    }
-  };
-
   // TODO: Implement extra input fields with caption text
   return (
     <KeyboardAvoidingView
@@ -238,8 +222,12 @@ const DynamicTextInput = ({
                 secureTextEntry={input.isSensitiveText}
                 onChangeText={(value) => {
                   if (input.formatter) return input.formatter(value);
-                  const formattedText = input?.inputFormatType
-                    ? formatData(input.inputFormatType, value, input.precision)
+                  const formatterFunction = input.inputFormatType
+                    ? FORMATTERS[input.inputFormatType]
+                    : null;
+
+                  const formattedText = formatterFunction
+                    ? formatterFunction(value, input.precision)
                     : value;
 
                   handleTextChange(formattedText, index);
