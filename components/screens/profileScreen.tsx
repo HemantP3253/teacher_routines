@@ -14,7 +14,7 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/themed";
-import { getUserProfileById } from "@/services/profileService";
+import { getProfileById } from "@/services/profileService";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LocalProfilesData } from "@/types/localDbTypes";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
@@ -45,7 +45,7 @@ const UserProfileScreen = () => {
         return;
       }
 
-      const profile = await getUserProfileById(userId);
+      const profile = await getProfileById(userId);
 
       setUserInfo(profile);
     };
