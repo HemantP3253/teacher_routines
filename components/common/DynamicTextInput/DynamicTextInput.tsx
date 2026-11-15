@@ -35,9 +35,9 @@ import {
   ThemedPressable,
   ThemedText,
   ThemedTextInput,
-} from "../themed";
-import InfoCard from "./InfoCard";
-import Spacer from "./Spacer";
+} from "../../themed";
+import InfoCard from "../InfoCard";
+import Spacer from "../Spacer";
 
 export type FormatType =
   | "whole-number"
