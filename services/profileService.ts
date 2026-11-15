@@ -1,8 +1,6 @@
 import { database } from "@/db";
 import { useAuthStore } from "@/store/useAuthStore";
-import {
-  LocalProfilesData
-} from "@/types/localDbTypes";
+import { LocalProfilesData } from "@/types/localDbTypes";
 import { Q } from "@nozbe/watermelondb";
 
 const profilesCollection = database.get<LocalProfilesData>("profiles");
@@ -67,7 +65,7 @@ export const getProfileById = async (
 
     return profile;
   } catch (error) {
-    console.error("[getUserProfileById] Error getting profile: ", error);
+    console.error("[getProfileById] Error getting profile: ", error);
     return null;
   }
 };
