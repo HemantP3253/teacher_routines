@@ -1,85 +1,18 @@
 import {
-  CalendarClockIcon,
-  CalendarInfoIcon,
-  ScheduleIcon,
-} from "@/assets/icons";
-import {
   formatDateInput,
   formatDateTimeInput,
-  formatEmailInput,
-  formatLettersAndSpacesInput,
-  formatLettersInput,
-  formatNameInput,
-  formatNumberInput,
-  formatPhoneInput,
   formatTimeInput,
-  formatUsernameInput,
 } from "@/utils/formatters";
-import {
-  CalendarType,
-  MainPickerMode,
-  useAppDatePicker,
-} from "@/utils/pickerUtils";
+import { useAppDatePicker } from "@/utils/pickerUtils";
 import { pad } from "@/utils/stringUtils";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useMemo, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  KeyboardTypeOptions,
-  Platform,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import {
-  ThemedCheckbox,
-  ThemedPressable,
-  ThemedText,
-  ThemedTextInput,
-} from "../../themed";
-import InfoCard from "../InfoCard";
+import { ThemedCheckbox, ThemedPressable, ThemedText } from "../../themed";
 import Spacer from "../Spacer";
-
-export type FormatType =
-  | "whole-number"
-  | "name"
-  | "phone"
-  | "decimal-number"
-  | "date"
-  | "time"
-  | "dateAndTime"
-  | "email"
-  | "username"
-  | "lettersAndSpaces"
-  | "letters";
-
-type InputType =
-  | {
-      inputFormatType: "date";
-      showPicker: "date";
-    }
-  | {
-      inputFormatType: "time";
-      showPicker: "time";
-    }
-  | {
-      inputFormatType: "dateAndTime";
-      showPicker: "dateAndTime";
-    }
-  | {
-      inputFormatType?: Exclude<FormatType, "date" | "time" | "dateAndTime">;
-      showPicker?: never;
-    };
-
-type InputField = InputType & {
-  title: string;
-  blendColor?: string;
-  keyboardType?: KeyboardTypeOptions;
-  precision?: number;
-  isSensitiveText?: boolean;
-  isNullable?: boolean;
-  infoText?: string;
-  formatter?: (input: string) => any;
-};
+import DynamicTextInput from "./DynamicTextInput";
+import { InputField } from "./DynamicTextInput.types";
 
 interface DynamicFormContainerProps {
   title?: string;
@@ -94,25 +27,6 @@ interface DynamicFormContainerProps {
   defaultValues?: string[];
   CustomComponent?: React.ReactNode;
 }
-
-const FORMATTERS: Record<
-  FormatType,
-  (input: string, precision?: number) => string
-> = {
-  date: (input) => formatDateInput(input),
-  time: (input) => formatTimeInput(input),
-  dateAndTime: (input) => formatDateTimeInput(input),
-  "whole-number": (input) =>
-    formatNumberInput({ text: input, formatType: "wholeNumber" }),
-  "decimal-number": (input, precision) =>
-    formatNumberInput({ text: input, formatType: "decimalNumber", precision }),
-  email: (input) => formatEmailInput(input),
-  name: (input) => formatNameInput(input),
-  phone: (input) => formatPhoneInput(input),
-  username: (input) => formatUsernameInput(input),
-  letters: (input) => formatLettersInput(input),
-  lettersAndSpaces: (input) => formatLettersAndSpacesInput(input),
-};
 
 const DynamicFormContainer = ({
   title,
@@ -175,22 +89,6 @@ const DynamicFormContainer = ({
     },
   });
 
-  const handleOpenPicker = (index: number) => {
-    setActivePickerIndex(index);
-
-    const rawVal = textValues[index];
-    const parsedDate = rawVal ? new Date(rawVal) : new Date();
-    const validDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
-
-    setCurrentSelectedDate(validDate);
-
-    const fieldConfig = inputFields[index];
-    const mode: MainPickerMode = fieldConfig.showPicker ?? "date";
-    const calendarType: CalendarType = "AD"; // TODO: Make dates be switchable to AD and BS using user settings
-
-    datePicker.openPicker({ mode, calendarType });
-  };
-
   const isClearable = useMemo(() => {
     return textValues.some((text) => text.trim() !== "");
   }, [textValues]);
@@ -205,8 +103,14 @@ const DynamicFormContainer = ({
 
   return (
     <KeyboardAvoidingView
+      // style={{ flex: 1 }}
       behavior={Platform.OS === "android" ? "padding" : "position"}
     >
+      {/* <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      > */}
       {title && (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <ThemedText type="text" style={{ fontWeight: "bold", fontSize: 20 }}>
@@ -217,47 +121,16 @@ const DynamicFormContainer = ({
       <View>
         {inputFields.map((input, index) => {
           return (
-            <View key={`${input.title}-${index}`}>
-              <ThemedTextInput
-                title={input.title}
-                blendColor={input.blendColor ?? undefined}
-                value={textValues[index] || ""}
-                secureTextEntry={input.isSensitiveText}
-                onChangeText={(value) => {
-                  if (input.formatter) return input.formatter(value);
-                  const formatterFunction = input.inputFormatType
-                    ? FORMATTERS[input.inputFormatType]
-                    : null;
-
-                  const formattedText = formatterFunction
-                    ? formatterFunction(value, input.precision)
-                    : value;
-
-                  handleTextChange(formattedText, index);
-                }}
-                keyboardType={input.keyboardType}
-                customComponent={
-                  input.showPicker && (
-                    <ThemedPressable
-                      noFill
-                      style={styles.pickerButton}
-                      onPress={() => handleOpenPicker(index)}
-                    >
-                      {input.showPicker === "date" && (
-                        <CalendarInfoIcon fill={colors.primary} />
-                      )}
-                      {input.showPicker === "time" && (
-                        <ScheduleIcon fill={colors.primary} />
-                      )}
-                      {input.showPicker === "dateAndTime" && (
-                        <CalendarClockIcon fill={colors.primary} />
-                      )}
-                    </ThemedPressable>
-                  )
-                }
-              />
-              {input.infoText && <InfoCard infoText={input.infoText} />}
-            </View>
+            <DynamicTextInput
+              key={`${input.title}-${index}`}
+              value={textValues[index]}
+              onChangeText={(value) => handleTextChange(value, index)}
+              onOpenPicker={() =>
+                input.showPicker &&
+                datePicker.openPicker({ mode: input.showPicker })
+              }
+              inputField={input}
+            />
           );
         })}
 
@@ -279,47 +152,16 @@ const DynamicFormContainer = ({
         {extraInputs &&
           extraInputs.inputFields.map((input, index) => {
             return (
-              <View key={`${input.title}-${index}`}>
-                <ThemedTextInput
-                  title={input.title}
-                  blendColor={input.blendColor ?? undefined}
-                  value={textValues[index] || ""}
-                  secureTextEntry={input.isSensitiveText}
-                  onChangeText={(value) => {
-                    if (input.formatter) return input.formatter(value);
-                    const formatterFunction = input.inputFormatType
-                      ? FORMATTERS[input.inputFormatType]
-                      : null;
-
-                    const formattedText = formatterFunction
-                      ? formatterFunction(value, input.precision)
-                      : value;
-
-                    handleTextChange(formattedText, index);
-                  }}
-                  keyboardType={input.keyboardType}
-                  customComponent={
-                    input.showPicker && (
-                      <ThemedPressable
-                        noFill
-                        style={styles.pickerButton}
-                        onPress={() => handleOpenPicker(index)}
-                      >
-                        {input.showPicker === "date" && (
-                          <CalendarInfoIcon fill={colors.primary} />
-                        )}
-                        {input.showPicker === "time" && (
-                          <ScheduleIcon fill={colors.primary} />
-                        )}
-                        {input.showPicker === "dateAndTime" && (
-                          <CalendarClockIcon fill={colors.primary} />
-                        )}
-                      </ThemedPressable>
-                    )
-                  }
-                />
-                {input.infoText && <InfoCard infoText={input.infoText} />}
-              </View>
+              <DynamicTextInput
+                key={`${input.title}-${index}`}
+                inputField={input}
+                value={textValues[index]}
+                onChangeText={(value) => handleTextChange(value, index)}
+                onOpenPicker={() =>
+                  input.showPicker &&
+                  datePicker.openPicker({ mode: input.showPicker })
+                }
+              />
             );
           })}
 
@@ -399,6 +241,7 @@ const DynamicFormContainer = ({
           )}
         </>
       )}
+      {/* </ScrollView> */}
     </KeyboardAvoidingView>
   );
 };
