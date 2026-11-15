@@ -7,6 +7,8 @@ import {
 import { getProfileInstituteId } from "@/utils/profileInstituteUtils";
 import { Q } from "@nozbe/watermelondb";
 
+const profilesCollection = database.get<LocalProfilesData>("profiles");
+
 interface GetProfilesOptions {
   preFetchedProfiles?: LocalProfilesData[];
   userStatus?: "pending" | "rejected" | "approved";
@@ -16,7 +18,6 @@ interface GetProfilesOptions {
 export const getAllProfiles = async (): Promise<LocalProfilesData[]> => {
   try {
     const { userId } = useAuthStore.getState();
-    const profilesCollection = database.get<LocalProfilesData>("profiles");
 
     const profiles = await profilesCollection
       .query(Q.where("id", Q.notEq(userId)), Q.sortBy("updated_at", "desc"))
@@ -36,8 +37,6 @@ export const getProfilesByStatus = async ({
   try {
     const { currentInstituteId, userId } = useAuthStore.getState();
     if (!currentInstituteId) return [];
-
-    const profilesCollection = database.get<LocalProfilesData>("profiles");
 
     const profiles = await profilesCollection
       .query(
@@ -66,8 +65,6 @@ export const getProfileById = async (
   userId: string,
 ): Promise<LocalProfilesData | null> => {
   try {
-    const profilesCollection = database.get<LocalProfilesData>("profiles");
-
     const profile = await profilesCollection.find(userId);
 
     return profile;
