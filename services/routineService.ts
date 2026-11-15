@@ -21,7 +21,9 @@ export const observeBatchesByProgramId = (
     );
 };
 
-export const fetchRoutinesByBatch = async (batch: string) => {
+export const fetchRoutinesByBatch = async (
+  batch: string,
+): Promise<LocalRoutinesData[]> => {
   return await routinesCollection
     .query(Q.where("batch_and_section", batch))
     .fetch();
