@@ -20,3 +20,9 @@ export const observeBatchesByProgramId = (
       ),
     );
 };
+
+export const fetchRoutinesByBatch = async (batch: string) => {
+  return await routinesCollection
+    .query(Q.where("batch_and_section", batch))
+    .fetch();
+};
