@@ -1,6 +1,7 @@
 import { RoutinesIcon } from "@/assets/icons";
-import { CustomModal, DynamicTextInput } from "@/components/common";
+import { CustomModal } from "@/components/common";
 import DynamicTagSelect from "@/components/common/DynamicTagSelect";
+import DynamicTextInput from "@/components/common/DynamicTextInput";
 import { ThemedLinearGradient } from "@/components/themed";
 import { useBlurContext } from "@/contexts/BlurContext";
 import { useAppStore } from "@/store/useAppStore";

@@ -1,5 +1,6 @@
-import { CustomModal, DynamicTextInput } from "@/components/common";
+import { CustomModal } from "@/components/common";
 import DynamicTagSelect from "@/components/common/DynamicTagSelect";
+import DynamicTextInput from "@/components/common/DynamicTextInput";
 import { ThemedLinearGradient } from "@/components/themed";
 import { useBlurContext } from "@/contexts/BlurContext";
 import { useObservable } from "@/hooks/useObservable";
