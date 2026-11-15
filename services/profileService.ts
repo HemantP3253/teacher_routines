@@ -62,7 +62,7 @@ export const getProfilesByStatus = async ({
   }
 };
 
-export const getUserProfileById = async (
+export const getProfileById = async (
   userId: string,
 ): Promise<LocalProfilesData | null> => {
   try {
