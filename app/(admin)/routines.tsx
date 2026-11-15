@@ -12,6 +12,20 @@ import { useCallback, useEffect, useMemo } from "react";
 import { FlatList, StatusBar } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+const EmptyRoutineComponent = () => (
+  <ThemedText
+    style={{
+      fontWeight: "600",
+      fontSize: 16,
+      padding: 4,
+      marginHorizontal: 8,
+    }}
+    type="text"
+  >
+    Please select program details.
+  </ThemedText>
+);
+
 const Routines = () => {
   const allProfiles = useProfileStore((state) => state.allProfiles);
   const statusMap = useProfileStore((state) => state.statusMap);
@@ -162,19 +176,7 @@ const Routines = () => {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={RoutinesHeader}
         renderItem={renderSubjectCard}
-        ListEmptyComponent={
-          <ThemedText
-            style={{
-              fontWeight: "600",
-              fontSize: 16,
-              padding: 4,
-              marginHorizontal: 8,
-            }}
-            type="text"
-          >
-            Please select program details.
-          </ThemedText>
-        }
+        ListEmptyComponent={EmptyRoutineComponent}
         ListFooterComponent={RoutinesFooter}
         ListFooterComponentStyle={{ marginBottom: 128 }}
       />
