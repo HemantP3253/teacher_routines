@@ -25,10 +25,9 @@ const RoutinesFooter = () => {
       </ThemedPressable>
       <View
         style={{
-          borderWidth: 1,
-          borderColor: colors.background,
-          borderBottomColor: colors.primary,
-          borderTopColor: colors.primary,
+          borderTopWidth: 1,
+          borderBottomWidth: 1,
+          borderColor: colors.primary,
           alignItems: "center",
         }}
       >
