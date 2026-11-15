@@ -1,5 +1,7 @@
 import { database } from "@/db";
+import { useAuthStore } from "@/store/useAuthStore";
 import { LocalProfileInstitutesData } from "@/types/localDbTypes";
+import { getProfileInstituteId } from "@/utils/profileInstituteUtils";
 import { Q } from "@nozbe/watermelondb";
 
 /**
@@ -94,3 +96,31 @@ export async function getAllMemberships(
     return [];
   }
 }
+
+export const updateDbUserStatus = async (
+  profileId: string,
+  newStatus: "approved" | "rejected" | "pending",
+): Promise<void> => {
+  try {
+    const { currentInstituteId } = useAuthStore.getState();
+    if (!currentInstituteId || !profileId) return;
+
+    const profileInstitutesCollection =
+      database.get<LocalProfileInstitutesData>("profile_institutes");
+
+    await database.write(async () => {
+      const profileInstitutesRecord = await profileInstitutesCollection.find(
+        getProfileInstituteId(profileId, currentInstituteId),
+      );
+
+      await profileInstitutesRecord.update((profileInstitutes) => {
+        profileInstitutes.status = newStatus;
+      });
+    });
+  } catch (error) {
+    console.error(
+      `[updateUserStatus] Error while setting status of ${profileId} to ${newStatus}: `,
+      error,
+    );
+  }
+};
