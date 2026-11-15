@@ -110,20 +110,16 @@ const Routines = () => {
         (profile) => profile.id === assignment?.teacherId,
       );
 
+      const teacherInfo =
+        assignment && teacher
+          ? { teacherId: assignment.teacherId, teacherName: teacher.fullName }
+          : undefined;
+
       return (
         <SubjectCard
           subject={item}
-          durationInfo={
-            assignment ? computeCurrentSubjectTimes(index) : undefined
-          }
-          teacherInfo={
-            assignment
-              ? {
-                  teacherId: assignment.teacherId,
-                  teacherName: teacher?.fullName ?? "",
-                }
-              : undefined
-          }
+          durationInfo={computeCurrentSubjectTimes(index)}
+          teacherInfo={teacherInfo}
           onTeacherChange={(teacherId) => {
             onTeacherChange({
               index: index,
