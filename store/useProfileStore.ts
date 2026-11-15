@@ -1,5 +1,8 @@
-import { getAllMemberships } from "@/services/profileInstituteService";
-import { getAllProfiles, updateDbUserStatus } from "@/services/profileService";
+import {
+  getAllMemberships,
+  updateDbUserStatus,
+} from "@/services/profileInstituteService";
+import { getAllProfiles } from "@/services/profileService";
 import { ProfileStatus } from "@/types/common";
 import { LocalProfilesData } from "@/types/localDbTypes";
 import { create } from "zustand";
