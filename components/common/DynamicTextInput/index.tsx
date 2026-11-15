@@ -81,7 +81,7 @@ type InputField = InputType & {
   formatter?: (input: string) => any;
 };
 
-interface DynamicTextInputProps {
+interface DynamicFormContainerProps {
   title?: string;
   inputFields: InputField[];
   extraInputs?: {
@@ -114,14 +114,14 @@ const FORMATTERS: Record<
   lettersAndSpaces: (input) => formatLettersAndSpacesInput(input),
 };
 
-const DynamicTextInput = ({
+const DynamicFormContainer = ({
   title,
   inputFields,
   extraInputs,
   onSubmit,
   defaultValues,
   CustomComponent,
-}: DynamicTextInputProps) => {
+}: DynamicFormContainerProps) => {
   const { colors } = useUnistyles().theme;
 
   const [textValues, setTextValues] = useState<string[]>(() => {
@@ -430,4 +430,4 @@ const styles = StyleSheet.create(({ colors, spacing, radius }) => ({
   },
 }));
 
-export default DynamicTextInput;
+export default DynamicFormContainer;
