@@ -85,8 +85,9 @@ interface DynamicTextInputProps {
   title?: string;
   inputFields: InputField[];
   extraInputs?: {
-    inputFields: InputField[];
     captionText: string;
+    subCaptionText?: string;
+    inputFields: InputField[];
   };
   optionalInputFields?: InputField[];
   onSubmit?: (inputs: string[]) => void;
@@ -133,6 +134,9 @@ const DynamicTextInput = ({
   const [currentSelectedDate, setCurrentSelectedDate] = useState<Date>(
     new Date(),
   );
+
+  const [isExtraInputsChecked, setIsExtraInputsChecked] =
+    useState<boolean>(false);
 
   const handleTextChange = (value: string, index: number) => {
     setTextValues((prev) => {
@@ -199,7 +203,6 @@ const DynamicTextInput = ({
     });
   }, [textValues, inputFields]);
 
-  // TODO: Implement extra input fields with caption text
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "android" ? "padding" : "position"}
@@ -258,18 +261,67 @@ const DynamicTextInput = ({
           );
         })}
 
-        {extraInputs?.inputFields && extraInputs.captionText && (
+        {CustomComponent}
+
+        {extraInputs && (
           <View>
             <ThemedCheckbox
-              label="Mahendra Multiple Campus, Nepalgunj"
-              subLabel="Sadarline, Nepalgunj - 10, Banke, Lumbini Province, Nepal"
+              label={extraInputs.captionText}
+              subLabel={extraInputs?.subCaptionText}
+              isChecked={isExtraInputsChecked}
+              onPress={() => setIsExtraInputsChecked((prev) => !prev)}
               style={{ padding: 4 }}
               alwaysShowSubLabel
             />
           </View>
         )}
 
-        {CustomComponent}
+        {extraInputs &&
+          extraInputs.inputFields.map((input, index) => {
+            return (
+              <View key={`${input.title}-${index}`}>
+                <ThemedTextInput
+                  title={input.title}
+                  blendColor={input.blendColor ?? undefined}
+                  value={textValues[index] || ""}
+                  secureTextEntry={input.isSensitiveText}
+                  onChangeText={(value) => {
+                    if (input.formatter) return input.formatter(value);
+                    const formatterFunction = input.inputFormatType
+                      ? FORMATTERS[input.inputFormatType]
+                      : null;
+
+                    const formattedText = formatterFunction
+                      ? formatterFunction(value, input.precision)
+                      : value;
+
+                    handleTextChange(formattedText, index);
+                  }}
+                  keyboardType={input.keyboardType}
+                  customComponent={
+                    input.showPicker && (
+                      <ThemedPressable
+                        noFill
+                        style={styles.pickerButton}
+                        onPress={() => handleOpenPicker(index)}
+                      >
+                        {input.showPicker === "date" && (
+                          <CalendarInfoIcon fill={colors.primary} />
+                        )}
+                        {input.showPicker === "time" && (
+                          <ScheduleIcon fill={colors.primary} />
+                        )}
+                        {input.showPicker === "dateAndTime" && (
+                          <CalendarClockIcon fill={colors.primary} />
+                        )}
+                      </ThemedPressable>
+                    )
+                  }
+                />
+                {input.infoText && <InfoCard infoText={input.infoText} />}
+              </View>
+            );
+          })}
 
         <Spacer size={16} />
 
