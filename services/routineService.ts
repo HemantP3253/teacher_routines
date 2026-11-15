@@ -4,11 +4,12 @@ import { Q } from "@nozbe/watermelondb";
 import { Observable } from "@nozbe/watermelondb/utils/rx";
 import { map } from "rxjs/operators";
 
+const routinesCollection = database.get<LocalRoutinesData>("routines");
+
 export const observeBatchesByProgramId = (
   programId: string,
 ): Observable<string[]> => {
-  return database
-    .get<LocalRoutinesData>("routines")
+  return routinesCollection
     .query(Q.where("program_id", programId))
     .observeWithColumns(["batch_and_section"])
     .pipe(
