@@ -90,3 +90,35 @@ export const prepareRoutineUpdates = (
 
   return updates;
 };
+
+export const saveRoutinesByBatch = async (
+  batch: string,
+  routines: LocalRoutinesData[],
+): Promise<void> => {
+  await database.write(async () => {
+    const existingRoutines = await routinesCollection
+      .query(Q.where("batch_and_section", batch))
+      .fetch();
+
+    const existingIds = new Set(existingRoutines.map((routine) => routine.id));
+
+    const newItems = routines.filter(
+      (item) => !item.id || !existingIds.has(item.id),
+    );
+    const existingItems = routines.filter(
+      (item) => item.id && existingIds.has(item.id),
+    );
+
+    const creations = prepareRoutineCreations(newItems);
+    const updates = prepareRoutineUpdates(existingRoutines, existingItems);
+
+    const incomingIds = new Set(
+      routines.map((item) => item.id).filter(Boolean),
+    );
+    const deletions = existingRoutines
+      .filter((existing) => !incomingIds.has(existing.id))
+      .map((existing) => existing.prepareMarkAsDeleted());
+
+    await database.batch(...deletions, ...creations, ...updates);
+  });
+};
