@@ -3,13 +3,14 @@ import { IconProperties } from "@/types/common";
 import {
   GestureResponderEvent,
   Pressable,
+  PressableProps,
   StyleProp,
   View,
   ViewStyle,
 } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-interface TagChipProps {
+interface TagChipProps extends PressableProps {
   label: string;
   selected?: boolean;
   Icon?: IconProperties["Icon"];
@@ -29,6 +30,7 @@ const TagChip = ({
   Icon,
   dottedBorder,
   style,
+  ...props
 }: TagChipProps) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
@@ -44,6 +46,7 @@ const TagChip = ({
         selected && !isDotted && styles.selectedRootContainer,
         isDotted && !selected && styles.dottedRootContainer,
       ]}
+      {...props}
     >
       <ThemedLinearGradient
         style={[styles.chipBase, contentStyle]}
