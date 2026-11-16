@@ -2,6 +2,7 @@ import { database } from "@/db";
 import { LocalRoutinesData } from "@/types/localDbTypes";
 import { Q } from "@nozbe/watermelondb";
 import { Observable } from "@nozbe/watermelondb/utils/rx";
+import { randomUUID } from "expo-crypto";
 import { map } from "rxjs/operators";
 
 const routinesCollection = database.get<LocalRoutinesData>("routines");
@@ -27,4 +28,29 @@ export const fetchRoutinesByBatch = async (
   return await routinesCollection
     .query(Q.where("batch_and_section", batch))
     .fetch();
+};
+
+export const createRoutines = (
+  routines: LocalRoutinesData[],
+): LocalRoutinesData[] => {
+  return routines.map((item) =>
+    routinesCollection.prepareCreate((routine) => {
+      routine._raw.id = randomUUID();
+      routine.batchAndSection = item.batchAndSection;
+      routine.days = item.days;
+      routine.endTime = item.endTime;
+      routine.gradeId = item.gradeId;
+      routine.instituteId = item.instituteId;
+      routine.programId = item.programId;
+      routine.semesterId = item.semesterId;
+      routine.startTime = item.startTime;
+      routine.streamId = item.streamId;
+      routine.subjectId = item.subjectId;
+      routine.teacherId = item.teacherId;
+      routine.unitId = item.unitId;
+      routine.createdAt = item.createdAt;
+      routine.updatedAt = item.updatedAt;
+      routine.deletedAt = item.deletedAt;
+    }),
+  );
 };
