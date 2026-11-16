@@ -55,25 +55,38 @@ export const prepareRoutineCreations = (
   );
 };
 
-export const prepareRoutineUpdate = (
-  routine: LocalRoutinesData,
-  item: Partial<LocalRoutinesData>,
-): LocalRoutinesData => {
-  return routine.prepareUpdate((record) => {
-    if (item.batchAndSection !== undefined)
-      record.batchAndSection = item.batchAndSection;
-    if (item.days !== undefined) record.days = item.days;
-    if (item.startTime !== undefined) record.startTime = item.startTime;
-    if (item.endTime !== undefined) record.endTime = item.endTime;
-    if (item.subjectId !== undefined) record.subjectId = item.subjectId;
-    if (item.teacherId !== undefined) record.teacherId = item.teacherId;
-    if (item.unitId !== undefined) record.unitId = item.unitId;
-    if (item.gradeId !== undefined) record.gradeId = item.gradeId;
-    if (item.instituteId !== undefined) record.instituteId = item.instituteId;
-    if (item.programId !== undefined) record.programId = item.programId;
-    if (item.streamId !== undefined) record.streamId = item.streamId;
-    if (item.semesterId !== undefined) record.semesterId = item.semesterId;
+export const prepareRoutineUpdates = (
+  existingRoutines: LocalRoutinesData[],
+  incomingRoutines: LocalRoutinesData[],
+): LocalRoutinesData[] => {
+  const existingMap = new Map(existingRoutines.map((r) => [r.id, r]));
+  const updates: LocalRoutinesData[] = [];
 
-    record.updatedAt = new Date();
-  });
+  for (const item of incomingRoutines) {
+    if (item.id && existingMap.has(item.id)) {
+      const routine = existingMap.get(item.id)!;
+
+      updates.push(
+        routine.prepareUpdate((r) => {
+          if (item.batchAndSection !== undefined)
+            r.batchAndSection = item.batchAndSection;
+          if (item.days !== undefined) r.days = item.days;
+          if (item.startTime !== undefined) r.startTime = item.startTime;
+          if (item.endTime !== undefined) r.endTime = item.endTime;
+          if (item.subjectId !== undefined) r.subjectId = item.subjectId;
+          if (item.teacherId !== undefined) r.teacherId = item.teacherId;
+          if (item.unitId !== undefined) r.unitId = item.unitId;
+          if (item.gradeId !== undefined) r.gradeId = item.gradeId;
+          if (item.instituteId !== undefined) r.instituteId = item.instituteId;
+          if (item.programId !== undefined) r.programId = item.programId;
+          if (item.streamId !== undefined) r.streamId = item.streamId;
+          if (item.semesterId !== undefined) r.semesterId = item.semesterId;
+
+          r.updatedAt = new Date();
+        }),
+      );
+    }
+  }
+
+  return updates;
 };
