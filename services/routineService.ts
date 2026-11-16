@@ -48,9 +48,9 @@ export const createRoutines = (
       routine.subjectId = item.subjectId;
       routine.teacherId = item.teacherId;
       routine.unitId = item.unitId;
-      routine.createdAt = item.createdAt;
-      routine.updatedAt = item.updatedAt;
-      routine.deletedAt = item.deletedAt;
+      routine.createdAt = item.createdAt ?? new Date();
+      routine.updatedAt = item.updatedAt ?? new Date();
+      routine.deletedAt = item.deletedAt ?? null;
     }),
   );
 };
