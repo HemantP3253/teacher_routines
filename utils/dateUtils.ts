@@ -1,3 +1,4 @@
+import { RoutineOption } from "@/types/routines";
 import { pad } from "./stringUtils";
 
 export const calculateFullPeriodTime = (
@@ -208,6 +209,29 @@ export const RangeToSubjectTime = ({
     duration: times.duration,
     totalSubjects: totalSubjects,
   };
+};
+
+export const calculateMaxSubjects = (routineOption?: RoutineOption): number => {
+  if (!routineOption) return 0;
+
+  const startMinutes = hoursToMinutes(routineOption.startTime);
+  const endMinutes = hoursToMinutes(routineOption.endTime);
+
+  let breakMinutes = 0;
+
+  if (routineOption.breakStartTime && routineOption.breakEndTime) {
+    const breakStart = hoursToMinutes(routineOption.breakStartTime);
+    const breakEnd = hoursToMinutes(routineOption.breakEndTime);
+    if (breakEnd > breakStart) {
+      breakMinutes = breakEnd - breakStart;
+    }
+  }
+
+  const totalAvailableTime = endMinutes - startMinutes - breakMinutes;
+
+  if (totalAvailableTime <= 0) return 0;
+
+  return Math.floor(totalAvailableTime / routineOption.periodDuration);
 };
 
 export const dateToFormattedTimeString = (
