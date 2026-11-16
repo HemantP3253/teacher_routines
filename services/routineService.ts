@@ -30,7 +30,7 @@ export const fetchRoutinesByBatch = async (
     .fetch();
 };
 
-export const createRoutines = (
+export const prepareRoutineCreations = (
   routines: LocalRoutinesData[],
 ): LocalRoutinesData[] => {
   return routines.map((item) =>
