@@ -212,7 +212,7 @@ export const RangeToSubjectTime = ({
 };
 
 export const calculateMaxSubjects = (routineOption?: RoutineOption): number => {
-  if (!routineOption) return 0;
+  if (!routineOption || routineOption.periodDuration <= 0) return 0;
 
   const startMinutes = hoursToMinutes(routineOption.startTime);
   const endMinutes = hoursToMinutes(routineOption.endTime);
