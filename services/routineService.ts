@@ -31,28 +31,30 @@ export const fetchRoutinesByBatch = async (
 };
 
 export const prepareRoutineCreations = (
-  routines: LocalRoutinesData[],
+  routines: Partial<LocalRoutinesData[]>,
 ): LocalRoutinesData[] => {
-  return routines.map((item) =>
-    routinesCollection.prepareCreate((routine) => {
-      routine._raw.id = randomUUID();
-      routine.batchAndSection = item.batchAndSection;
-      routine.days = item.days;
-      routine.endTime = item.endTime;
-      routine.gradeId = item.gradeId;
-      routine.instituteId = item.instituteId;
-      routine.programId = item.programId;
-      routine.semesterId = item.semesterId;
-      routine.startTime = item.startTime;
-      routine.streamId = item.streamId;
-      routine.subjectId = item.subjectId;
-      routine.teacherId = item.teacherId;
-      routine.unitId = item.unitId;
-      routine.createdAt = item.createdAt ?? new Date();
-      routine.updatedAt = item.updatedAt ?? new Date();
-      routine.deletedAt = item.deletedAt ?? null;
-    }),
-  );
+  return routines
+    .filter((item) => item != null)
+    .map((item) =>
+      routinesCollection.prepareCreate((routine) => {
+        routine._raw.id = randomUUID();
+        routine.batchAndSection = item.batchAndSection;
+        routine.days = item.days;
+        routine.endTime = item.endTime;
+        routine.gradeId = item.gradeId;
+        routine.instituteId = item.instituteId;
+        routine.programId = item.programId;
+        routine.semesterId = item.semesterId;
+        routine.startTime = item.startTime;
+        routine.streamId = item.streamId;
+        routine.subjectId = item.subjectId;
+        routine.teacherId = item.teacherId;
+        routine.unitId = item.unitId;
+        routine.createdAt = item.createdAt ?? new Date();
+        routine.updatedAt = item.updatedAt ?? new Date();
+        routine.deletedAt = item.deletedAt ?? null;
+      }),
+    );
 };
 
 export const prepareRoutineUpdates = (
