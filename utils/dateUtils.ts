@@ -211,7 +211,9 @@ export const RangeToSubjectTime = ({
   };
 };
 
-export const calculateMaxSubjects = (routineOption?: RoutineOption): number => {
+export const calculateMaxSubjects = (
+  routineOption: RoutineOption | null,
+): number => {
   if (!routineOption || routineOption.periodDuration <= 0) return 0;
 
   const startMinutes = hoursToMinutes(routineOption.startTime);
