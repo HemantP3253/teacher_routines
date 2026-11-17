@@ -1,6 +1,6 @@
 import { CustomModal } from "@/components/common";
 import DynamicTagSelect from "@/components/common/DynamicTagSelect";
-import DynamicTextInput from "@/components/common/DynamicTextInput";
+import DynamicFormContainer from "@/components/common/DynamicTextInput";
 import { ThemedLinearGradient } from "@/components/themed";
 import { useBlurContext } from "@/contexts/BlurContext";
 import { useObservable } from "@/hooks/useObservable";
@@ -106,11 +106,12 @@ const BatchAndSectionStep = () => {
         <ThemedLinearGradient
           style={{
             width: "100%",
+            // height: "100%",
             padding: 12,
             borderRadius: 12,
           }}
         >
-          <DynamicTextInput
+          <DynamicFormContainer
             title="Add new Batch"
             key={"batch"}
             inputFields={batchInputFields}
