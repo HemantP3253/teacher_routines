@@ -59,9 +59,7 @@ export const prepareRoutineCreations = (
           ? new Date(item.updatedAt)
           : new Date();
 
-        if (routine.deletedAt !== undefined) {
-          routine.deletedAt = item.deletedAt ? new Date(item.deletedAt) : null;
-        }
+        routine.deletedAt = item.deletedAt ? new Date(item.deletedAt) : null;
       }),
     );
 };
