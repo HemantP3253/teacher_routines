@@ -206,16 +206,6 @@ export const RangeToSubjectTime = ({
   };
 };
 
-export const calculateMaxSubjects = (
-  routineOption: RoutineOption | null,
-  customDuration: Record<number, number> = {},
-): number => {
-  if (!routineOption || routineOption.periodDuration <= 0) return 0;
-
-  const validSlots = getValidTeachingSlots(routineOption, customDuration);
-  return validSlots.length;
-};
-
 export const dateToFormattedTimeString = (
   date: Date,
   hideSeconds: boolean = false,
