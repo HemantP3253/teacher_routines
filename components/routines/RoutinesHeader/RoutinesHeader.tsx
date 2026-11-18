@@ -8,14 +8,14 @@ import BatchAndSectionStep from "./BatchAndSectionStep";
 import RoutineOptionSelector from "./RoutineOptionSelector";
 import CurrentStepMenu from "./StepMenu";
 
+const activeMenuSteps: MenuSteps[] = ["Program", "Branch", "Term"];
+
 const RoutinesHeader = () => {
   const selectedProgram = useRoutineStore((state) => state.selectedProgram);
   const selectedBranch = useRoutineStore((state) => state.selectedBranch);
   const selectedAcademicLevel = useRoutineStore(
     (state) => state.selectedAcademicLevel,
   );
-
-  const activeMenuSteps: MenuSteps[] = ["Program", "Branch", "Term"];
 
   const hasBranches = selectedProgram?.hasBranches;
 
