@@ -15,6 +15,14 @@ export type ActiveSubjectInfo = {
 
 export type MenuSteps = "Program" | "Branch" | "Term";
 
+export interface RoutineMetadata {
+  unitId: string | null;
+  programId: string | null;
+  branchId: string | null;
+  academicLevelId: string | null;
+  batchAndSection: string;
+}
+
 export interface RoutineOption {
   id: number;
   label: string;
