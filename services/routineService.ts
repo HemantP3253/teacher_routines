@@ -68,7 +68,7 @@ export const prepareRoutineCreations = (
 
 export const prepareRoutineUpdates = (
   existingRoutines: LocalRoutinesData[],
-  incomingRoutines: LocalRoutinesData[],
+  incomingRoutines: Partial<LocalRoutinesData>[],
 ): LocalRoutinesData[] => {
   const existingMap = new Map(existingRoutines.map((r) => [r.id, r]));
   const updates: LocalRoutinesData[] = [];
