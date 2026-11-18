@@ -1,10 +1,14 @@
+import { getProgramContextById } from "@/data/curricula/university/TU/tuHelpers";
+import { saveRoutinesByBatch } from "@/services/routineService";
 import {
   AcademicLevel,
   UniversityBranch,
   UniversityProgram,
 } from "@/types/academic";
 import { ActiveSubjectInfo, RoutineOption } from "@/types/routines";
+import { generateRoutinesArray } from "@/utils/routineUtils";
 import { create } from "zustand";
+import { useAuthStore } from "./useAuthStore";
 
 interface RoutineState {
   // Routine Filters
@@ -39,9 +43,12 @@ interface RoutineState {
    * @param filters list of filters for clearing routine state
    */
   clearRoutine: () => void;
+  generateAndSaveRoutines: (
+    customDuration?: Record<number, number>,
+  ) => Promise<void>;
 }
 
-export const useRoutineStore = create<RoutineState>((set) => ({
+export const useRoutineStore = create<RoutineState>((set, get) => ({
   selectedProgram: null,
   selectedBranch: null,
   selectedAcademicLevel: null,
@@ -124,5 +131,59 @@ export const useRoutineStore = create<RoutineState>((set) => ({
       selectedBatchAndSection: null,
       activeSubjectsInfo: [],
     });
+  },
+
+  generateAndSaveRoutines: async (customDuration) => {
+    const {
+      selectedRoutineOption,
+      selectedProgram,
+      selectedBranch,
+      selectedAcademicLevel,
+      selectedBatchAndSection,
+      activeSubjectsInfo,
+    } = get();
+
+    if (
+      !selectedRoutineOption ||
+      !selectedProgram ||
+      !selectedBranch ||
+      !selectedAcademicLevel ||
+      !selectedBatchAndSection ||
+      activeSubjectsInfo.length === 0
+    )
+      throw new Error(
+        "Please select all the program details before saving routines.",
+      );
+
+    const instituteId = useAuthStore.getState().currentInstituteId;
+
+    if (!instituteId) {
+      throw new Error("Institute id not found, unauthorized action.");
+    }
+
+    const context = getProgramContextById(selectedProgram.id);
+
+    if (!context) {
+      throw new Error(
+        "Could not find the given program's context in the system. Please try again.",
+      );
+    }
+
+    const routineMetadata = {
+      unitId: context.unit.id,
+      programId: selectedProgram.id,
+      branchId: selectedBranch.id,
+      academicLevelId: selectedAcademicLevel.id,
+      batchAndSection: selectedBatchAndSection,
+    };
+
+    const routines = generateRoutinesArray({
+      routineOption: selectedRoutineOption,
+      activeSubjectsInfo,
+      routineMetadata,
+      instituteId,
+      customDuration,
+    });
+    await saveRoutinesByBatch(selectedBatchAndSection, routines);
   },
 }));
