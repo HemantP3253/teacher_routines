@@ -182,67 +182,27 @@ export const getValidTeachingSlots = (
 };
 
 interface RangeToSubjectTimeProps {
-  routineOption: RoutineOption;
+  routineOption: RoutineOption | null;
   index: number;
+  customDuration: Record<number, number>;
 }
 
 export const RangeToSubjectTime = ({
   routineOption,
   index,
+  customDuration,
 }: RangeToSubjectTimeProps) => {
-  const startMinutes: number = hoursToMinutes(
-    changeTimeMode(routineOption.startTime, "24-hour"),
-  );
-  const endMinutes: number = hoursToMinutes(
-    changeTimeMode(routineOption.endTime, "24-hour"),
-  );
+  const validSlots = getValidTeachingSlots(routineOption, customDuration);
 
-  let breakStartMinutes: number = 0;
-  let breakEndMinutes: number = 0;
-  let breakDuration: number = 0;
+  if (index >= validSlots.length) return null;
 
-  if (routineOption.breakStartTime && routineOption.breakEndTime) {
-    breakStartMinutes = hoursToMinutes(
-      changeTimeMode(routineOption.breakStartTime, "24-hour"),
-    );
-
-    breakEndMinutes = hoursToMinutes(
-      changeTimeMode(routineOption.breakEndTime, "24-hour"),
-    );
-    breakDuration = breakEndMinutes - breakStartMinutes;
-  }
-
-  const totalSubjects = calculateMaxSubjects(routineOption);
-
-  if (index >= totalSubjects) return null;
-
-  let startRange = startMinutes + index * routineOption.periodDuration;
-  let endRange = startRange + routineOption.periodDuration;
-
-  if (breakDuration > 0) {
-    if (startRange >= breakStartMinutes) {
-      startRange += breakDuration;
-      endRange += breakDuration;
-    } else if (endRange > breakStartMinutes) {
-      endRange = breakStartMinutes;
-    }
-  }
-
-  startRange %= 24 * 60;
-  endRange %= 24 * 60;
+  const slot = validSlots[index];
 
   return {
-    startTime: changeTimeMode(minutesToHours(startRange), "12-hour"),
-    endTime: changeTimeMode(minutesToHours(endRange), "12-hour"),
-    breakStartTime: changeTimeMode(
-      minutesToHours(breakStartMinutes),
-      "12-hour",
-    ),
-    breakEndTime: changeTimeMode(minutesToHours(breakEndMinutes), "12-hour"),
-    breakDuration: breakDuration,
-    type: "",
-    duration: routineOption.periodDuration,
-    totalSubjects: totalSubjects,
+    startTime: changeTimeMode(minutesToHours(slot.start), "12-hour"),
+    endTime: changeTimeMode(minutesToHours(slot.end), "12-hour"),
+    duration: slot.duration,
+    totalSubjects: validSlots.length,
   };
 };
 
