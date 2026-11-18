@@ -121,6 +121,66 @@ export const doesRoutineCollide = ({
   return true;
 };
 
+export const getValidTeachingSlots = (
+  routineOption: RoutineOption | null,
+  customDuration: Record<number, number> = {},
+) => {
+  if (!routineOption || routineOption.periodDuration <= 0) return [];
+
+  const startMinutes = hoursToMinutes(
+    changeTimeMode(routineOption.startTime, "24-hour"),
+  );
+  const endMinutes = hoursToMinutes(
+    changeTimeMode(routineOption.endTime, "24-hour"),
+  );
+  const defaultDuration = routineOption.periodDuration;
+
+  let breakStartMinutes = -1;
+  let breakEndMinutes = -1;
+
+  if (routineOption.breakStartTime && routineOption.breakEndTime) {
+    breakStartMinutes = hoursToMinutes(
+      changeTimeMode(routineOption.breakStartTime, "24-hour"),
+    );
+    breakEndMinutes = hoursToMinutes(
+      changeTimeMode(routineOption.breakEndTime, "24-hour"),
+    );
+  }
+
+  const validSlots: { start: number; end: number; duration: number }[] = [];
+  let currentMin = startMinutes;
+  let subjectIndex = 0;
+
+  while (currentMin < endMinutes) {
+    const currentDuration = customDuration[subjectIndex] ?? defaultDuration;
+    const slotStart = currentMin;
+    const slotEnd = currentMin + currentDuration;
+
+    if (slotEnd > endMinutes) break;
+
+    const overlapBreak =
+      breakStartMinutes !== -1 &&
+      breakEndMinutes !== -1 &&
+      slotStart < breakEndMinutes &&
+      slotEnd > breakStartMinutes;
+
+    if (overlapBreak) {
+      currentMin = breakEndMinutes;
+      continue;
+    }
+
+    validSlots.push({
+      start: slotStart,
+      end: slotEnd,
+      duration: currentDuration,
+    });
+    currentMin = slotEnd;
+    subjectIndex++;
+  }
+
+  return validSlots;
+};
+
 interface RangeToSubjectTimeProps {
   routineOption: RoutineOption;
   index: number;
