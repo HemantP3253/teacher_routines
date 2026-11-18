@@ -35,7 +35,7 @@ const DynamicTagSelect = <T,>({
     showDropDown ? false : true,
   );
   const [selectedTag, setSelectedTag] = useState<T | undefined>(
-    initialValue || data[0],
+    initialValue ?? undefined,
   );
 
   return (
