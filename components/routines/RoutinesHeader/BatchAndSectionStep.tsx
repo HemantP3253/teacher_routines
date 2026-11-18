@@ -106,7 +106,6 @@ const BatchAndSectionStep = () => {
         <ThemedLinearGradient
           style={{
             width: "100%",
-            // height: "100%",
             padding: 12,
             borderRadius: 12,
           }}
