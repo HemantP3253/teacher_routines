@@ -7,10 +7,8 @@ import { useProfileStore } from "@/store/useProfileStore";
 import { useRoutineStore } from "@/store/useRoutineStore";
 import { CurriculumSubject } from "@/types/academic";
 import { ActiveSubjectInfo } from "@/types/routines";
-import {
-  getValidTeachingSlots,
-  RangeToSubjectTime,
-} from "@/utils/routineUtils";
+import { changeTimeMode, minutesToHours } from "@/utils/dateUtils";
+import { getValidTeachingSlots } from "@/utils/routineUtils";
 import { useCallback, useEffect, useMemo } from "react";
 import { FlatList, StatusBar } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -66,7 +64,8 @@ const Routines = () => {
     [selectedProgram?.id, selectedBranch?.id, selectedAcademicLevel?.id],
   );
 
-  const maxSubjects = getValidTeachingSlots(selectedRoutineOption).length ?? 0;
+  const timeSlots = getValidTeachingSlots(selectedRoutineOption);
+  const maxSubjects = timeSlots.length ?? 0;
   const isLimitReached = activeSubjectsInfo.length >= maxSubjects;
 
   const error: { title: string; description: string; showError?: boolean } =
@@ -79,22 +78,6 @@ const Routines = () => {
       [isLimitReached, maxSubjects],
     );
 
-  const computeCurrentSubjectTimes = useCallback(
-    (index: number) => {
-      if (!selectedRoutineOption) return undefined;
-
-      const result = RangeToSubjectTime({
-        routineOption: selectedRoutineOption,
-        index: index,
-      });
-
-      return result
-        ? { startTime: result.startTime, duration: result.duration }
-        : undefined;
-    },
-    [selectedRoutineOption],
-  );
-
   const onTeacherChange = useCallback(
     (subjectInfo: ActiveSubjectInfo) => {
       upsertActiveSubjectInfo(subjectInfo);
@@ -102,6 +85,7 @@ const Routines = () => {
     [upsertActiveSubjectInfo],
   );
 
+  // TODO: Change this to render using the actual subject index and display an error if the user tries to set user to a subject which isn't in the max subjects range. This is to be done when actually using draggable flatlist.
   const renderSubjectCard = useCallback(
     ({ item, index }: { item: CurriculumSubject; index: number }) => {
       const assignment = activeSubjectsInfo.find(
@@ -117,7 +101,21 @@ const Routines = () => {
           ? { teacherId: assignment.teacherId, teacherName: teacher.fullName }
           : undefined;
 
-      const durationInfo = computeCurrentSubjectTimes(index);
+      const activeIndex = activeSubjectsInfo.findIndex(
+        (info) => info.subjectId === item.id,
+      );
+      const currentTimeSlot =
+        activeIndex !== -1 ? timeSlots[activeIndex] : undefined;
+      const durationInfo =
+        assignment && currentTimeSlot
+          ? {
+              startTime: changeTimeMode(
+                minutesToHours(currentTimeSlot.start),
+                "12-hour",
+              ),
+              duration: currentTimeSlot.duration,
+            }
+          : undefined;
       const errorInfo = { ...error, showError: !assignment && isLimitReached };
 
       return (
@@ -139,7 +137,7 @@ const Routines = () => {
     [
       activeSubjectsInfo,
       approvedProfiles,
-      computeCurrentSubjectTimes,
+      timeSlots,
       onTeacherChange,
       error,
       isLimitReached,
