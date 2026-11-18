@@ -119,9 +119,10 @@ const RoutineOptionSelector = () => {
       >
         <ThemedLinearGradient
           style={{
-            maxHeight: "85%",
+            height: "85%",
             width: "100%",
-            padding: 12,
+            alignItems: "center",
+            padding: 8,
             borderRadius: 12,
           }}
         >
