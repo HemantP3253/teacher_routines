@@ -7,7 +7,10 @@ import { useProfileStore } from "@/store/useProfileStore";
 import { useRoutineStore } from "@/store/useRoutineStore";
 import { CurriculumSubject } from "@/types/academic";
 import { ActiveSubjectInfo } from "@/types/routines";
-import { calculateMaxSubjects, RangeToSubjectTime } from "@/utils/dateUtils";
+import {
+  getValidTeachingSlots,
+  RangeToSubjectTime,
+} from "@/utils/routineUtils";
 import { useCallback, useEffect, useMemo } from "react";
 import { FlatList, StatusBar } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -63,7 +66,7 @@ const Routines = () => {
     [selectedProgram?.id, selectedBranch?.id, selectedAcademicLevel?.id],
   );
 
-  const maxSubjects = calculateMaxSubjects(selectedRoutineOption);
+  const maxSubjects = getValidTeachingSlots(selectedRoutineOption).length ?? 0;
   const isLimitReached = activeSubjectsInfo.length >= maxSubjects;
 
   const error: { title: string; description: string; showError?: boolean } =
@@ -82,11 +85,7 @@ const Routines = () => {
       if (!selectedRoutineOption) return defaultData;
 
       const result = RangeToSubjectTime({
-        times: {
-          start: selectedRoutineOption.startTime,
-          end: selectedRoutineOption.endTime,
-          duration: selectedRoutineOption.periodDuration,
-        },
+        routineOption: selectedRoutineOption,
         index: index,
       });
 
