@@ -103,7 +103,7 @@ const RoutineOptionSelector = () => {
         data={routineOptions}
         getId={(item) => item.id.toString()}
         getLabel={(item) => item.label}
-        initialValue={selectedRoutineOption ?? routineOptions?.[0]}
+        initialValue={selectedRoutineOption}
         defaultAddButton={{
           label: "Add New Routine",
           onPress: () => setModalVisible(true),
