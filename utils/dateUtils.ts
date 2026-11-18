@@ -184,13 +184,13 @@ export const getValidTeachingSlots = (
 interface RangeToSubjectTimeProps {
   routineOption: RoutineOption | null;
   index: number;
-  customDuration: Record<number, number>;
+  customDuration?: Record<number, number>;
 }
 
 export const RangeToSubjectTime = ({
   routineOption,
   index,
-  customDuration,
+  customDuration = {},
 }: RangeToSubjectTimeProps) => {
   const validSlots = getValidTeachingSlots(routineOption, customDuration);
 
