@@ -1,5 +1,19 @@
-import { RoutineOption } from "@/types/routines";
+import { LocalRoutinesData } from "@/types/localDbTypes";
+import {
+  ActiveSubjectInfo,
+  RoutineMetadata,
+  RoutineOption,
+} from "@/types/routines";
+import { randomUUID } from "expo-crypto";
 import { changeTimeMode, hoursToMinutes, minutesToHours } from "./dateUtils";
+
+interface GenerateRoutinesArrayParams {
+  routineOption: RoutineOption;
+  activeSubjectsInfo: ActiveSubjectInfo[];
+  routineMetadata: RoutineMetadata;
+  customDuration?: Record<number, number>;
+  instituteId: string;
+}
 
 interface RangeToSubjectTimeProps {
   routineOption: RoutineOption | null;
@@ -110,4 +124,58 @@ export const RangeToSubjectTime = ({
     duration: slot.duration,
     totalSubjects: validSlots.length,
   };
+};
+
+export const generateRoutinesArray = ({
+  routineOption,
+  activeSubjectsInfo,
+  routineMetadata,
+  customDuration = {},
+  instituteId,
+}: GenerateRoutinesArrayParams): Partial<LocalRoutinesData>[] => {
+  if (
+    !routineOption ||
+    !routineOption.activeDays ||
+    routineOption.activeDays.length === 0
+  )
+    return [];
+
+  const validSlots = getValidTeachingSlots(routineOption, customDuration);
+
+  return activeSubjectsInfo
+    .map((info, index) => {
+      const slot = validSlots[index];
+      if (!slot) return null;
+
+      return {
+        id: randomUUID(),
+
+        // Routine metadata
+        unitId: routineMetadata.unitId ?? undefined,
+        programId: routineMetadata.programId,
+        branchId: routineMetadata.branchId ?? null,
+        semesterId: routineMetadata.academicLevelId,
+        batchAndSection: routineMetadata.batchAndSection,
+
+        // Routine time details
+        startTime: changeTimeMode(minutesToHours(slot.start), "12-hour"),
+        endTime: changeTimeMode(minutesToHours(slot.end), "12-hour"),
+        days: routineOption.activeDays,
+
+        // Routine entitities details
+        subjectId: info.subjectId,
+        teacherId: info.teacherId,
+        instituteId: instituteId,
+
+        // Not applicable details
+        gradeId: null,
+        streamId: null,
+
+        // Sync metadata
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      } as Partial<LocalRoutinesData>;
+    })
+    .filter((item): item is Partial<LocalRoutinesData> => item !== null);
 };
