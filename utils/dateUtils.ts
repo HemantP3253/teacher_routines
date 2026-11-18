@@ -248,27 +248,12 @@ export const RangeToSubjectTime = ({
 
 export const calculateMaxSubjects = (
   routineOption: RoutineOption | null,
+  customDuration: Record<number, number> = {},
 ): number => {
   if (!routineOption || routineOption.periodDuration <= 0) return 0;
 
-  const startMinutes = hoursToMinutes(routineOption.startTime);
-  const endMinutes = hoursToMinutes(routineOption.endTime);
-
-  let breakMinutes = 0;
-
-  if (routineOption.breakStartTime && routineOption.breakEndTime) {
-    const breakStart = hoursToMinutes(routineOption.breakStartTime);
-    const breakEnd = hoursToMinutes(routineOption.breakEndTime);
-    if (breakEnd > breakStart) {
-      breakMinutes = breakEnd - breakStart;
-    }
-  }
-
-  const totalAvailableTime = endMinutes - startMinutes - breakMinutes;
-
-  if (totalAvailableTime <= 0) return 0;
-
-  return Math.floor(totalAvailableTime / routineOption.periodDuration);
+  const validSlots = getValidTeachingSlots(routineOption, customDuration);
+  return validSlots.length;
 };
 
 export const dateToFormattedTimeString = (
