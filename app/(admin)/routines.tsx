@@ -81,8 +81,7 @@ const Routines = () => {
 
   const computeCurrentSubjectTimes = useCallback(
     (index: number) => {
-      const defaultData = undefined;
-      if (!selectedRoutineOption) return defaultData;
+      if (!selectedRoutineOption) return undefined;
 
       const result = RangeToSubjectTime({
         routineOption: selectedRoutineOption,
@@ -118,22 +117,22 @@ const Routines = () => {
           ? { teacherId: assignment.teacherId, teacherName: teacher.fullName }
           : undefined;
 
+      const durationInfo = computeCurrentSubjectTimes(index);
+      const errorInfo = { ...error, showError: !assignment && isLimitReached };
+
       return (
         <SubjectCard
           subject={item}
-          durationInfo={computeCurrentSubjectTimes(index)}
+          durationInfo={durationInfo}
           teacherInfo={teacherInfo}
-          onTeacherChange={(teacherId) => {
+          onTeacherChange={(teacherId) =>
             onTeacherChange({
               index: index,
               subjectId: item.id,
               teacherId: teacherId,
-            });
-          }}
-          errorInfo={{
-            ...error,
-            showError: !assignment && isLimitReached,
-          }}
+            })
+          }
+          errorInfo={errorInfo}
         />
       );
     },
