@@ -122,67 +122,42 @@ export const doesRoutineCollide = ({
 };
 
 interface RangeToSubjectTimeProps {
-  times: {
-    start: string;
-    end: string;
-    duration: number;
-  };
-  breakTime?:
-    | {
-        type: "range";
-        start: string;
-        end: string;
-      }
-    | {
-        type: "duration";
-        start: string;
-        duration: number;
-      };
+  routineOption: RoutineOption;
   index: number;
 }
 
 export const RangeToSubjectTime = ({
-  times,
-  breakTime,
+  routineOption,
   index,
 }: RangeToSubjectTimeProps) => {
-  const durationMinutes: number = Number(times.duration);
-  if (!durationMinutes) return null;
-
   const startMinutes: number = hoursToMinutes(
-    changeTimeMode(times.start, "24-hour"),
+    changeTimeMode(routineOption.startTime, "24-hour"),
   );
   const endMinutes: number = hoursToMinutes(
-    changeTimeMode(times.end, "24-hour"),
+    changeTimeMode(routineOption.endTime, "24-hour"),
   );
 
   let breakStartMinutes: number = 0;
   let breakEndMinutes: number = 0;
   let breakDuration: number = 0;
 
-  if (breakTime) {
+  if (routineOption.breakStartTime && routineOption.breakEndTime) {
     breakStartMinutes = hoursToMinutes(
-      changeTimeMode(breakTime.start, "24-hour"),
+      changeTimeMode(routineOption.breakStartTime, "24-hour"),
     );
 
-    if (breakTime.type === "duration") {
-      breakDuration = Number(breakTime.duration);
-      breakEndMinutes = breakStartMinutes + breakDuration;
-    } else {
-      breakEndMinutes = hoursToMinutes(
-        changeTimeMode(breakTime.end, "24-hour"),
-      );
-      breakDuration = breakEndMinutes - breakStartMinutes;
-    }
+    breakEndMinutes = hoursToMinutes(
+      changeTimeMode(routineOption.breakEndTime, "24-hour"),
+    );
+    breakDuration = breakEndMinutes - breakStartMinutes;
   }
 
-  const totalAvailableTime = endMinutes - startMinutes - breakDuration;
-  const totalSubjects = Math.floor(totalAvailableTime / durationMinutes);
+  const totalSubjects = calculateMaxSubjects(routineOption);
 
   if (index >= totalSubjects) return null;
 
-  let startRange = startMinutes + index * durationMinutes;
-  let endRange = startRange + durationMinutes;
+  let startRange = startMinutes + index * routineOption.periodDuration;
+  let endRange = startRange + routineOption.periodDuration;
 
   if (breakDuration > 0) {
     if (startRange >= breakStartMinutes) {
@@ -206,7 +181,7 @@ export const RangeToSubjectTime = ({
     breakEndTime: changeTimeMode(minutesToHours(breakEndMinutes), "12-hour"),
     breakDuration: breakDuration,
     type: "",
-    duration: times.duration,
+    duration: routineOption.periodDuration,
     totalSubjects: totalSubjects,
   };
 };
