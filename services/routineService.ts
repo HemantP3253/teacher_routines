@@ -104,7 +104,7 @@ export const prepareRoutineUpdates = (
 
 export const saveRoutinesByBatch = async (
   batch: string,
-  routines: LocalRoutinesData[],
+  routines: Partial<LocalRoutinesData>[],
 ): Promise<void> => {
   await database.write(async () => {
     const existingRoutines = await routinesCollection
