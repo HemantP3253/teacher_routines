@@ -1,5 +1,5 @@
-import { RoutinesData } from "@/types/common";
 import { LocalRoutinesData, RawRoutineSyncRecord } from "@/types/localDbTypes";
+import { RoutinesData } from "@/types/supabaseTypes";
 
 export function mapRoutineData(remoteItem: RoutinesData): RawRoutineSyncRecord;
 export function mapRoutineData(
@@ -41,10 +41,9 @@ export function mapRoutineData(
   target.batchAndSection = remoteItem.batch_and_section ?? "";
   target.days = remoteItem.days;
   target.endTime = remoteItem.end_time ?? "";
-  target.gradeId = remoteItem.grade_id ?? null;
   target.instituteId = remoteItem.institute_id ?? "";
   target.programId = remoteItem.program_id ?? null;
-  target.semesterId = remoteItem.semester_id ?? null;
+  target.academicLevelId = remoteItem.academic_level_id ?? null;
   target.startTime = remoteItem.start_time ?? "";
   target.streamId = remoteItem.stream_id ?? null;
   target.subjectId = remoteItem.subject_id ?? "";

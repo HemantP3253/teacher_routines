@@ -42,10 +42,9 @@ export const prepareRoutineCreations = (
         routine.batchAndSection = item.batchAndSection ?? "";
         routine.days = item.days ?? [];
         routine.endTime = item.endTime ?? "";
-        routine.gradeId = item.gradeId ?? null;
         routine.instituteId = item.instituteId ?? "";
         routine.programId = item.programId ?? null;
-        routine.semesterId = item.semesterId ?? null;
+        routine.academicLevelId = item.academicLevelId ?? null;
         routine.startTime = item.startTime ?? "";
         routine.streamId = item.streamId ?? null;
         routine.subjectId = item.subjectId ?? "";
@@ -85,11 +84,11 @@ export const prepareRoutineUpdates = (
           if (item.subjectId !== undefined) r.subjectId = item.subjectId;
           if (item.teacherId !== undefined) r.teacherId = item.teacherId;
           if (item.unitId !== undefined) r.unitId = item.unitId;
-          if (item.gradeId !== undefined) r.gradeId = item.gradeId;
           if (item.instituteId !== undefined) r.instituteId = item.instituteId;
           if (item.programId !== undefined) r.programId = item.programId;
           if (item.streamId !== undefined) r.streamId = item.streamId;
-          if (item.semesterId !== undefined) r.semesterId = item.semesterId;
+          if (item.academicLevelId !== undefined)
+            r.academicLevelId = item.academicLevelId;
 
           r.updatedAt = new Date();
         }),
