@@ -16,10 +16,10 @@ export default class Routines extends Model {
   @text("batch_and_section") batchAndSection!: string;
   @json("days", sanitizeArray) days!: string[];
   @text("end_time") endTime!: string;
-  @text("grade_id") gradeId?: string | null;
   @text("institute_id") instituteId!: string;
   @text("program_id") programId?: string | null;
-  @text("semester_id") semesterId?: string | null;
+  @text("branch_id") branchId?: string | null;
+  @text("academic_level_id") academicLevelId?: string | null;
   @text("start_time") startTime!: string;
   @text("stream_id") streamId?: string | null;
   @text("subject_id") subjectId!: string;
