@@ -58,10 +58,9 @@ export interface RawRoutineSyncRecord {
   days: string;
   deleted_at: number | null;
   end_time: string;
-  grade_id: string | null;
   institute_id: string;
   program_id: string | null;
-  semester_id: string | null;
+  academic_level_id: string;
   start_time: string;
   stream_id: string | null;
   subject_id: string;
