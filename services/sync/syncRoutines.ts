@@ -34,6 +34,11 @@ export const pushRoutines = async (
 
   const payloads = routines
     .filter((record) => record.instituteId === currentInstituteId)
+    .filter(
+      (record): record is LocalRoutinesData & { academicLevelId: string } =>
+        typeof record.academicLevelId === "string" &&
+        record.academicLevelId.trim().length > 0,
+    )
     .map((record) => {
       let parsedDays = record.days;
       if (typeof record.days === "string") {
@@ -49,10 +54,9 @@ export const pushRoutines = async (
         batch_and_section: record.batchAndSection,
         days: parsedDays,
         end_time: record.endTime,
-        grade_id: record.gradeId,
         institute_id: record.instituteId,
         program_id: record.programId,
-        semester_id: record.semesterId,
+        academic_level_id: record.academicLevelId,
         start_time: record.startTime,
         stream_id: record.streamId,
         subject_id: record.subjectId,
