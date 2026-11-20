@@ -143,10 +143,12 @@ export const useRoutineStore = create<RoutineState>((set, get) => ({
       activeSubjectsInfo,
     } = get();
 
+    const requiresBranch = selectedProgram?.hasBranches ?? false;
+
     if (
       !selectedRoutineOption ||
       !selectedProgram ||
-      !selectedBranch ||
+      (requiresBranch && !selectedBranch) ||
       !selectedAcademicLevel ||
       !selectedBatchAndSection ||
       activeSubjectsInfo.length === 0
@@ -172,7 +174,7 @@ export const useRoutineStore = create<RoutineState>((set, get) => ({
     const routineMetadata = {
       unitId: context.unit.id,
       programId: selectedProgram.id,
-      branchId: selectedBranch.id,
+      branchId: selectedBranch?.id || null,
       academicLevelId: selectedAcademicLevel.id,
       batchAndSection: selectedBatchAndSection,
     };
@@ -184,6 +186,7 @@ export const useRoutineStore = create<RoutineState>((set, get) => ({
       instituteId,
       customDuration,
     });
+
     await saveRoutinesByBatch(selectedBatchAndSection, routines);
   },
 }));
