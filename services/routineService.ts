@@ -140,9 +140,7 @@ export const saveRoutinesByBatch = async (
   routines: Partial<LocalRoutinesData>[],
 ): Promise<void> => {
   await database.write(async () => {
-    const existingRoutines = await routinesCollection
-      .query(Q.where("batch_and_section", batch))
-      .fetch();
+    const existingRoutines = await fetchRoutines({ batchAndSection: batch });
 
     const existingIds = new Set(existingRoutines.map((routine) => routine.id));
 
