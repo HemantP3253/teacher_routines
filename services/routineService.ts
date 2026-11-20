@@ -5,6 +5,17 @@ import { Observable } from "@nozbe/watermelondb/utils/rx";
 import { randomUUID } from "expo-crypto";
 import { map } from "rxjs/operators";
 
+interface RoutineFilterOptions {
+  teacherId?: string;
+  instituteId?: string;
+  unitId?: string;
+  programId?: string;
+  branchId?: string;
+  academicLevelId?: string;
+  batchAndSection?: string;
+  streamId?: string;
+}
+
 const routinesCollection = database.get<LocalRoutinesData>("routines");
 
 export const observeBatchesByProgramId = (
@@ -22,12 +33,37 @@ export const observeBatchesByProgramId = (
     );
 };
 
-export const fetchRoutinesByBatch = async (
-  batch: string,
+export const fetchRoutines = async (
+  options: RoutineFilterOptions,
 ): Promise<LocalRoutinesData[]> => {
-  return await routinesCollection
-    .query(Q.where("batch_and_section", batch))
-    .fetch();
+  const queryList = [];
+
+  if (options.academicLevelId) {
+    queryList.push(Q.where("academic_level_id", options.academicLevelId));
+  }
+  if (options.batchAndSection) {
+    queryList.push(Q.where("academic_level_id", options.batchAndSection));
+  }
+  if (options.branchId) {
+    queryList.push(Q.where("academic_level_id", options.branchId));
+  }
+  if (options.instituteId) {
+    queryList.push(Q.where("academic_level_id", options.instituteId));
+  }
+  if (options.programId) {
+    queryList.push(Q.where("academic_level_id", options.programId));
+  }
+  if (options.streamId) {
+    queryList.push(Q.where("academic_level_id", options.streamId));
+  }
+  if (options.teacherId) {
+    queryList.push(Q.where("academic_level_id", options.teacherId));
+  }
+  if (options.unitId) {
+    queryList.push(Q.where("academic_level_id", options.unitId));
+  }
+
+  return await routinesCollection.query(...queryList).fetch();
 };
 
 export const prepareRoutineCreations = (
