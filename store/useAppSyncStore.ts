@@ -1,4 +1,3 @@
-import { AppState } from "react-native";
 import { create } from "zustand";
 
 interface SyncState {
@@ -17,7 +16,7 @@ interface SyncState {
 
 export const useAppSyncStore = create<SyncState>()((set) => ({
   isOnline: false,
-  isAppActive: AppState.currentState === "active",
+  isAppActive: false,
   isSyncing: false,
   institutesLoaded: false,
 
