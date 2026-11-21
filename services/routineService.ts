@@ -36,34 +36,22 @@ export const observeBatchesByProgramId = (
 export const fetchRoutines = async (
   options: RoutineFilterOptions,
 ): Promise<LocalRoutinesData[]> => {
-  const queryList = [];
+  const filters: [string | undefined, string][] = [
+    [options.teacherId, "teacher_id"],
+    [options.instituteId, "institute_id"],
+    [options.unitId, "unit_id"],
+    [options.batchAndSection, "batch_and_section"],
+    [options.branchId, "branch_id"],
+    [options.programId, "program_id"],
+    [options.academicLevelId, "academic_level_id"],
+    [options.streamId, "stream_id"],
+  ];
 
-  if (options.teacherId) {
-    queryList.push(Q.where("academic_level_id", options.teacherId));
-  }
-  if (options.instituteId) {
-    queryList.push(Q.where("academic_level_id", options.instituteId));
-  }
-  if (options.unitId) {
-    queryList.push(Q.where("academic_level_id", options.unitId));
-  }
-  if (options.batchAndSection) {
-    queryList.push(Q.where("academic_level_id", options.batchAndSection));
-  }
-  if (options.branchId) {
-    queryList.push(Q.where("academic_level_id", options.branchId));
-  }
-  if (options.programId) {
-    queryList.push(Q.where("academic_level_id", options.programId));
-  }
-  if (options.academicLevelId) {
-    queryList.push(Q.where("academic_level_id", options.academicLevelId));
-  }
-  if (options.streamId) {
-    queryList.push(Q.where("academic_level_id", options.streamId));
-  }
+  const clauses = filters
+    .filter((entry): entry is [string, string] => Boolean(entry[0]))
+    .map(([value, column]) => Q.where(column, value));
 
-  return await routinesCollection.query(...queryList).fetch();
+  return await routinesCollection.query(...clauses).fetch();
 };
 
 export const prepareRoutineCreations = (
