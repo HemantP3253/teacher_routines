@@ -7,8 +7,8 @@ import { useAppDatePicker } from "@/utils/pickerUtils";
 import { pad } from "@/utils/stringUtils";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useMemo, useState } from "react";
-import { KeyboardAvoidingView, Platform, View } from "react-native";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { StyleSheet } from "react-native-unistyles";
 import { ThemedCheckbox, ThemedPressable, ThemedText } from "../../themed";
 import Spacer from "../Spacer";
 import DynamicTextInput from "./DynamicTextInput";
@@ -36,10 +36,10 @@ const DynamicFormContainer = ({
   defaultValues,
   CustomComponent,
 }: DynamicFormContainerProps) => {
-  const { colors } = useUnistyles().theme;
-
+  const extraCount = extraInputs?.inputFields.length || 0;
+  const totalFieldsCount = inputFields.length + extraCount;
   const [textValues, setTextValues] = useState<string[]>(() => {
-    return defaultValues || Array(inputFields.length).fill("");
+    return defaultValues || Array(totalFieldsCount).fill("");
   });
 
   const [activePickerIndex, setActivePickerIndex] = useState<number | null>(
@@ -94,154 +94,175 @@ const DynamicFormContainer = ({
   }, [textValues]);
 
   const isSubmittable = useMemo(() => {
-    return textValues.every((value, index) => {
-      const isNullable = inputFields[index]?.isNullable;
-      if (!isNullable && value === "") return false;
+    const areMainFieldsValid = inputFields.every((field, index) => {
+      if (!field.isNullable && textValues[index] === "") return false;
       return true;
     });
-  }, [textValues, inputFields]);
+
+    if (!areMainFieldsValid) return false;
+
+    if (extraInputs && isExtraInputsChecked) {
+      return extraInputs.inputFields.every((field, extraIndex) => {
+        const actualIndex = inputFields.length + extraIndex;
+        if (!field.isNullable && textValues[actualIndex] === "") return false;
+        return true;
+      });
+    }
+
+    return true;
+  }, [textValues, inputFields, extraInputs, isExtraInputsChecked]);
 
   return (
     <KeyboardAvoidingView
-      // style={{ flex: 1 }}
       behavior={Platform.OS === "android" ? "padding" : "position"}
     >
-      {/* <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
+      <ScrollView
         keyboardShouldPersistTaps="handled"
-      > */}
-      {title && (
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <ThemedText type="text" style={{ fontWeight: "bold", fontSize: 20 }}>
-            {title}
-          </ThemedText>
-        </View>
-      )}
-      <View>
-        {inputFields.map((input, index) => {
-          return (
-            <DynamicTextInput
-              key={`${input.title}-${index}`}
-              value={textValues[index]}
-              onChangeText={(value) => handleTextChange(value, index)}
-              onOpenPicker={() =>
-                input.showPicker &&
-                datePicker.openPicker({ mode: input.showPicker })
-              }
-              inputField={input}
-            />
-          );
-        })}
-
-        {CustomComponent}
-
-        {extraInputs && (
-          <View>
-            <ThemedCheckbox
-              label={extraInputs.captionText}
-              subLabel={extraInputs?.subCaptionText}
-              isChecked={isExtraInputsChecked}
-              onPress={() => setIsExtraInputsChecked((prev) => !prev)}
-              style={{ padding: 4 }}
-              alwaysShowSubLabel
-            />
+        contentContainerStyle={{ paddingBottom: 16 }}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
+        {title && (
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <ThemedText
+              type="text"
+              style={{ fontWeight: "bold", fontSize: 20 }}
+            >
+              {title}
+            </ThemedText>
           </View>
         )}
-
-        {extraInputs &&
-          extraInputs.inputFields.map((input, index) => {
+        <View>
+          {inputFields.map((input, index) => {
             return (
               <DynamicTextInput
                 key={`${input.title}-${index}`}
-                inputField={input}
                 value={textValues[index]}
                 onChangeText={(value) => handleTextChange(value, index)}
                 onOpenPicker={() =>
                   input.showPicker &&
                   datePicker.openPicker({ mode: input.showPicker })
                 }
+                inputField={input}
               />
             );
           })}
 
-        <Spacer size={16} />
+          {CustomComponent}
 
-        <View style={styles.actionButtonsContainer}>
-          <ThemedPressable
-            noFill
-            disabled={!isClearable}
-            style={[
-              styles.actionButtons,
-              !isClearable && styles.buttonDisabled,
-            ]}
-            onPress={() => setTextValues(Array(inputFields.length).fill(""))}
-          >
-            <ThemedText
-              style={styles.actionButtonsText}
-              type={isClearable ? "text" : "disabledContent"}
-            >
-              Clear All
-            </ThemedText>
-          </ThemedPressable>
+          {extraInputs && (
+            <View>
+              <ThemedCheckbox
+                label={extraInputs.captionText}
+                subLabel={extraInputs?.subCaptionText}
+                isChecked={isExtraInputsChecked}
+                onPress={() => setIsExtraInputsChecked((prev) => !prev)}
+                style={{ padding: 4 }}
+                alwaysShowSubLabel
+              />
+            </View>
+          )}
 
-          <ThemedPressable
-            style={[
-              styles.actionButtons,
-              !isSubmittable && styles.buttonDisabled,
-            ]}
-            disabled={!isSubmittable}
-            onPress={() => onSubmit?.(textValues)}
-          >
-            <ThemedText
-              type={isSubmittable ? "primaryContent" : "disabledContent"}
-              style={styles.actionButtonsText}
+          {extraInputs &&
+            isExtraInputsChecked &&
+            extraInputs.inputFields.map((input, index) => {
+              const actualIndex = inputFields.length + index;
+
+              return (
+                <DynamicTextInput
+                  key={`${input.title}-${actualIndex}`}
+                  inputField={input}
+                  value={textValues[actualIndex]}
+                  onChangeText={(value) => handleTextChange(value, actualIndex)}
+                  onOpenPicker={() =>
+                    input.showPicker &&
+                    datePicker.openPicker({ mode: input.showPicker })
+                  }
+                />
+              );
+            })}
+
+          <Spacer size={16} />
+
+          <View style={styles.actionButtonsContainer}>
+            <ThemedPressable
+              noFill
+              disabled={!isClearable}
+              style={[
+                styles.actionButtons,
+                !isClearable && styles.buttonDisabled,
+              ]}
+              onPress={() => setTextValues(Array(totalFieldsCount).fill(""))}
             >
-              Submit
-            </ThemedText>
-          </ThemedPressable>
+              <ThemedText
+                style={styles.actionButtonsText}
+                type={isClearable ? "text" : "disabledContent"}
+              >
+                Clear All
+              </ThemedText>
+            </ThemedPressable>
+
+            <ThemedPressable
+              style={[
+                styles.actionButtons,
+                !isSubmittable && styles.buttonDisabled,
+              ]}
+              disabled={!isSubmittable}
+              onPress={() => {
+                if (extraInputs && !isExtraInputsChecked)
+                  onSubmit?.(textValues.slice(0, inputFields.length));
+                else onSubmit?.(textValues);
+              }}
+            >
+              <ThemedText
+                type={isSubmittable ? "primaryContent" : "disabledContent"}
+                style={styles.actionButtonsText}
+              >
+                Submit
+              </ThemedText>
+            </ThemedPressable>
+          </View>
         </View>
-      </View>
 
-      {datePicker.visible && (
-        <>
-          {/* DATE or DATE_AND_TIME (First Step) */}
-          {(datePicker.mode === "date" ||
-            (datePicker.mode === "dateAndTime" &&
-              datePicker.dateTimeStep === "date")) && (
-            <>
-              {/* {datePicker.calendarType === "bs" ? (
+        {datePicker.visible && (
+          <>
+            {/* DATE or DATE_AND_TIME (First Step) */}
+            {(datePicker.mode === "date" ||
+              (datePicker.mode === "dateAndTime" &&
+                datePicker.dateTimeStep === "date")) && (
+              <>
+                {/* {datePicker.calendarType === "bs" ? (
                   <NepaliDatePicker
                     value={datePicker.getInitialBsValue()}
                     onSelect={datePicker.handleNepaliDateSelect}
                     onClose={datePicker.closePicker}
                   />
                 ) : ( */}
+                <DateTimePicker
+                  value={currentSelectedDate}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onValueChange={datePicker.handleStandardSelect}
+                />
+                {/* )} */}
+              </>
+            )}
+
+            {/* TIME or DATE_AND_TIME (Second Step) */}
+            {(datePicker.mode === "time" ||
+              (datePicker.mode === "dateAndTime" &&
+                datePicker.dateTimeStep === "time")) && (
               <DateTimePicker
                 value={currentSelectedDate}
-                mode="date"
+                mode="time"
+                is24Hour={true}
                 display={Platform.OS === "ios" ? "spinner" : "default"}
-                onChange={datePicker.handleStandardSelect}
+                onValueChange={datePicker.handleStandardSelect}
               />
-              {/* )} */}
-            </>
-          )}
-
-          {/* TIME or DATE_AND_TIME (Second Step) */}
-          {(datePicker.mode === "time" ||
-            (datePicker.mode === "dateAndTime" &&
-              datePicker.dateTimeStep === "time")) && (
-            <DateTimePicker
-              value={currentSelectedDate}
-              mode="time"
-              is24Hour={true}
-              display={Platform.OS === "ios" ? "spinner" : "default"}
-              onChange={datePicker.handleStandardSelect}
-            />
-          )}
-        </>
-      )}
-      {/* </ScrollView> */}
+            )}
+          </>
+        )}
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
