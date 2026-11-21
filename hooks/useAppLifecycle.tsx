@@ -33,14 +33,15 @@ const useAppLifecycle = () => {
 
   // Effect responsible for changing themes
   useEffect(() => {
-    if (themePreference === "Use System Theme") {
-      UnistylesRuntime.setAdaptiveThemes(true);
-    } else {
-      UnistylesRuntime.setAdaptiveThemes(false);
-      const rawTheme = themePreference.split(" ")[0].toLowerCase() as
-        | "light"
-        | "dark";
-      UnistylesRuntime.setTheme(rawTheme);
+    const isSystemTheme = themePreference === "Use System Theme";
+
+    UnistylesRuntime.setAdaptiveThemes(isSystemTheme);
+
+    if (!isSystemTheme) {
+      const theme = themePreference.toLowerCase().startsWith("dark")
+        ? "dark"
+        : "light";
+      UnistylesRuntime.setTheme(theme);
     }
   }, [themePreference]);
 
