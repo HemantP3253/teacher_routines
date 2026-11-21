@@ -65,7 +65,9 @@ const useAppLifecycle = () => {
   // Effect for checking app state and network changes
   useEffect(() => {
     const unsubscribeNet = NetInfo.addEventListener((state) =>
-      setIsOnline((state.isConnected && state.isInternetReachable) ?? false),
+      setIsOnline(
+        state.isConnected === true && state.isInternetReachable === true,
+      ),
     );
 
     const subscriptionApp = AppState.addEventListener(
