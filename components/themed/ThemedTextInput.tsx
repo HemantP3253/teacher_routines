@@ -10,8 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import ErrorCard from "../common/ErrorCard";
-import InfoCard from "../common/InfoCard";
+import { ErrorCard, InfoCard } from "../status";
 import ThemedView from "./ThemedView";
 
 interface ThemedTextInputProps extends TextInputProps {

@@ -13,8 +13,8 @@ import {
 } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import CustomModal from "../common/CustomModal";
-import ErrorCard from "../common/ErrorCard";
 import Spacer from "../common/Spacer";
+import { ErrorCard } from "../status";
 import ThemedAlertWindow from "./ThemedAlertWindow";
 import ThemedPressable from "./ThemedPressable";
 import ThemedText from "./ThemedText";
