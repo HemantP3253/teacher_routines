@@ -71,6 +71,8 @@ const useAppLifecycle = () => {
       ),
     );
 
+    setIsAppActive(AppState.currentState === "active");
+
     const subscriptionApp = AppState.addEventListener(
       "change",
       (nextAppState) => setIsAppActive(nextAppState === "active"),
