@@ -1,8 +1,8 @@
 import { InfoIcon } from "@/assets/icons";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import ThemedLinearGradient from "../themed/ThemedLinearGradient";
-import ThemedText from "../themed/ThemedText";
+import ThemedLinearGradient from "../../themed/ThemedLinearGradient";
+import ThemedText from "../../themed/ThemedText";
 
 const InfoCard = ({
   infoText,
