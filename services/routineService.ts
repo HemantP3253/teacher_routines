@@ -68,10 +68,11 @@ export const prepareRoutineCreations = (
         routine.endTime = item.endTime ?? "";
         routine.instituteId = item.instituteId ?? "";
         routine.programId = item.programId ?? null;
-        routine.academicLevelId = item.academicLevelId ?? null;
+        routine.academicLevelId = item.academicLevelId ?? "";
         routine.startTime = item.startTime ?? "";
         routine.streamId = item.streamId ?? null;
         routine.subjectId = item.subjectId ?? "";
+        routine.syllabusId = item.syllabusId ?? null;
         routine.teacherId = item.teacherId ?? "";
         routine.unitId = item.unitId ?? "";
 
@@ -113,6 +114,7 @@ export const prepareRoutineUpdates = (
           if (item.streamId !== undefined) r.streamId = item.streamId;
           if (item.academicLevelId !== undefined)
             r.academicLevelId = item.academicLevelId;
+          if (item.syllabusId !== undefined) r.syllabusId = item.syllabusId;
 
           r.updatedAt = new Date();
         }),
