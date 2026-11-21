@@ -19,10 +19,11 @@ export default class Routines extends Model {
   @text("institute_id") instituteId!: string;
   @text("program_id") programId?: string | null;
   @text("branch_id") branchId?: string | null;
-  @text("academic_level_id") academicLevelId?: string | null;
+  @text("academic_level_id") academicLevelId!: string;
   @text("start_time") startTime!: string;
   @text("stream_id") streamId?: string | null;
   @text("subject_id") subjectId!: string;
+  @text("syllabus_id") syllabusId?: string | null;
   @text("teacher_id") teacherId!: string;
   @text("unit_id") unitId!: string;
 
