@@ -7,13 +7,11 @@ import {
 import { MenuProps } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useMemo, useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, ScrollView, TextStyle, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import Spacer from "../common/Spacer";
-import ThemedCheckbox from "./ThemedCheckbox";
-import ThemedPressable from "./ThemedPressable";
-import ThemedText from "./ThemedText";
-import ThemedView from "./ThemedView";
+import { Spacer } from "../layout";
+import { CustomPressable, CustomText, CustomView } from "../primitives";
+import Checkbox from "./Checkbox";
 
 interface ThemedCheckboxMenuProps<T> extends MenuProps<T> {
   initialSelection?: T[];
@@ -89,10 +87,10 @@ const ThemedCheckboxMenu = <T,>({
 
   return (
     <ScrollView>
-      <ThemedView style={styles.headerContainer}>
-        <ThemedText type="text" style={styles.titleText}>
+      <CustomView style={styles.headerContainer}>
+        <CustomText type="text" style={styles.titleText}>
           {title ?? "Select an option"}
-        </ThemedText>
+        </CustomText>
 
         <View style={styles.selectOptionsContainer}>
           <Pressable
@@ -106,22 +104,22 @@ const ThemedCheckboxMenu = <T,>({
             ) : (
               <IndeterminateCheckBoxIcon fill={colors.accent} />
             )}
-            <ThemedText style={styles.selectOptionText}>
+            <CustomText style={styles.selectOptionText}>
               {getSelectedText()}
-            </ThemedText>
+            </CustomText>
           </Pressable>
           <Pressable
             style={styles.selectAllContainer}
             onPress={handleInverseSelection}
           >
             <SelectAllIcon fill={colors.accent} />
-            <ThemedText style={styles.selectOptionText}>
+            <CustomText style={styles.selectOptionText}>
               Inverse Selection
-            </ThemedText>
+            </CustomText>
           </Pressable>
         </View>
-      </ThemedView>
-      <ThemedView style={styles.listItemsContainer}>
+      </CustomView>
+      <CustomView style={styles.listItemsContainer}>
         <View style={styles.checkboxListContainer}>
           {sortedData.map((item: T, index) => {
             const id = getId(item);
@@ -133,7 +131,7 @@ const ThemedCheckboxMenu = <T,>({
             );
 
             return (
-              <ThemedCheckbox
+              <Checkbox
                 label={label}
                 subLabel={subLabel}
                 key={`Checkbox-${id}-${index}`}
@@ -146,12 +144,12 @@ const ThemedCheckboxMenu = <T,>({
           <Spacer />
 
           {data.length > 0 ? (
-            <ThemedPressable
+            <CustomPressable
               disabled={isSubmitDisabled}
               style={isSubmitDisabled && { backgroundColor: colors.disabled }}
               onPress={() => onSubmit?.(selectedItems)}
             >
-              <ThemedText
+              <CustomText
                 style={[
                   isSubmitDisabled
                     ? { color: colors.disabledContent }
@@ -160,15 +158,15 @@ const ThemedCheckboxMenu = <T,>({
                 ]}
               >
                 Submit Choices
-              </ThemedText>
-            </ThemedPressable>
+              </CustomText>
+            </CustomPressable>
           ) : (
-            <ThemedText type="text" style={styles.noItemsText}>
+            <CustomText type="text" style={styles.noItemsText}>
               No items available
-            </ThemedText>
+            </CustomText>
           )}
         </View>
-      </ThemedView>
+      </CustomView>
     </ScrollView>
   );
 };
@@ -209,6 +207,7 @@ const styles = StyleSheet.create(({ colors, spacing, radius, typography }) => ({
   },
   selectOptionText: {
     ...typography.body,
+    fontWeight: typography.body.fontWeight as TextStyle["fontWeight"],
     paddingLeft: spacing.sm,
     color: colors.accent,
   },

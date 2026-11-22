@@ -6,9 +6,9 @@ import {
 import { useState } from "react";
 import { Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import ThemedText from "./ThemedText";
+import { CustomText } from "../primitives";
 
-interface ThemedCheckboxProps {
+interface CheckboxProps {
   label: string;
   alwaysShowSubLabel?: boolean;
   subLabel?: string;
@@ -17,14 +17,14 @@ interface ThemedCheckboxProps {
   isChecked?: boolean;
 }
 
-const ThemedCheckbox = ({
+const Checkbox = ({
   label,
   alwaysShowSubLabel = false,
   subLabel,
   style,
   onPress,
   isChecked: controlledIsChecked,
-}: ThemedCheckboxProps) => {
+}: CheckboxProps) => {
   const [internalIsChecked, setInternalIsChecked] = useState<boolean>(
     controlledIsChecked ?? false,
   );
@@ -63,7 +63,7 @@ const ThemedCheckbox = ({
         </View>
         <View style={styles.rightContainer}>
           <View style={styles.labelContainer}>
-            <ThemedText style={[styles.labelText]}>{label}</ThemedText>
+            <CustomText style={[styles.labelText]}>{label}</CustomText>
             {!alwaysShowSubLabel && subLabel && (
               <ArrowDownIcon
                 fill={currentColor}
@@ -74,14 +74,14 @@ const ThemedCheckbox = ({
           </View>
           <View style={styles.subLabelContainer}>
             {(alwaysShowSubLabel || isExpanded) && subLabel && (
-              <ThemedText
+              <CustomText
                 style={[
                   styles.subLabelText,
                   isChecked && { color: colors.onPrimaryContainer },
                 ]}
               >
                 {subLabel}
-              </ThemedText>
+              </CustomText>
             )}
           </View>
         </View>
@@ -90,7 +90,7 @@ const ThemedCheckbox = ({
   );
 };
 
-export default ThemedCheckbox;
+export default Checkbox;
 
 const styles = StyleSheet.create(({ colors, spacing, radius }) => ({
   rootContainer: {
