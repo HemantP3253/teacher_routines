@@ -8,12 +8,6 @@ import {
   PhoneIcon,
   UsernameIcon,
 } from "@/assets/icons";
-import {
-  ThemedLinearGradient,
-  ThemedStatusBar,
-  ThemedText,
-  ThemedView,
-} from "@/components/themed";
 import { getProfileById } from "@/services/profileService";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LocalProfilesData } from "@/types/localDbTypes";
@@ -28,6 +22,7 @@ import {
   View,
 } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
+import { AppLinearGradient, AppStatusBar, CustomText, CustomView } from "../ui";
 
 const UserProfileScreen = () => {
   const router = useRouter();
@@ -55,7 +50,7 @@ const UserProfileScreen = () => {
 
   if (isLoading)
     return (
-      <ThemedLinearGradient
+      <AppLinearGradient
         style={[
           StyleSheet.absoluteFill,
           { alignItems: "center", justifyContent: "center" },
@@ -66,22 +61,20 @@ const UserProfileScreen = () => {
           style={{ flex: 1, backgroundColor: colors.primary }}
           size="large"
         />
-      </ThemedLinearGradient>
+      </AppLinearGradient>
     );
 
-  if (!userInfo) return <ThemedText>No user info available.</ThemedText>;
+  if (!userInfo) return <CustomText>No user info available.</CustomText>;
 
   return (
-    <ThemedLinearGradient
-      style={{ flex: 1, paddingTop: StatusBar.currentHeight }}
-    >
-      <ThemedStatusBar />
+    <AppLinearGradient style={{ flex: 1, paddingTop: StatusBar.currentHeight }}>
+      <AppStatusBar />
       <OptionsIcon
         style={{ alignSelf: "flex-end", margin: 8 }}
         fill={colors.primary}
         onPress={() => router.navigate("/(misc)/options")}
       />
-      <ThemedView
+      <CustomView
         style={{
           alignItems: "center",
           padding: 8,
@@ -92,8 +85,8 @@ const UserProfileScreen = () => {
         }}
       >
         <View style={{ flexDirection: "row" }}>
-          <ThemedView style={{ flex: 1 }} />
-          <ThemedView style={{ flex: 1, alignItems: "center" }}>
+          <CustomView style={{ flex: 1 }} />
+          <CustomView style={{ flex: 1, alignItems: "center" }}>
             {userInfo.avatarUrl ? (
               <Image
                 source={{ uri: userInfo.avatarUrl }}
@@ -103,21 +96,21 @@ const UserProfileScreen = () => {
             ) : (
               <UsernameIcon size={96} fill={colors.primary} />
             )}
-          </ThemedView>
-          <ThemedView style={{ flex: 1, alignItems: "flex-end" }}>
+          </CustomView>
+          <CustomView style={{ flex: 1, alignItems: "flex-end" }}>
             <EditIcon
               style={{ flexDirection: "row", margin: 4 }}
               height={24}
               width={24}
               fill={colors.primary}
             />
-          </ThemedView>
+          </CustomView>
         </View>
-        <ThemedText
+        <CustomText
           type="text"
           style={{ color: colors.secondary, fontWeight: "bold", fontSize: 18 }}
         >
-          <ThemedText
+          <CustomText
             style={{
               color: colors.primary,
               fontWeight: "bold",
@@ -126,11 +119,11 @@ const UserProfileScreen = () => {
             }}
           >
             @
-          </ThemedText>
+          </CustomText>
           {userInfo.username}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView
+        </CustomText>
+      </CustomView>
+      <CustomView
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -139,9 +132,9 @@ const UserProfileScreen = () => {
         }}
       >
         <NameIcon fill={colors.primary} />
-        <ThemedText type="text">{userInfo.fullName}</ThemedText>
-      </ThemedView>
-      <ThemedView
+        <CustomText type="text">{userInfo.fullName}</CustomText>
+      </CustomView>
+      <CustomView
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -150,11 +143,11 @@ const UserProfileScreen = () => {
         }}
       >
         <AgeIcon fill={colors.primary} />
-        <ThemedText type="text">
+        <CustomText type="text">
           {calculateAgeByDOB(userInfo.dateOfBirth)}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView
+        </CustomText>
+      </CustomView>
+      <CustomView
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -163,9 +156,9 @@ const UserProfileScreen = () => {
         }}
       >
         <GenderIcon fill={colors.primary} />
-        <ThemedText type="text">{userInfo.gender}</ThemedText>
-      </ThemedView>
-      <ThemedView
+        <CustomText type="text">{userInfo.gender}</CustomText>
+      </CustomView>
+      <CustomView
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -174,9 +167,9 @@ const UserProfileScreen = () => {
         }}
       >
         <PhoneIcon fill={colors.primary} />
-        <ThemedText type="text">{userInfo.phone}</ThemedText>
-      </ThemedView>
-      <ThemedView
+        <CustomText type="text">{userInfo.phone}</CustomText>
+      </CustomView>
+      <CustomView
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -185,11 +178,11 @@ const UserProfileScreen = () => {
         }}
       >
         <AddressIcon fill={colors.primary} />
-        <ThemedText type="text">
+        <CustomText type="text">
           {userInfo.address ? userInfo.address : "Address not set"}
-        </ThemedText>
-      </ThemedView>
-    </ThemedLinearGradient>
+        </CustomText>
+      </CustomView>
+    </AppLinearGradient>
   );
 };
 

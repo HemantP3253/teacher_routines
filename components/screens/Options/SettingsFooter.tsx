@@ -1,5 +1,5 @@
 import { LogoutIcon, SyncIcon } from "@/assets/icons";
-import { ThemedPressable, ThemedText } from "@/components/themed";
+import { CustomPressable, CustomText } from "@/components/ui";
 import { handleLogout } from "@/services/authService";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
@@ -10,22 +10,22 @@ const SettingsFooter = () => {
 
   return (
     <View>
-      <ThemedPressable style={[styles.actionButton]}>
+      <CustomPressable style={[styles.actionButton]}>
         <SyncIcon fill={colors.infoContent} />
-        <ThemedText type="infoContent" style={styles.actionText}>
+        <CustomText type="infoContent" style={styles.actionText}>
           Sync Now
-        </ThemedText>
-      </ThemedPressable>
+        </CustomText>
+      </CustomPressable>
 
-      <ThemedPressable
+      <CustomPressable
         style={[styles.logoutButton, styles.actionButton]}
         onPress={handleLogout}
       >
         <LogoutIcon fill={colors.errorContent} />
-        <ThemedText type="errorContent" style={styles.actionText}>
+        <CustomText type="errorContent" style={styles.actionText}>
           Log Out
-        </ThemedText>
-      </ThemedPressable>
+        </CustomText>
+      </CustomPressable>
     </View>
   );
 };

@@ -1,6 +1,5 @@
 import { DarkModeIcon } from "@/assets/icons";
-import { CustomModal } from "@/components/common";
-import { ThemedOptionsCard, ThemedRadioButtonMenu } from "@/components/themed/";
+import { CustomModal, OptionsCard, RadioButtonMenu } from "@/components/ui";
 import { useAppStore } from "@/store/useAppStore";
 import { ThemePreference } from "@/types/common";
 import { useState } from "react";
@@ -24,7 +23,7 @@ const CommonSettings = () => {
 
   return (
     <View>
-      <ThemedOptionsCard
+      <OptionsCard
         Icon={DarkModeIcon}
         label={"Select Theme"}
         onPress={() => setModalVisible(true)}
@@ -33,7 +32,7 @@ const CommonSettings = () => {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
       >
-        <ThemedRadioButtonMenu
+        <RadioButtonMenu
           title="Select Theme"
           data={availableThemeOptions}
           selectedItem={themePreference}

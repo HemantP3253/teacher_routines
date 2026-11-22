@@ -1,6 +1,5 @@
 import { DegreeIcon } from "@/assets/icons";
-import { CustomModal } from "@/components/common";
-import { ThemedCheckboxMenu, ThemedOptionsCard } from "@/components/themed";
+import { CheckboxMenu, CustomModal, OptionsCard } from "@/components/ui";
 import { useAppStore } from "@/store/useAppStore";
 import { UniversityProgram } from "@/types/academic";
 import { useState } from "react";
@@ -28,7 +27,7 @@ const AdminSettings = () => {
 
   return (
     <View>
-      <ThemedOptionsCard
+      <OptionsCard
         Icon={DegreeIcon}
         label="Selected Degrees"
         onPress={() => setModalVisible(true)}
@@ -38,7 +37,7 @@ const AdminSettings = () => {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
       >
-        <ThemedCheckboxMenu
+        <CheckboxMenu
           title="Select Available Degrees"
           data={availableDegrees}
           minSelection={1}

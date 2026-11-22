@@ -1,4 +1,4 @@
-import { ThemedLinearGradient, ThemedStatusBar } from "@/components/themed";
+import { AppLinearGradient, AppStatusBar } from "@/components/ui";
 import { StatusBar } from "react-native";
 import AdminSettings from "./AdminSettings";
 import CommonSettings from "./CommonSettings";
@@ -7,14 +7,14 @@ import SettingsFooter from "./SettingsFooter";
 
 const OptionsScreen = () => {
   return (
-    <ThemedLinearGradient
+    <AppLinearGradient
       style={{
         height: "100%",
         paddingTop: StatusBar.currentHeight ?? 0,
         gap: 8,
       }}
     >
-      <ThemedStatusBar />
+      <AppStatusBar />
 
       <CommonSettings />
 
@@ -23,7 +23,7 @@ const OptionsScreen = () => {
       </RoleGuard>
 
       <SettingsFooter />
-    </ThemedLinearGradient>
+    </AppLinearGradient>
   );
 };
 
