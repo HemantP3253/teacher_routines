@@ -1,5 +1,5 @@
-import { InfoIcon } from "@/assets/icons";
-import SyncIcon from "@/assets/icons/SyncIcon";
+import { InfoIcon, SyncIcon } from "@/assets/icons";
+import { CustomModal, CustomText } from "@/components/ui";
 import { useAppSyncStore } from "@/store/useAppSyncStore";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -13,8 +13,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { ThemedText } from "../themed";
-import CustomModal from "./CustomModal";
 
 const SyncStatusBanner = () => {
   const { top } = useSafeAreaInsets();
@@ -73,9 +71,9 @@ const SyncStatusBanner = () => {
           <SyncIcon fill={colors.infoContent} />
         </Animated.View>
       )}
-      <ThemedText type="infoContent" style={styles.syncMessage}>
+      <CustomText type="infoContent" style={styles.syncMessage}>
         {syncText}
-      </ThemedText>
+      </CustomText>
       <InfoIcon
         onPress={(event) => {
           event.stopPropagation();
@@ -93,9 +91,9 @@ const SyncStatusBanner = () => {
             backgroundColor: colors.info,
           }}
         >
-          <ThemedText type="text" style={{ color: "white" }}>
+          <CustomText type="text" style={{ color: "white" }}>
             Please wait while we sync your data. This may take a while.
-          </ThemedText>
+          </CustomText>
         </View>
       </CustomModal>
     </View>
