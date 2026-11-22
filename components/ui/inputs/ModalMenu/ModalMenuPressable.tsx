@@ -20,8 +20,8 @@ const ModalMenuPressable = ({
   target,
   selectedItem,
   iconProperties,
-  onPress,
   description,
+  style,
   ...props
 }: ModalMenuPressableProps & Description) => {
   const { colors } = useUnistyles().theme;
@@ -32,30 +32,42 @@ const ModalMenuPressable = ({
 
   return (
     <Pressable
-      style={{
-        backgroundColor: "transparent",
-        borderWidth: 1,
-        borderColor: colors.primary,
-        alignItems: "center",
-        gap: 8,
-        flexDirection: "row",
-        padding: 4,
-        flexWrap: "wrap",
-        borderRadius: 12,
-      }}
+      style={(state) => [
+        state.pressed && { opacity: 0.8 },
+        {
+          backgroundColor: "transparent",
+          borderWidth: 1,
+          borderColor: colors.primary,
+          alignItems: "center",
+          gap: 8,
+          flexDirection: "row",
+          padding: 4,
+          flexWrap: "wrap",
+          borderRadius: 12,
+        },
+        typeof style === "function" ? style(state) : style,
+      ]}
       {...props}
     >
       {Icon && <Icon size={24} fill={colors.primary} />}
       <View style={{ flex: 1, paddingHorizontal: 8 }}>
-        <CustomText type="text" style={{ flexWrap: "wrap", fontSize: 16 }}>
+        <CustomText
+          type="text"
+          style={{
+            flexWrap: "wrap",
+            fontSize: 16,
+            opacity: 0.9,
+            fontWeight: "700",
+          }}
+        >
           {title}
         </CustomText>
         <Spacer line={{ type: "primaryContainer" }} horizontal useFullWidth />
         <CustomText
           style={{
             flexWrap: "wrap",
-            fontSize: 13,
-            fontWeight: "700",
+            fontSize: 14,
+            fontWeight: "600",
             opacity: 0.7,
           }}
         >
