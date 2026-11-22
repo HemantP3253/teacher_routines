@@ -1,14 +1,14 @@
 import { CloseIcon, ExclamationIcon, SuccessIcon } from "@/assets/icons";
+import { CustomText } from "@/components/ui";
 import { capitalizeFirstLettter } from "@/utils/stringUtils";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { ThemedText } from "../../themed";
 
-interface StatusCardProps {
+interface UserStatusBadgeProps {
   status: string;
 }
 
-const StatusCard = ({ status }: StatusCardProps) => {
+const UserStatusBadge = ({ status }: UserStatusBadgeProps) => {
   const { colors } = useUnistyles().theme;
 
   const statusColor =
@@ -27,9 +27,9 @@ const StatusCard = ({ status }: StatusCardProps) => {
       ) : (
         <CloseIcon fill={statusColor} />
       )}
-      <ThemedText style={{ color: statusColor }}>
+      <CustomText style={{ color: statusColor }}>
         {capitalizeFirstLettter(status)}
-      </ThemedText>
+      </CustomText>
     </View>
   );
 };
@@ -43,4 +43,4 @@ const styles = StyleSheet.create(({ spacing }) => ({
   },
 }));
 
-export default StatusCard;
+export default UserStatusBadge;

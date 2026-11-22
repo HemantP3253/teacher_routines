@@ -9,14 +9,14 @@ import {
   RejectIcon,
   UsernameIcon,
 } from "@/assets/icons";
+import { AppLinearGradient, CustomText } from "@/components/ui";
 import { ProfileStatus } from "@/types/common";
 import { LocalProfilesData } from "@/types/localDbTypes";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { ThemedLinearGradient, ThemedText } from "../../themed";
-import StatusCard from "./StatusCard";
+import UserStatusBadge from "./UserStatusBadge";
 
 interface UserActionCardProps {
   profile: LocalProfilesData;
@@ -50,7 +50,7 @@ const UserActionCard = ({
         !keepExpanded && setShowDropDown(!showDropDown);
       }}
     >
-      <ThemedLinearGradient
+      <AppLinearGradient
         type="surface"
         end={{ x: 0, y: 1 }}
         style={styles.cardContainer}
@@ -59,9 +59,9 @@ const UserActionCard = ({
           <View style={[styles.headerWrapper]}>
             <View style={styles.nameRow}>
               <NameIcon fill={iconColour} />
-              <ThemedText type="text" style={{ paddingRight: 4 }}>
+              <CustomText type="text" style={{ paddingRight: 4 }}>
                 {profile.fullName}
-              </ThemedText>
+              </CustomText>
               {!keepExpanded && (
                 <ArrowDownIcon
                   transform={[{ rotate: showDropDown ? "180deg" : "0deg" }]}
@@ -69,39 +69,39 @@ const UserActionCard = ({
                 />
               )}
             </View>
-            {!showDropDown && status && <StatusCard status={status} />}
+            {!showDropDown && status && <UserStatusBadge status={status} />}
           </View>
           {showDropDown && (
             <View>
               <View style={styles.iconInfoContainer}>
                 <UsernameIcon fill={iconColour} />
-                <ThemedText type="text">
-                  <ThemedText style={styles.username}>@</ThemedText>
+                <CustomText type="text">
+                  <CustomText style={styles.username}>@</CustomText>
                   {profile.username}
-                </ThemedText>
+                </CustomText>
               </View>
               <View style={styles.iconInfoContainer}>
                 <AgeIcon fill={iconColour} />
-                <ThemedText type="text">
+                <CustomText type="text">
                   {calculateAgeByDOB(profile.dateOfBirth)}
                   {", " + profile.gender}
-                </ThemedText>
+                </CustomText>
               </View>
               <View style={styles.iconInfoContainer}>
                 <PhoneIcon fill={iconColour} />
-                <ThemedText type="text">{profile.phone}</ThemedText>
+                <CustomText type="text">{profile.phone}</CustomText>
               </View>
               {profile?.address && (
                 <View style={styles.iconInfoContainer}>
                   <AddressIcon fill={iconColour} />
-                  <ThemedText type="text">{profile.address}</ThemedText>
+                  <CustomText type="text">{profile.address}</CustomText>
                 </View>
               )}
             </View>
           )}
         </View>
         <View style={styles.rightColumn}>
-          {status && showDropDown && <StatusCard status={status} />}
+          {status && showDropDown && <UserStatusBadge status={status} />}
           <View style={styles.actionButtonsContainer}>
             {!hideIcons && (
               <>
@@ -139,7 +139,7 @@ const UserActionCard = ({
             )}
           </View>
         </View>
-      </ThemedLinearGradient>
+      </AppLinearGradient>
     </Pressable>
   );
 };
