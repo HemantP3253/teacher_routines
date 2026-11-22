@@ -7,7 +7,7 @@ import {
 import { MenuProps } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useMemo, useState } from "react";
-import { Pressable, ScrollView, TextStyle, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { Spacer } from "../layout";
 import { CustomPressable, CustomText, CustomView } from "../primitives";
@@ -207,7 +207,6 @@ const styles = StyleSheet.create(({ colors, spacing, radius, typography }) => ({
   },
   selectOptionText: {
     ...typography.body,
-    fontWeight: typography.body.fontWeight as TextStyle["fontWeight"],
     paddingLeft: spacing.sm,
     color: colors.accent,
   },
