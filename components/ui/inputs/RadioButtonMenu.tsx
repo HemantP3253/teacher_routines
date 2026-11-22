@@ -8,16 +8,15 @@ import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import ThemedText from "./ThemedText";
-import ThemedView from "./ThemedView";
+import { CustomText, CustomView } from "../primitives";
 
-interface ThemedRadioButtonMenuProps<T> extends MenuProps<T> {
+interface RadioButtonMenuProps<T> extends MenuProps<T> {
   selectedItem?: T;
   onItemSelect?: (selectedId: any) => void;
   alwaysShowSubLabel?: boolean;
 }
 
-const ThemedRadioButtonMenu = <T,>({
+const RadioButtonMenu = <T,>({
   title,
   data,
   selectedItem,
@@ -27,7 +26,7 @@ const ThemedRadioButtonMenu = <T,>({
   getSublabel,
   sortType,
   alwaysShowSubLabel,
-}: ThemedRadioButtonMenuProps<T>) => {
+}: RadioButtonMenuProps<T>) => {
   const { colors } = useUnistyles().theme;
 
   const currentSelectedId = selectedItem ? getId(selectedItem) : undefined;
@@ -46,12 +45,12 @@ const ThemedRadioButtonMenu = <T,>({
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
-      <ThemedView style={styles.rootContainer}>
-        <ThemedText type="text" style={styles.titleText}>
+      <CustomView style={styles.rootContainer}>
+        <CustomText type="text" style={styles.titleText}>
           {title ?? "Select an option"}
-        </ThemedText>
+        </CustomText>
 
-        <ThemedView style={styles.cardContainer}>
+        <CustomView style={styles.cardContainer}>
           {sortedData.map((item: T) => {
             const id = getId(item);
             const label = getLabel(item);
@@ -83,7 +82,7 @@ const ThemedRadioButtonMenu = <T,>({
                 </View>
                 <View style={styles.rightContainer}>
                   <View style={styles.labelContainer}>
-                    <ThemedText
+                    <CustomText
                       type={isChecked ? "primaryContent" : "text"}
                       style={[
                         styles.labelText,
@@ -93,7 +92,7 @@ const ThemedRadioButtonMenu = <T,>({
                       ]}
                     >
                       {label}
-                    </ThemedText>
+                    </CustomText>
                     {subLabel && !alwaysShowSubLabel && (
                       <ArrowDownIcon
                         fill={
@@ -109,20 +108,20 @@ const ThemedRadioButtonMenu = <T,>({
                   </View>
                   <View style={styles.subLabelContainer}>
                     {isExpanded && subLabel && (
-                      <ThemedText
+                      <CustomText
                         type={isChecked ? "primaryContent" : "text"}
                         style={styles.subLabelText}
                       >
                         {subLabel}
-                      </ThemedText>
+                      </CustomText>
                     )}
                   </View>
                 </View>
               </Pressable>
             );
           })}
-        </ThemedView>
-      </ThemedView>
+        </CustomView>
+      </CustomView>
     </ScrollView>
   );
 };
@@ -187,4 +186,4 @@ const styles = StyleSheet.create(({ colors, spacing, radius }) => ({
   },
 }));
 
-export default ThemedRadioButtonMenu;
+export default RadioButtonMenu;

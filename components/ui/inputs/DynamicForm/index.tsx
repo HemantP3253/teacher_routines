@@ -9,13 +9,13 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useMemo, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import Spacer from "../../../common/Spacer";
 import { ThemedCheckbox } from "../../../themed";
+import { Spacer } from "../../layout";
 import { CustomPressable, CustomText } from "../../primitives";
 import DynamicTextInput from "./DynamicTextInput";
 import { InputField } from "./DynamicTextInput.types";
 
-interface DynamicFormContainerProps {
+interface DynamicFormProps {
   title?: string;
   inputFields: InputField[];
   extraInputs?: {
@@ -29,14 +29,14 @@ interface DynamicFormContainerProps {
   CustomComponent?: React.ReactNode;
 }
 
-const DynamicFormContainer = ({
+const DynamicForm = ({
   title,
   inputFields,
   extraInputs,
   onSubmit,
   defaultValues,
   CustomComponent,
-}: DynamicFormContainerProps) => {
+}: DynamicFormProps) => {
   const extraCount = extraInputs?.inputFields.length || 0;
   const totalFieldsCount = inputFields.length + extraCount;
   const [textValues, setTextValues] = useState<string[]>(() => {
@@ -295,4 +295,4 @@ const styles = StyleSheet.create(({ colors, spacing, radius }) => ({
   },
 }));
 
-export default DynamicFormContainer;
+export default DynamicForm;
