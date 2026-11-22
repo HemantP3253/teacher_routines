@@ -13,14 +13,14 @@ import { Spacer } from "../layout";
 import { CustomPressable, CustomText, CustomView } from "../primitives";
 import Checkbox from "./Checkbox";
 
-interface ThemedCheckboxMenuProps<T> extends MenuProps<T> {
+interface CheckboxMenuProps<T> extends MenuProps<T> {
   initialSelection?: T[];
   minSelection?: number;
   onSubmit?: (selected: T[]) => void;
   addSearchBar?: boolean;
 }
 
-const ThemedCheckboxMenu = <T,>({
+const CheckboxMenu = <T,>({
   data,
   initialSelection,
   minSelection = 0,
@@ -30,7 +30,7 @@ const ThemedCheckboxMenu = <T,>({
   getId,
   getLabel,
   getSublabel,
-}: ThemedCheckboxMenuProps<T>) => {
+}: CheckboxMenuProps<T>) => {
   const { colors } = useUnistyles().theme;
 
   const [selectedItems, setSelectedItems] = useState<T[]>(
@@ -225,4 +225,4 @@ const styles = StyleSheet.create(({ colors, spacing, radius, typography }) => ({
   },
 }));
 
-export default ThemedCheckboxMenu;
+export default CheckboxMenu;
