@@ -1,8 +1,7 @@
 import { ErrorIcon, InfoIcon, SuccessIcon } from "@/assets/icons";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import ThemedLinearGradient from "../../themed/ThemedLinearGradient";
-import ThemedText from "../../themed/ThemedText";
+import { AppLinearGradient, CustomText } from "../primitives";
 
 export type StatusVariant = "success" | "error" | "info";
 
@@ -41,15 +40,15 @@ const StatusCard = ({
   const currentMeta = variantMeta[variant];
 
   return (
-    <ThemedLinearGradient
+    <AppLinearGradient
       type={variant}
       style={[styles.rootContainer, containerStyle]}
     >
       <StatusIcon fill={colors[currentMeta]} style={[styles.icon, iconStyle]} />
-      <ThemedText type={currentMeta} style={[textStyle]}>
+      <CustomText type={currentMeta} style={[textStyle]}>
         {message}
-      </ThemedText>
-    </ThemedLinearGradient>
+      </CustomText>
+    </AppLinearGradient>
   );
 };
 
