@@ -1,9 +1,8 @@
 import { ArrowDownIcon, ArrowUpIcon, DegreeIcon } from "@/assets/icons";
+import { ActionableHeaderCard, CustomText, CustomView } from "@/components/ui";
 import { useRoutineStore } from "@/store/useRoutineStore";
 import { MenuSteps } from "@/types/routines";
 import { useMemo, useState } from "react";
-import ActionableHeaderCard from "../../common/ActionableHeaderCard";
-import { ThemedText, ThemedView } from "../../themed";
 import BatchAndSectionStep from "./BatchAndSectionStep";
 import RoutineOptionSelector from "./RoutineOptionSelector";
 import CurrentStepMenu from "./StepMenu";
@@ -34,8 +33,8 @@ const RoutinesHeader = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   return (
-    <ThemedView style={{ backgroundColor: "transparent" }}>
-      <ThemedText
+    <CustomView style={{ backgroundColor: "transparent" }}>
+      <CustomText
         style={{
           fontSize: 24,
           fontWeight: "bold",
@@ -44,7 +43,7 @@ const RoutinesHeader = () => {
         }}
       >
         Admin Dashboard
-      </ThemedText>
+      </CustomText>
       <ActionableHeaderCard
         title="Select Program Details"
         IconBeforeText={DegreeIcon}
@@ -68,7 +67,7 @@ const RoutinesHeader = () => {
       </ActionableHeaderCard>
       <BatchAndSectionStep key={selectedProgram?.id ?? "none"} />
       <RoutineOptionSelector />
-    </ThemedView>
+    </CustomView>
   );
 };
 

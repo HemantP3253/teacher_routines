@@ -1,11 +1,16 @@
 import { SearchIcon } from "@/assets/icons";
-import UserActionCard from "@/components/admin/users";
+import {
+  CustomModal,
+  CustomText,
+  CustomTextInput,
+  CustomView,
+  Spacer,
+} from "@/components/ui";
 import { useProfileStore } from "@/store/useProfileStore";
 import { useMemo, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import { CustomModal, Spacer } from "../../common";
-import { ThemedText, ThemedTextInput, ThemedView } from "../../themed";
+import UserActionCard from "../../userAction";
 
 interface AssignTeacherModalProps {
   visible: boolean;
@@ -46,7 +51,7 @@ const AssignTeacherModal = ({
 
   return (
     <CustomModal modalVisible={visible} setModalVisible={onClose}>
-      <ThemedView
+      <CustomView
         style={{
           width: "100%",
           borderRadius: 8,
@@ -54,13 +59,13 @@ const AssignTeacherModal = ({
           maxHeight: "100%",
         }}
       >
-        <ThemedText
+        <CustomText
           style={{ fontSize: 18, fontWeight: "bold", textAlign: "center" }}
         >
           Assign Teacher
-        </ThemedText>
+        </CustomText>
 
-        <ThemedTextInput
+        <CustomTextInput
           title="Search approved users"
           Icon={SearchIcon}
           value={searchText}
@@ -82,7 +87,7 @@ const AssignTeacherModal = ({
             keyboardShouldPersistTaps="handled"
             style={{ marginTop: 12 }}
             ListEmptyComponent={() => (
-              <ThemedText
+              <CustomText
                 style={{
                   fontSize: 16,
                   color: colors.accent,
@@ -93,7 +98,7 @@ const AssignTeacherModal = ({
                 {searchText
                   ? "No matching teachers found"
                   : "No approved teachers found"}
-              </ThemedText>
+              </CustomText>
             )}
             renderItem={({ item: teacher }) => (
               <UserActionCard
@@ -108,7 +113,7 @@ const AssignTeacherModal = ({
             )}
           />
         )}
-      </ThemedView>
+      </CustomView>
     </CustomModal>
   );
 };

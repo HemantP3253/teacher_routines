@@ -1,5 +1,4 @@
-import TagChip from "@/components/common/DynamicTagSelect/TagChip";
-import { ThemedText } from "@/components/themed";
+import { CustomText, TagChip } from "@/components/ui";
 import { Days } from "@/types/routines";
 import { useState } from "react";
 import { View } from "react-native";
@@ -54,7 +53,7 @@ const DaySelector = ({ initialSelection, onChange }: DaySelectorProps) => {
 
   return (
     <View>
-      <ThemedText>Select Days</ThemedText>
+      <CustomText>Select Days</CustomText>
       <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
         {ALL_DAYS.map((item) => {
           const isSelected = selectedDaysMap[item];

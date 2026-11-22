@@ -1,8 +1,10 @@
 import { RoutinesIcon } from "@/assets/icons";
-import { CustomModal } from "@/components/common";
-import DynamicTagSelect from "@/components/common/DynamicTagSelect";
-import DynamicFormContainer from "@/components/common/DynamicTextInput";
-import { ThemedLinearGradient } from "@/components/themed";
+import {
+  AppLinearGradient,
+  CustomModal,
+  DynamicForm,
+  DynamicTagSelect,
+} from "@/components/ui";
 import { useBlurContext } from "@/contexts/BlurContext";
 import { useAppStore } from "@/store/useAppStore";
 import { useRoutineStore } from "@/store/useRoutineStore";
@@ -117,7 +119,7 @@ const RoutineOptionSelector = () => {
         setModalVisible={setModalVisible}
         blurTarget={targetRef}
       >
-        <ThemedLinearGradient
+        <AppLinearGradient
           style={{
             height: "85%",
             width: "100%",
@@ -126,7 +128,7 @@ const RoutineOptionSelector = () => {
             borderRadius: 12,
           }}
         >
-          <DynamicFormContainer
+          <DynamicForm
             title="Add new Batch"
             key={"batch"}
             inputFields={inputFields}
@@ -142,7 +144,7 @@ const RoutineOptionSelector = () => {
               />
             }
           />
-        </ThemedLinearGradient>
+        </AppLinearGradient>
       </CustomModal>
     </View>
   );

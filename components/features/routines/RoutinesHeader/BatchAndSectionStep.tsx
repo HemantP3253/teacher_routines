@@ -1,7 +1,9 @@
-import { CustomModal } from "@/components/common";
-import DynamicTagSelect from "@/components/common/DynamicTagSelect";
-import DynamicFormContainer from "@/components/common/DynamicTextInput";
-import { ThemedLinearGradient } from "@/components/themed";
+import {
+  AppLinearGradient,
+  CustomModal,
+  DynamicForm,
+  DynamicTagSelect,
+} from "@/components/ui";
 import { useBlurContext } from "@/contexts/BlurContext";
 import { useObservable } from "@/hooks/useObservable";
 import { observeBatchesByProgramId } from "@/services/routineService";
@@ -103,20 +105,20 @@ const BatchAndSectionStep = () => {
         setModalVisible={setModalVisible}
         blurTarget={targetRef}
       >
-        <ThemedLinearGradient
+        <AppLinearGradient
           style={{
             width: "100%",
             padding: 12,
             borderRadius: 12,
           }}
         >
-          <DynamicFormContainer
+          <DynamicForm
             title="Add new Batch"
             key={"batch"}
             inputFields={batchInputFields}
             onSubmit={handleBatchSubmit}
           />
-        </ThemedLinearGradient>
+        </AppLinearGradient>
       </CustomModal>
     </View>
   );

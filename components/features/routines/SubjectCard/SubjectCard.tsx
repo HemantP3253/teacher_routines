@@ -1,14 +1,10 @@
 import { AssignmentIcon } from "@/assets/icons";
+import { AlertDialog, AppLinearGradient, CustomText } from "@/components/ui";
 import { CurriculumSubject } from "@/types/academic";
 import { calculateFullPeriodTime } from "@/utils/dateUtils";
 import { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import {
-  ThemedAlertWindow,
-  ThemedLinearGradient,
-  ThemedText,
-} from "../../themed";
 import AssignTeacherModal from "./AssignTeacherModal";
 
 interface SubjectCardProps {
@@ -42,7 +38,7 @@ const SubjectCard = ({
   return (
     <View style={styles.rootView}>
       {/* Gradient View for the subtle background in the card */}
-      <ThemedLinearGradient
+      <AppLinearGradient
         type="surface"
         end={{ x: 0, y: 1 }}
         style={styles.cardContainer}
@@ -50,27 +46,27 @@ const SubjectCard = ({
         {/* Left column container (Subject info container) */}
         <View>
           {/* Subject Time */}
-          <ThemedText style={styles.timeContainer}>
+          <CustomText style={styles.timeContainer}>
             {!durationInfo
               ? "Time not selected"
               : calculateFullPeriodTime(
                   durationInfo.startTime,
                   durationInfo.duration,
                 )}
-          </ThemedText>
+          </CustomText>
 
           {/*  Subject Name */}
-          <ThemedText style={styles.titleText}>{subject.name}</ThemedText>
+          <CustomText style={styles.titleText}>{subject.name}</CustomText>
 
           {/*  Subject Code */}
-          <ThemedText style={styles.codeText}>{subject.code}</ThemedText>
+          <CustomText style={styles.codeText}>{subject.code}</CustomText>
 
           {/* Assigned Status  */}
-          <ThemedText style={styles.teacherAssignedText}>
+          <CustomText style={styles.teacherAssignedText}>
             {teacherInfo?.teacherId
               ? `Teacher: ${teacherInfo?.teacherName}`
               : "Not assigned"}
-          </ThemedText>
+          </CustomText>
         </View>
 
         {/* Icon for selecting teachers */}
@@ -85,7 +81,7 @@ const SubjectCard = ({
 
         {/* If error is shown, then the error modal appears, otherwise assign teacher modal appears */}
         {errorInfo && errorInfo.showError ? (
-          <ThemedAlertWindow
+          <AlertDialog
             title={errorInfo.title}
             description={errorInfo?.description || ""}
             visible={visible}
@@ -102,7 +98,7 @@ const SubjectCard = ({
             }}
           />
         )}
-      </ThemedLinearGradient>
+      </AppLinearGradient>
     </View>
   );
 };

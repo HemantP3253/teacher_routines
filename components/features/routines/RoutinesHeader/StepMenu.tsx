@@ -1,5 +1,5 @@
 import { AltRouteIcon, DateRangeIcon, DegreeIcon } from "@/assets/icons";
-import { ThemedModalMenu } from "@/components/themed";
+import { ModalMenu } from "@/components/ui";
 import {
   getNextCurriculumEntities,
   getProgramContextById,
@@ -36,7 +36,7 @@ const CurrentStepMenu = ({ currentStep }: StepMenuProps) => {
   switch (currentStep) {
     case "Program":
       return (
-        <ThemedModalMenu<UniversityProgram>
+        <ModalMenu<UniversityProgram>
           title={"Select Program"}
           data={programs}
           selectedItem={selectedProgram ?? null}
@@ -48,7 +48,7 @@ const CurrentStepMenu = ({ currentStep }: StepMenuProps) => {
       );
     case "Branch":
       return hasBranches ? (
-        <ThemedModalMenu<UniversityBranch>
+        <ModalMenu<UniversityBranch>
           title={"Select Branch"}
           data={
             getNextCurriculumEntities(
@@ -72,7 +72,7 @@ const CurrentStepMenu = ({ currentStep }: StepMenuProps) => {
     case "Term":
       const alertType = hasBranches ? "Branch" : "Program";
       return (
-        <ThemedModalMenu<AcademicLevel>
+        <ModalMenu<AcademicLevel>
           title={"Select Academic Level"}
           data={
             getNextCurriculumEntities(
