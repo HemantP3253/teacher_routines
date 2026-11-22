@@ -1,3 +1,2 @@
-export { default as ErrorCard } from "./ErrorCard";
-export { default as InfoCard } from "./InfoCard";
+export { default as StatusCard } from "./StatusCard";
 
