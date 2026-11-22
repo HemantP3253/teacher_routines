@@ -1,15 +1,18 @@
 import { ErrorIcon, SuccessIcon } from "@/assets/icons";
-import { AlertCondition, CustomSvgProps, MenuProps } from "@/types/common";
-import { sortByLabel } from "@/utils/sortUtils";
-import { FC, useCallback, useMemo, useState } from "react";
 import {
-  ColorValue,
+  AlertCondition,
+  IconProperties,
+  MenuProps
+} from "@/types/common";
+import { sortByLabel } from "@/utils/sortUtils";
+import { useCallback, useMemo, useState } from "react";
+import {
   FlatList,
   Pressable,
   PressableProps,
   StyleProp,
   View,
-  ViewStyle,
+  ViewStyle
 } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { Spacer } from "../../layout";
@@ -32,15 +35,7 @@ interface ModalMenuProps<T> extends MenuProps<T>, PressableProps {
   cancelable?: boolean;
   pressableStyle?: StyleProp<ViewStyle>;
 
-  iconProperties?: {
-    Icon?: FC<CustomSvgProps>;
-    iconFill?: boolean;
-    showIconOnly?: boolean;
-    iconFillColor?: ColorValue;
-    height?: number;
-    width?: number;
-    size?: number;
-  };
+  iconProperties?: IconProperties;
 }
 
 const ModalMenu = <T,>({
