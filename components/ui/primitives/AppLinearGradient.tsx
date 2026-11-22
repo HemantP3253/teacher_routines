@@ -1,3 +1,4 @@
+import { ThemeColors } from "@/types/common";
 import { LinearGradient, LinearGradientProps } from "expo-linear-gradient";
 import { ColorValue } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
@@ -14,22 +15,19 @@ type GradientType =
   | "warning"
   | "error";
 
+type GradientColors = [ColorValue, ColorValue, ...ColorValue[]];
+
 interface AppLinearGradientProps extends Omit<LinearGradientProps, "colors"> {
-  overrideColors?: [ColorValue, ColorValue, ...ColorValue[]];
+  overrideColors?: GradientColors;
   type?: GradientType;
 }
 
-const AppLinearGradient = ({
-  overrideColors,
-  style,
-  type = "background",
-  start = { x: 0, y: 0 },
-  end = { x: 1, y: 1 },
-  ...otherProps
-}: AppLinearGradientProps) => {
-  const { colors } = useUnistyles().theme;
-
-  const gradientMap: Record<GradientType, [ColorValue, ColorValue]> = {
+// Hoisted outside the component so the mapping logic lives in one place
+const getGradientColors = (
+  colors: ThemeColors,
+  type: GradientType,
+): GradientColors => {
+  const gradientMap: Record<GradientType, GradientColors> = {
     background: [colors.background, colors.surface],
     surface: [colors.surface, colors.surfaceElevated],
     surfaceElevated: [colors.surfaceElevated, colors.surfacePressed],
@@ -42,8 +40,19 @@ const AppLinearGradient = ({
     error: [...colors.errorGradient],
   };
 
-  const resolvedColors =
-    overrideColors ?? gradientMap[type] ?? gradientMap.background;
+  return gradientMap[type] ?? gradientMap.background;
+};
+
+const AppLinearGradient = ({
+  overrideColors,
+  style,
+  type = "background",
+  start = { x: 0, y: 0 },
+  end = { x: 1, y: 1 },
+  ...otherProps
+}: AppLinearGradientProps) => {
+  const { colors } = useUnistyles().theme;
+  const resolvedColors = overrideColors ?? getGradientColors(colors, type);
 
   return (
     <LinearGradient
