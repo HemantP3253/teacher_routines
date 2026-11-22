@@ -1,6 +1,6 @@
 import { AddIcon, ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
 import { IconProperties, MenuProps } from "@/types/common";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { ActionableHeaderCard } from "../../cards";
@@ -15,7 +15,6 @@ interface DynamicTagSelectProps<T> extends MenuProps<T> {
     label?: string;
     onPress: () => void;
   };
-  renderAddButton?: () => ReactNode;
 }
 
 const DynamicTagSelect = <T,>({
@@ -78,7 +77,7 @@ const DynamicTagSelect = <T,>({
                     onSelect?.(index);
                     setSelectedTag(item);
                   }}
-                  selected={selectedTag === item}
+                  selected={selectedTag ? getId(selectedTag) === id : false}
                 />
               );
             })}
