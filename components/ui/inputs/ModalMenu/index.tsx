@@ -12,16 +12,13 @@ import {
   ViewStyle,
 } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import CustomModal from "../common/CustomModal";
-import Spacer from "../common/Spacer";
-import { ErrorCard } from "../status";
-import ThemedAlertWindow from "./ThemedAlertWindow";
-import ThemedPressable from "./ThemedPressable";
-import ThemedText from "./ThemedText";
-import ThemedTextInput from "./ThemedTextInput";
-import ThemedView from "./ThemedView";
+import { Spacer } from "../../layout";
+import { AlertDialog, CustomModal } from "../../overlays";
+import { CustomPressable, CustomText, CustomView } from "../../primitives";
+import { StatusCard } from "../../status";
+import CustomTextInput from "../CustomTextInput";
 
-interface ThemedModalMenuProps<T> extends MenuProps<T>, PressableProps {
+interface ModalMenuProps<T> extends MenuProps<T>, PressableProps {
   selectedItem: T | null;
   onItemSelect?: (selectedId: any) => void;
   type?: string;
@@ -46,7 +43,7 @@ interface ThemedModalMenuProps<T> extends MenuProps<T>, PressableProps {
   };
 }
 
-const ThemedModalMenu = <T,>({
+const ModalMenu = <T,>({
   data,
   sortType,
   selectedItem,
@@ -64,7 +61,7 @@ const ThemedModalMenu = <T,>({
   iconProperties,
   addSearchBar = false,
   ...props
-}: ThemedModalMenuProps<T>) => {
+}: ModalMenuProps<T>) => {
   const [modalVisible, setModalVisible] = useState<{
     alert: boolean;
     mainModal: boolean;
@@ -120,13 +117,13 @@ const ThemedModalMenu = <T,>({
 
   const renderItem = useCallback(
     ({ item }: { item: T }) => (
-      <ThemedView
+      <CustomView
         style={{
           backgroundColor: colors.surfaceElevated,
           padding: 8,
         }}
       >
-        <ThemedPressable
+        <CustomPressable
           onPress={() => {
             onItemSelect?.(item);
             setModalVisible((prev) => ({
@@ -141,7 +138,7 @@ const ThemedModalMenu = <T,>({
             justifyContent: "center",
           }}
         >
-          <ThemedText
+          <CustomText
             type="primaryContent"
             style={{
               textAlign: "center",
@@ -150,13 +147,13 @@ const ThemedModalMenu = <T,>({
             }}
           >
             {getLabel(item)}
-          </ThemedText>
+          </CustomText>
 
           {getSublabel && (
-            <ThemedText type="text">{getSublabel(item)}</ThemedText>
+            <CustomText type="text">{getSublabel(item)}</CustomText>
           )}
-        </ThemedPressable>
-      </ThemedView>
+        </CustomPressable>
+      </CustomView>
     ),
     [onItemSelect, getLabel, getSublabel, colors.surfaceElevated],
   );
@@ -187,7 +184,7 @@ const ThemedModalMenu = <T,>({
             )}
           </Pressable>
         ) : (
-          <ThemedPressable
+          <CustomPressable
             noFill={noFill}
             onPress={openModal}
             style={(state) => [
@@ -212,7 +209,7 @@ const ThemedModalMenu = <T,>({
                 fill={dynamicColorText}
               />
             )}
-            <ThemedText
+            <CustomText
               type={error ? "errorContent" : noFill ? "text" : "primaryContent"}
               style={{ fontSize: 16, paddingHorizontal: 8 }}
             >
@@ -221,7 +218,7 @@ const ThemedModalMenu = <T,>({
                 : type
                   ? `${type}: ${getLabel(selectedItem)}`
                   : `${getLabel(selectedItem)}`}
-            </ThemedText>
+            </CustomText>
 
             <Spacer horizontal style={{ flex: 1 }} />
 
@@ -242,10 +239,10 @@ const ThemedModalMenu = <T,>({
                 style={statusIconStyle}
               />
             )}
-          </ThemedPressable>
+          </CustomPressable>
         )}
         {alertCondition && (
-          <ThemedAlertWindow
+          <AlertDialog
             title={alertCondition?.title ?? "Action Required"}
             description={
               alertCondition?.description ??
@@ -268,7 +265,7 @@ const ThemedModalMenu = <T,>({
               setModalVisible((prev) => ({ ...prev, mainModal: false }));
           }}
         >
-          <ThemedView
+          <CustomView
             style={{
               width: "100%",
               maxHeight: "100%",
@@ -277,7 +274,7 @@ const ThemedModalMenu = <T,>({
               backgroundColor: colors.background,
             }}
           >
-            <ThemedText
+            <CustomText
               type="text"
               style={{
                 fontSize: 18,
@@ -288,13 +285,13 @@ const ThemedModalMenu = <T,>({
               }}
             >
               {title}
-            </ThemedText>
+            </CustomText>
             <FlatList
               data={filteredResults}
               keyExtractor={(item) => getId(item)}
               ListHeaderComponent={() =>
                 addSearchBar && (
-                  <ThemedTextInput
+                  <CustomTextInput
                     title="Type to Search"
                     value={searchText}
                     onChangeText={setSearchText}
@@ -307,7 +304,7 @@ const ThemedModalMenu = <T,>({
               }}
               renderItem={renderItem}
               ListEmptyComponent={
-                <ThemedText
+                <CustomText
                   style={{
                     backgroundColor: colors.surfaceElevated,
                     padding: 12,
@@ -318,14 +315,14 @@ const ThemedModalMenu = <T,>({
                   {filteredResults.length === 0 && addSearchBar
                     ? `No results found for "${searchText}"`
                     : "No items available"}
-                </ThemedText>
+                </CustomText>
               }
             />
             {cancelable && (
-              <ThemedView
+              <CustomView
                 style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
               >
-                <ThemedPressable
+                <CustomPressable
                   noFill
                   style={{
                     alignSelf: "flex-end",
@@ -336,16 +333,16 @@ const ThemedModalMenu = <T,>({
                     setModalVisible((prev) => ({ ...prev, mainModal: false }))
                   }
                 >
-                  <ThemedText style={{ fontWeight: "600" }}>Cancel</ThemedText>
-                </ThemedPressable>
-              </ThemedView>
+                  <CustomText style={{ fontWeight: "600" }}>Cancel</CustomText>
+                </CustomPressable>
+              </CustomView>
             )}
-          </ThemedView>
+          </CustomView>
         </CustomModal>
       </View>
-      {error && <ErrorCard errorText={errorText} />}
+      {error && <StatusCard variant="error" message={errorText} />}
     </View>
   );
 };
 
-export default ThemedModalMenu;
+export default ModalMenu;

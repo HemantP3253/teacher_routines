@@ -1,7 +1,8 @@
-import { BlurView, BlurViewProps } from "expo-blur";
+import { BlurViewProps } from "expo-blur";
 import { ReactNode } from "react";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { AppBlurView } from "../primitives";
 
 interface FloatingTabBarProps extends BlurViewProps {
   children?: ReactNode;
@@ -12,7 +13,7 @@ const FloatingTabBar = ({ children, ...props }: FloatingTabBarProps) => {
 
   return (
     <View style={styles.shadowContainer}>
-      <BlurView
+      <AppBlurView
         intensity={40}
         tint={rt.themeName === "light" ? "light" : "dark"}
         style={styles.tabBar}
@@ -20,7 +21,7 @@ const FloatingTabBar = ({ children, ...props }: FloatingTabBarProps) => {
         {...props}
       >
         {children}
-      </BlurView>
+      </AppBlurView>
     </View>
   );
 };
@@ -45,13 +46,13 @@ const styles = StyleSheet.create((theme) => ({
     left: 0,
     right: 0,
     bottom: 0,
-    padding: 4, // Clean 4px gutter for your sliding capsule
+    padding: 4,
     flexDirection: "row",
     borderRadius: theme.radius.full,
     borderWidth: 1,
     borderColor: theme.colors.border,
     alignItems: "center",
-    overflow: "hidden", // Ensures the blur effect cuts off cleanly at the rounded corners
+    overflow: "hidden",
   },
 }));
 

@@ -2,7 +2,7 @@ import { CustomSvgProps } from "@/types/common";
 import { FC } from "react";
 import { Pressable, PressableProps, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import ThemedText from "../themed/ThemedText";
+import { CustomText } from "../primitives";
 
 interface TabIconProps extends PressableProps {
   focused: boolean;
@@ -31,9 +31,9 @@ const TabButton = ({
         <Icon height={24} width={24} fill={tabItemColor} fillItem={focused} />
       </View>
 
-      <ThemedText numberOfLines={1} style={styles.focusedText}>
+      <CustomText numberOfLines={1} style={styles.focusedText}>
         {title}
-      </ThemedText>
+      </CustomText>
     </Pressable>
   );
 };

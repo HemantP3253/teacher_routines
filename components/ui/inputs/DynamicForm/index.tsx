@@ -9,9 +9,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useMemo, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { ThemedCheckbox } from "../../../themed";
 import { Spacer } from "../../layout";
 import { CustomPressable, CustomText } from "../../primitives";
+import Checkbox from "../Checkbox";
 import DynamicTextInput from "./DynamicTextInput";
 import { InputField } from "./DynamicTextInput.types";
 
@@ -153,7 +153,7 @@ const DynamicForm = ({
 
           {extraInputs && (
             <View>
-              <ThemedCheckbox
+              <Checkbox
                 label={extraInputs.captionText}
                 subLabel={extraInputs?.subCaptionText}
                 isChecked={isExtraInputsChecked}

@@ -3,8 +3,8 @@ import { IconProperties } from "@/types/common";
 import { ReactNode } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { ThemedLinearGradient, ThemedText } from "../themed";
-import Spacer from "./Spacer";
+import { Spacer } from "../layout";
+import { AppLinearGradient, CustomText } from "../primitives";
 
 interface ActionableHeaderCardProps {
   title: string;
@@ -35,7 +35,7 @@ const ActionableHeaderCard = ({
   const { Icon, onPress, height, width, size } = iconProperties;
 
   return (
-    <ThemedLinearGradient
+    <AppLinearGradient
       type="surface"
       end={{ x: 0, y: 1 }}
       style={styles.rootContainer}
@@ -43,7 +43,7 @@ const ActionableHeaderCard = ({
       <Pressable onPress={onPress} style={styles.headerContainer}>
         <View style={styles.titleContainer}>
           {IconBeforeText && <IconBeforeText fill={colors.text} />}
-          <ThemedText style={styles.title}>{title}</ThemedText>
+          <CustomText style={styles.title}>{title}</CustomText>
         </View>
         <View style={styles.iconContainer}>
           {searchButtonProperties && (
@@ -75,9 +75,9 @@ const ActionableHeaderCard = ({
       )}
 
       {summaryText && (
-        <ThemedText style={styles.summaryText}>{summaryText}</ThemedText>
+        <CustomText style={styles.summaryText}>{summaryText}</CustomText>
       )}
-    </ThemedLinearGradient>
+    </AppLinearGradient>
   );
 };
 

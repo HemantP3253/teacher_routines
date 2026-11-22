@@ -2,8 +2,7 @@ import { CustomSvgProps } from "@/types/common";
 import { FC } from "react";
 import { Pressable, PressableProps, Switch } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import ThemedText from "./ThemedText";
-import ThemedView from "./ThemedView";
+import { CustomText, CustomView } from "../primitives";
 
 interface ThemedOptionsCardProps extends PressableProps {
   Icon?: FC<CustomSvgProps>;
@@ -32,20 +31,20 @@ const ThemedOptionsCard = ({
       {...props}
     >
       {Icon && (
-        <ThemedView style={{ marginLeft: 8 }}>
+        <CustomView style={{ marginLeft: 8 }}>
           <Icon height={24} width={24} fill={colors.primary} />
-        </ThemedView>
+        </CustomView>
       )}
-      <ThemedView style={{ flex: 1, marginLeft: 8 }}>
-        <ThemedText type="text" style={{ fontSize: 16, fontWeight: "600" }}>
+      <CustomView style={{ flex: 1, marginLeft: 8 }}>
+        <CustomText type="text" style={{ fontSize: 16, fontWeight: "600" }}>
           {label}
-        </ThemedText>
+        </CustomText>
         {description && (
-          <ThemedText type="text" style={{ fontSize: 14 }}>
+          <CustomText type="text" style={{ fontSize: 14 }}>
             {description}
-          </ThemedText>
+          </CustomText>
         )}
-      </ThemedView>
+      </CustomView>
       {switchOnValueChange && (
         <Switch
           value={switchValue}

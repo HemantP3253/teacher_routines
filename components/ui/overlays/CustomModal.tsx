@@ -1,4 +1,3 @@
-import { BlurView } from "expo-blur";
 import { ReactNode, RefObject } from "react";
 import {
   KeyboardAvoidingView,
@@ -35,7 +34,7 @@ const CustomModal = ({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <BlurView
+        {/* <BlurView
           style={{
             flex: 1,
             justifyContent: "center",
@@ -47,28 +46,30 @@ const CustomModal = ({
           intensity={10}
           blurTarget={props.blurTarget}
           blurMethod="dimezisBlurView"
+        > */}
+        <Pressable
+          style={{
+            width: "100%",
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 20,
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
+          }}
+          onPress={() => setModalVisible(false)}
         >
           <Pressable
             style={{
-              flex: 1,
               width: "100%",
               justifyContent: "center",
               alignItems: "center",
             }}
-            onPress={() => setModalVisible(false)}
+            onPress={(e) => e.stopPropagation()}
           >
-            <Pressable
-              style={{
-                width: "100%",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              onPress={(e) => e.stopPropagation()}
-            >
-              {children}
-            </Pressable>
+            {children}
           </Pressable>
-        </BlurView>
+        </Pressable>
+        {/* </BlurView> */}
       </KeyboardAvoidingView>
     </Modal>
   );

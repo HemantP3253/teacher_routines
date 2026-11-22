@@ -1,13 +1,11 @@
 import React from "react";
 import { View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
-import CustomModal from "../common/CustomModal";
-import Spacer from "../common/Spacer";
-import ThemedPressable from "./ThemedPressable";
-import ThemedText from "./ThemedText";
-import ThemedView from "./ThemedView";
+import { Spacer } from "../layout";
+import { CustomPressable, CustomText, CustomView } from "../primitives";
+import CustomModal from "./CustomModal";
 
-interface ThemedAlertWindowProps {
+interface AlertDialogProps {
   title: string;
   description?: string;
   okButton?: boolean;
@@ -18,7 +16,7 @@ interface ThemedAlertWindowProps {
   onConfirm?: () => void;
 }
 
-const ThemedAlertWindow = ({
+const AlertDialog = ({
   title,
   description,
   okButton = true,
@@ -26,7 +24,7 @@ const ThemedAlertWindow = ({
   visible,
   onClose,
   onConfirm,
-}: ThemedAlertWindowProps) => {
+}: AlertDialogProps) => {
   const handleOk = () => {
     if (onConfirm) onConfirm();
     return;
@@ -45,14 +43,14 @@ const ThemedAlertWindow = ({
       modalVisible={visible}
       setModalVisible={onClose ?? onConfirm}
     >
-      <ThemedView
+      <CustomView
         style={{
           alignContent: "center",
           width: "100%",
           borderRadius: 16,
         }}
       >
-        <ThemedText
+        <CustomText
           style={{
             fontSize: 18,
             fontWeight: "800",
@@ -62,11 +60,11 @@ const ThemedAlertWindow = ({
           }}
         >
           {title}
-        </ThemedText>
+        </CustomText>
 
         <Spacer line={{ color: colors.accent }} />
 
-        <ThemedText
+        <CustomText
           style={{
             fontSize: 14,
             padding: 8,
@@ -75,7 +73,7 @@ const ThemedAlertWindow = ({
           }}
         >
           {description}
-        </ThemedText>
+        </CustomText>
 
         <Spacer size={60} />
 
@@ -88,7 +86,7 @@ const ThemedAlertWindow = ({
           }}
         >
           {cancelButton && (
-            <ThemedPressable
+            <CustomPressable
               noFill
               onPress={handleCancel}
               style={{
@@ -97,12 +95,12 @@ const ThemedAlertWindow = ({
                 borderColor: colors.secondary,
               }}
             >
-              <ThemedText>Cancel</ThemedText>
-            </ThemedPressable>
+              <CustomText>Cancel</CustomText>
+            </CustomPressable>
           )}
 
           {okButton && (
-            <ThemedPressable
+            <CustomPressable
               noFill
               onPress={handleOk}
               style={{
@@ -111,13 +109,13 @@ const ThemedAlertWindow = ({
                 borderColor: colors.primary,
               }}
             >
-              <ThemedText>OK</ThemedText>
-            </ThemedPressable>
+              <CustomText>OK</CustomText>
+            </CustomPressable>
           )}
         </View>
-      </ThemedView>
+      </CustomView>
     </CustomModal>
   );
 };
 
-export default ThemedAlertWindow;
+export default AlertDialog;
