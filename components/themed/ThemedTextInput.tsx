@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { ErrorCard, InfoCard } from "../status";
+import { StatusCard } from "../ui/status";
 import ThemedView from "./ThemedView";
 
 interface ThemedTextInputProps extends TextInputProps {
@@ -73,6 +73,14 @@ const ThemedTextInput = ({
       : hasSuccess
         ? colors.success
         : colors.text;
+
+  const activeStatus = hasError
+    ? !hideErrorText && errorText
+      ? { variant: "error" as const, message: errorText }
+      : null
+    : infoText
+      ? { variant: "info" as const, message: infoText }
+      : null;
 
   const isFloating = focused || !!otherProps.value;
   const progress = useDerivedValue(() =>
@@ -205,9 +213,12 @@ const ThemedTextInput = ({
         {customComponent}
       </ThemedView>
 
-      {!hasError && infoText && <InfoCard infoText={infoText} />}
-
-      {hasError && !hideErrorText && <ErrorCard errorText={errorText!} />}
+      {activeStatus && (
+        <StatusCard
+          variant={activeStatus.variant}
+          message={activeStatus.message}
+        />
+      )}
     </View>
   );
 };
