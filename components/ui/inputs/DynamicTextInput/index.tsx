@@ -9,8 +9,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useMemo, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { ThemedCheckbox, ThemedPressable, ThemedText } from "../../themed";
-import Spacer from "../Spacer";
+import Spacer from "../../../common/Spacer";
+import { ThemedCheckbox } from "../../../themed";
+import { CustomPressable, CustomText } from "../../primitives";
 import DynamicTextInput from "./DynamicTextInput";
 import { InputField } from "./DynamicTextInput.types";
 
@@ -124,12 +125,12 @@ const DynamicFormContainer = ({
       >
         {title && (
           <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <ThemedText
+            <CustomText
               type="text"
               style={{ fontWeight: "bold", fontSize: 20 }}
             >
               {title}
-            </ThemedText>
+            </CustomText>
           </View>
         )}
         <View>
@@ -185,7 +186,7 @@ const DynamicFormContainer = ({
           <Spacer size={16} />
 
           <View style={styles.actionButtonsContainer}>
-            <ThemedPressable
+            <CustomPressable
               noFill
               disabled={!isClearable}
               style={[
@@ -194,15 +195,15 @@ const DynamicFormContainer = ({
               ]}
               onPress={() => setTextValues(Array(totalFieldsCount).fill(""))}
             >
-              <ThemedText
+              <CustomText
                 style={styles.actionButtonsText}
                 type={isClearable ? "text" : "disabledContent"}
               >
                 Clear All
-              </ThemedText>
-            </ThemedPressable>
+              </CustomText>
+            </CustomPressable>
 
-            <ThemedPressable
+            <CustomPressable
               style={[
                 styles.actionButtons,
                 !isSubmittable && styles.buttonDisabled,
@@ -214,13 +215,13 @@ const DynamicFormContainer = ({
                 else onSubmit?.(textValues);
               }}
             >
-              <ThemedText
+              <CustomText
                 type={isSubmittable ? "primaryContent" : "disabledContent"}
                 style={styles.actionButtonsText}
               >
                 Submit
-              </ThemedText>
-            </ThemedPressable>
+              </CustomText>
+            </CustomPressable>
           </View>
         </View>
 

@@ -1,4 +1,3 @@
-import { ThemedLinearGradient, ThemedText } from "@/components/themed";
 import { IconProperties } from "@/types/common";
 import {
   GestureResponderEvent,
@@ -9,6 +8,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { AppLinearGradient, CustomText } from "../../primitives";
 
 interface TagChipProps extends PressableProps {
   label: string;
@@ -48,7 +48,7 @@ const TagChip = ({
       ]}
       {...props}
     >
-      <ThemedLinearGradient
+      <AppLinearGradient
         style={[styles.chipBase, contentStyle]}
         type={selected ? "primary" : "surfaceElevated"}
         end={{ x: 0, y: 1 }}
@@ -60,10 +60,10 @@ const TagChip = ({
             />
           </View>
         )}
-        <ThemedText type="text" style={[styles.labelText]} numberOfLines={1}>
+        <CustomText type="text" style={[styles.labelText]} numberOfLines={1}>
           {label}
-        </ThemedText>
-      </ThemedLinearGradient>
+        </CustomText>
+      </AppLinearGradient>
     </Pressable>
   );
 };

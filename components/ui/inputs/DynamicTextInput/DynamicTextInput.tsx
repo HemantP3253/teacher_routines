@@ -3,7 +3,6 @@ import {
   CalendarInfoIcon,
   ScheduleIcon,
 } from "@/assets/icons";
-import { ThemedPressable, ThemedTextInput } from "@/components/themed";
 import { IconProperties } from "@/types/common";
 import {
   formatDateInput,
@@ -19,6 +18,8 @@ import {
 } from "@/utils/formatters";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { CustomPressable } from "../../primitives";
+import CustomTextInput from "../CustomTextInput";
 import { FormatType, InputField } from "./DynamicTextInput.types";
 
 interface DynamicTextInputProps {
@@ -76,7 +77,7 @@ const DynamicTextInput = ({
       ? formatFunction(rawText, inputField.precision)
       : rawText;
 
-    return formattedText;
+    onChangeText(formattedText);
   };
 
   const SelectedIcon = inputField.showPicker
@@ -85,7 +86,7 @@ const DynamicTextInput = ({
 
   return (
     <View>
-      <ThemedTextInput
+      <CustomTextInput
         title={inputField.title}
         blendColor={inputField.blendColor ?? undefined}
         value={value}
@@ -94,13 +95,13 @@ const DynamicTextInput = ({
         keyboardType={inputField.keyboardType}
         customComponent={
           inputField.showPicker && (
-            <ThemedPressable
+            <CustomPressable
               noFill
               style={styles.pickerButton}
               onPress={onOpenPicker}
             >
               {SelectedIcon && <SelectedIcon fill={colors.primary} />}
-            </ThemedPressable>
+            </CustomPressable>
           )
         }
         infoText={inputField.infoText}
