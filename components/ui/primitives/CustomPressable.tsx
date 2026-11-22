@@ -7,7 +7,7 @@ interface ThemedPressableProps extends PressableProps {
   inline?: boolean;
 }
 
-const ThemedPressable = ({
+const CustomPressable = ({
   style,
   noFill,
   inline,
@@ -43,4 +43,4 @@ const ThemedPressable = ({
   );
 };
 
-export default ThemedPressable;
+export default CustomPressable;

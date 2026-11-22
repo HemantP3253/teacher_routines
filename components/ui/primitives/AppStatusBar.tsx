@@ -1,7 +1,7 @@
 import { StatusBar, StatusBarProps } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
-const ThemedStatusBar = ({ ...props }: StatusBarProps) => {
+const AppStatusBar = ({ ...props }: StatusBarProps) => {
   const { theme, rt } = useUnistyles();
   return (
     <StatusBar
@@ -13,4 +13,4 @@ const ThemedStatusBar = ({ ...props }: StatusBarProps) => {
   );
 };
 
-export default ThemedStatusBar;
+export default AppStatusBar;

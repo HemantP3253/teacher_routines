@@ -1,7 +1,7 @@
 import { View, ViewProps } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
-const ThemedView = ({ style, ...otherProps }: ViewProps) => {
+const CustomView = ({ style, ...otherProps }: ViewProps) => {
   const { theme } = useUnistyles();
 
   const colors = theme.colors;
@@ -14,4 +14,4 @@ const ThemedView = ({ style, ...otherProps }: ViewProps) => {
   );
 };
 
-export default ThemedView;
+export default CustomView;

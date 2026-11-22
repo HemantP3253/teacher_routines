@@ -14,22 +14,19 @@ type GradientType =
   | "warning"
   | "error";
 
-interface ThemedLinearGradientProps extends Omit<
-  LinearGradientProps,
-  "colors"
-> {
+interface AppLinearGradientProps extends Omit<LinearGradientProps, "colors"> {
   overrideColors?: [ColorValue, ColorValue, ...ColorValue[]];
   type?: GradientType;
 }
 
-const ThemedLinearGradient = ({
+const AppLinearGradient = ({
   overrideColors,
   style,
   type = "background",
   start = { x: 0, y: 0 },
   end = { x: 1, y: 1 },
   ...otherProps
-}: ThemedLinearGradientProps) => {
+}: AppLinearGradientProps) => {
   const { colors } = useUnistyles().theme;
 
   const gradientMap: Record<GradientType, [ColorValue, ColorValue]> = {
@@ -59,4 +56,4 @@ const ThemedLinearGradient = ({
   );
 };
 
-export default ThemedLinearGradient;
+export default AppLinearGradient;
