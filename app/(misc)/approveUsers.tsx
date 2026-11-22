@@ -1,7 +1,10 @@
 import { ArrowDownIcon, ArrowUpIcon } from "@/assets/icons";
-import UserActionCard from "@/components/admin/users";
-import { ActionableHeaderCard } from "@/components/common";
-import { ThemedLinearGradient, ThemedText } from "@/components/themed";
+import UserActionCard from "@/components/features/userAction";
+import {
+  ActionableHeaderCard,
+  AppLinearGradient,
+  CustomText,
+} from "@/components/ui";
 import { useProfileStore } from "@/store/useProfileStore";
 import { ProfileStatus, ThemeColors } from "@/types/common";
 import { LocalProfilesData } from "@/types/localDbTypes";
@@ -130,7 +133,7 @@ const FilterAccordionItem = memo(function FilterAccordionItem({
               nestedScrollEnabled={true}
             >
               {profiles.length === 0 ? (
-                <ThemedText
+                <CustomText
                   type="text"
                   style={{
                     padding: 12,
@@ -140,7 +143,7 @@ const FilterAccordionItem = memo(function FilterAccordionItem({
                   }}
                 >
                   No {type} users found
-                </ThemedText>
+                </CustomText>
               ) : (
                 profiles.map((profile) => (
                   <MemoizedUserCard
@@ -167,12 +170,12 @@ const ApproveUsers = () => {
   const updateUserStatus = useProfileStore((state) => state.updateUserStatus);
 
   return (
-    <ThemedLinearGradient style={styles.rootContainer}>
+    <AppLinearGradient style={styles.rootContainer}>
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
-        <ThemedText style={styles.headingText}>User Action Section</ThemedText>
+        <CustomText style={styles.headingText}>User Action Section</CustomText>
 
         {FILTER_TYPES.map((type) => (
           <FilterAccordionItem
@@ -185,7 +188,7 @@ const ApproveUsers = () => {
           />
         ))}
       </ScrollView>
-    </ThemedLinearGradient>
+    </AppLinearGradient>
   );
 };
 

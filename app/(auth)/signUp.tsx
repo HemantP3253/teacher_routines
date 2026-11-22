@@ -7,16 +7,17 @@ import {
   PhoneIcon,
   UsernameIcon,
 } from "@/assets/icons";
-import { CustomModal, Spacer } from "@/components/common";
-import TagChip from "@/components/common/DynamicTagSelect/TagChip";
 import {
-  ThemedCheckboxMenu,
-  ThemedPressable,
-  ThemedStatusBar,
-  ThemedText,
-  ThemedTextInput,
-  ThemedView,
-} from "@/components/themed";
+  AppStatusBar,
+  CheckboxMenu,
+  CustomModal,
+  CustomPressable,
+  CustomText,
+  CustomTextInput,
+  CustomView,
+  Spacer,
+  TagChip,
+} from "@/components/ui";
 import { useBlurContext } from "@/contexts/BlurContext";
 import { useSignUpForm } from "@/hooks/useSignUpForm";
 import { GenderType } from "@/types/common";
@@ -83,7 +84,7 @@ const SignUp = () => {
   };
 
   return (
-    <ThemedView style={styles.rootContainer}>
+    <CustomView style={styles.rootContainer}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -94,20 +95,20 @@ const SignUp = () => {
             paddingHorizontal: 4,
           }}
         >
-          <ThemedStatusBar />
+          <AppStatusBar />
           <Spacer size={8} />
 
-          <ThemedText type="text" style={styles.headingText}>
+          <CustomText type="text" style={styles.headingText}>
             Register New User
-          </ThemedText>
+          </CustomText>
 
           <Spacer size={8} />
 
-          <ThemedText type="text" style={styles.labelText}>
+          <CustomText type="text" style={styles.labelText}>
             Personal Details
-          </ThemedText>
+          </CustomText>
 
-          <ThemedTextInput
+          <CustomTextInput
             ref={(element) => {
               inputRefs.current["fullName"] = element;
             }}
@@ -123,7 +124,7 @@ const SignUp = () => {
             autoCapitalize="words"
           />
 
-          <ThemedTextInput
+          <CustomTextInput
             ref={(element) => {
               inputRefs.current["dateOfBirth"] = element;
             }}
@@ -136,7 +137,7 @@ const SignUp = () => {
             errorText={signUpError.dateOfBirth}
             infoText="You must be 13 years or older to use this app"
             customComponent={
-              <ThemedPressable
+              <CustomPressable
                 noFill
                 style={{
                   height: 50,
@@ -152,7 +153,7 @@ const SignUp = () => {
                   width={24}
                   height={24}
                 />
-              </ThemedPressable>
+              </CustomPressable>
             }
           />
 
@@ -175,7 +176,7 @@ const SignUp = () => {
 
           <View style={{ flexDirection: "row" }}>
             <GenderIcon fill={colors.text} height={24} width={24} />
-            <ThemedText type="text">Select Gender</ThemedText>
+            <CustomText type="text">Select Gender</CustomText>
           </View>
 
           <View style={{ flexDirection: "row", flex: 1 }}>
@@ -214,10 +215,10 @@ const SignUp = () => {
 
           <Spacer size={8} line={{ type: "divider" }} />
 
-          <ThemedText type="text" style={styles.labelText}>
+          <CustomText type="text" style={styles.labelText}>
             Account details
-          </ThemedText>
-          <ThemedTextInput
+          </CustomText>
+          <CustomTextInput
             ref={(element) => {
               inputRefs.current["username"] = element;
             }}
@@ -230,7 +231,7 @@ const SignUp = () => {
             maxLength={25}
           />
 
-          <ThemedTextInput
+          <CustomTextInput
             ref={(element) => {
               inputRefs.current["email"] = element;
             }}
@@ -243,7 +244,7 @@ const SignUp = () => {
             maxLength={254}
           />
 
-          <ThemedTextInput
+          <CustomTextInput
             ref={(element) => {
               inputRefs.current["password"] = element;
             }}
@@ -258,7 +259,7 @@ const SignUp = () => {
             infoText={`Password must contain:\n● At least one uppercase letter\n● At least one symbol character\n● At least one number\n● Must not contain spaces`}
           />
 
-          <ThemedTextInput
+          <CustomTextInput
             ref={(element) => {
               inputRefs.current["confirmPassword"] = element;
             }}
@@ -274,7 +275,7 @@ const SignUp = () => {
             maxLength={128}
           />
 
-          <ThemedTextInput
+          <CustomTextInput
             ref={(element) => {
               inputRefs.current["phone"] = element;
             }}
@@ -291,13 +292,13 @@ const SignUp = () => {
             title="Phone"
           />
 
-          <ThemedPressable
+          <CustomPressable
             onPress={() => {
               setModalVisible(true);
             }}
           >
-            <ThemedText>Colleges</ThemedText>
-          </ThemedPressable>
+            <CustomText>Colleges</CustomText>
+          </CustomPressable>
 
           <CustomModal
             modalVisible={modalVisible}
@@ -311,7 +312,7 @@ const SignUp = () => {
             }}
           >
             <View style={{ width: "100%" }}>
-              <ThemedCheckboxMenu
+              <CheckboxMenu
                 title="Select Institutes"
                 data={institutes}
                 getId={(item) => item.id}
@@ -328,14 +329,14 @@ const SignUp = () => {
           </CustomModal>
           <Spacer size={8} />
 
-          <ThemedPressable onPress={async () => submitSignUpForm()}>
-            <ThemedText type="primaryContent" style={styles.pressableText}>
+          <CustomPressable onPress={async () => submitSignUpForm()}>
+            <CustomText type="primaryContent" style={styles.pressableText}>
               Sign Up
-            </ThemedText>
-          </ThemedPressable>
+            </CustomText>
+          </CustomPressable>
         </ScrollView>
       </KeyboardAvoidingView>
-    </ThemedView>
+    </CustomView>
   );
 };
 

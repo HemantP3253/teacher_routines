@@ -1,7 +1,9 @@
-import RoutinesFooter from "@/components/routines/RoutinesFooter";
-import RoutinesHeader from "@/components/routines/RoutinesHeader";
-import SubjectCard from "@/components/routines/SubjectCard";
-import { ThemedLinearGradient, ThemedText } from "@/components/themed";
+import {
+  RoutinesFooter,
+  RoutinesHeader,
+  SubjectCard,
+} from "@/components/features/routines";
+import { AppLinearGradient, CustomText } from "@/components/ui";
 import { getSubjects } from "@/data/curricula/university/TU/tuHelpers";
 import { useProfileStore } from "@/store/useProfileStore";
 import { useRoutineStore } from "@/store/useRoutineStore";
@@ -14,7 +16,7 @@ import { FlatList, StatusBar } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 const EmptyRoutineComponent = () => (
-  <ThemedText
+  <CustomText
     style={{
       fontWeight: "600",
       fontSize: 16,
@@ -24,7 +26,7 @@ const EmptyRoutineComponent = () => (
     type="text"
   >
     Please select program details.
-  </ThemedText>
+  </CustomText>
 );
 
 const Routines = () => {
@@ -151,7 +153,7 @@ const Routines = () => {
   }, [maxSubjects, activeSubjectsInfo.length, trimActiveSubjectsInfo]);
 
   return (
-    <ThemedLinearGradient style={StyleSheet.absoluteFillObject}>
+    <AppLinearGradient style={StyleSheet.absoluteFillObject}>
       <FlatList
         data={subjectList}
         style={{
@@ -166,7 +168,7 @@ const Routines = () => {
         ListFooterComponent={RoutinesFooter}
         ListFooterComponentStyle={{ marginBottom: 128 }}
       />
-    </ThemedLinearGradient>
+    </AppLinearGradient>
   );
 };
 

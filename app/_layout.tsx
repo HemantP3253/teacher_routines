@@ -1,6 +1,6 @@
-import SyncStatusBanner from "@/components/common/SyncStatusBanner";
 import "../styles/unistyles";
 
+import { SyncStatusBanner } from "@/components/features/sync";
 import { BlurProvider } from "@/contexts/BlurContext";
 import useAppLifecycle from "@/hooks/useAppLifecycle";
 import { ThemeColors } from "@/types/common";

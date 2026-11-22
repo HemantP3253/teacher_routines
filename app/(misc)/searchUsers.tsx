@@ -1,11 +1,11 @@
 import { SearchIcon } from "@/assets/icons";
-import UserActionCard from "@/components/admin/users";
-import TagChip from "@/components/common/DynamicTagSelect/TagChip";
+import UserActionCard from "@/components/features/userAction";
 import {
-  ThemedLinearGradient,
-  ThemedText,
-  ThemedTextInput,
-} from "@/components/themed";
+  AppLinearGradient,
+  CustomText,
+  CustomTextInput,
+  TagChip,
+} from "@/components/ui";
 import { useProfileStore } from "@/store/useProfileStore";
 import { ProfileStatus } from "@/types/common";
 import { LocalProfilesData } from "@/types/localDbTypes";
@@ -82,16 +82,16 @@ const SearchUsers = () => {
   })();
 
   return (
-    <ThemedLinearGradient style={styles.rootContainer}>
+    <AppLinearGradient style={styles.rootContainer}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView>
-          <ThemedText type="text" style={styles.headingText}>
+          <CustomText type="text" style={styles.headingText}>
             {title ? `Search ${title} Users` : "Search Users"}
-          </ThemedText>
-          <ThemedTextInput
+          </CustomText>
+          <CustomTextInput
             title={`Search by ${searchParams.searchType}`}
             Icon={SearchIcon}
             value={searchParams.searchText}
@@ -105,9 +105,9 @@ const SearchUsers = () => {
             onSubmitEditing={() => handleSearchSubmit()}
           />
 
-          <ThemedText style={styles.searchByText} type="text">
+          <CustomText style={styles.searchByText} type="text">
             Search By:
-          </ThemedText>
+          </CustomText>
 
           <View style={styles.searchByContainer}>
             {(["Name", "Username", "Phone"] as searchType[]).map((type) => (
@@ -133,13 +133,13 @@ const SearchUsers = () => {
               />
             ) : searchParams.searchText.trim().length >= 3 &&
               filteredUsers?.length === 0 ? (
-              <ThemedText style={styles.searchHintText} type="text">
+              <CustomText style={styles.searchHintText} type="text">
                 {`No results found for "${searchParams.searchText}"`}
-              </ThemedText>
+              </CustomText>
             ) : searchParams.searchText.trim().length < 3 ? (
-              <ThemedText style={styles.searchHintText} type="text">
+              <CustomText style={styles.searchHintText} type="text">
                 Type at least 3 characters to search...
-              </ThemedText>
+              </CustomText>
             ) : (
               filteredUsers?.map((profile) => {
                 const status = statusMap.get(profile.id) as ProfileStatus;
@@ -159,7 +159,7 @@ const SearchUsers = () => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </ThemedLinearGradient>
+    </AppLinearGradient>
   );
 };
 

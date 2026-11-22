@@ -1,9 +1,9 @@
 import {
-  ThemedLinearGradient,
-  ThemedStatusBar,
-  ThemedText,
-  ThemedView,
-} from "@/components/themed";
+  AppLinearGradient,
+  AppStatusBar,
+  CustomText,
+  CustomView,
+} from "@/components/ui/primitives";
 import { useDynamicGreeting } from "@/hooks/useDynamicGreeting";
 import { StatusBar, StyleSheet } from "react-native";
 
@@ -11,17 +11,17 @@ const Home = () => {
   const greeting = useDynamicGreeting();
 
   return (
-    <ThemedLinearGradient style={styles.rootContainer}>
-      <ThemedStatusBar />
-      <ThemedText type="text" style={styles.headingText}>
+    <AppLinearGradient style={styles.rootContainer}>
+      <AppStatusBar />
+      <CustomText type="text" style={styles.headingText}>
         {greeting} {/* Add name for greeting, as well */}
-      </ThemedText>
-      <ThemedView style={styles.infoContainer}>
-        <ThemedText type="text" style={styles.infoText}>
+      </CustomText>
+      <CustomView style={styles.infoContainer}>
+        <CustomText type="text" style={styles.infoText}>
           You have 5 classes today!
-        </ThemedText>
-      </ThemedView>
-    </ThemedLinearGradient>
+        </CustomText>
+      </CustomView>
+    </AppLinearGradient>
   );
 };
 const styles = StyleSheet.create({

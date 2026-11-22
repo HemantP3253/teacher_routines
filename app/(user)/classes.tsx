@@ -1,9 +1,5 @@
-import {
-  ThemedClassCard,
-  ThemedLinearGradient,
-  ThemedStatusBar,
-  ThemedText,
-} from "@/components/themed";
+import { ClassCard } from "@/components/features/routines/";
+import { AppLinearGradient, AppStatusBar, CustomText } from "@/components/ui";
 import { useDynamicGreeting } from "@/hooks/useDynamicGreeting";
 import { StatusBar, StyleSheet } from "react-native";
 
@@ -11,19 +7,19 @@ const Classes = () => {
   const greeting = useDynamicGreeting();
 
   return (
-    <ThemedLinearGradient style={styles.rootContainer}>
-      <ThemedStatusBar />
-      <ThemedText type="text" style={styles.headingText}>
+    <AppLinearGradient style={styles.rootContainer}>
+      <AppStatusBar />
+      <CustomText type="text" style={styles.headingText}>
         {"Today's classes are"}
         {/* TODO: Choose "no classes today, if no classes available" */}
-      </ThemedText>
+      </CustomText>
       {/* Placeholder */}
-      <ThemedClassCard
+      <ClassCard
         class={{ degreeName: "BCA", semester: 4, totalYears: 4 }}
         startTime="09:30"
         subject="Database Management System"
-      ></ThemedClassCard>
-    </ThemedLinearGradient>
+      ></ClassCard>
+    </AppLinearGradient>
   );
 };
 

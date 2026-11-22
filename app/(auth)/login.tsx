@@ -1,12 +1,12 @@
 import { EmailIcon, PasswordIcon } from "@/assets/icons";
-import { Spacer } from "@/components/common";
 import {
-  ThemedPressable,
-  ThemedStatusBar,
-  ThemedText,
-  ThemedTextInput,
-  ThemedView,
-} from "@/components/themed";
+  AppStatusBar,
+  CustomPressable,
+  CustomText,
+  CustomTextInput,
+  CustomView,
+  Spacer,
+} from "@/components/ui";
 import { useLogInForm } from "@/hooks/useLogInForm";
 import { handleLogin } from "@/services/authService";
 import { checkLogInFormValidity } from "@/utils/validationUtils";
@@ -36,22 +36,22 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   return (
-    <ThemedView style={styles.rootContainer}>
+    <CustomView style={styles.rootContainer}>
       <ScrollView style={{ flex: 1 }}>
-        <ThemedStatusBar />
+        <AppStatusBar />
         <Spacer size={8} />
 
-        <ThemedText type="text" style={styles.headingText}>
+        <CustomText type="text" style={styles.headingText}>
           Login
-        </ThemedText>
+        </CustomText>
 
         <Spacer size={8} />
 
-        <ThemedText type="text" style={styles.labelText}>
+        <CustomText type="text" style={styles.labelText}>
           Login Details
-        </ThemedText>
+        </CustomText>
 
-        <ThemedTextInput
+        <CustomTextInput
           value={logInData.usernameOrEmail}
           errorText={logInError.usernameOrEmail}
           hideErrorText
@@ -63,7 +63,7 @@ const Login = () => {
           onSubmitEditing={() => passwordRef.current?.focus()}
           submitBehavior="submit"
         />
-        <ThemedTextInput
+        <CustomTextInput
           ref={passwordRef}
           value={logInData.password}
           errorText={logInError.password}
@@ -77,7 +77,7 @@ const Login = () => {
 
         <Spacer size={8} />
 
-        <ThemedPressable
+        <CustomPressable
           disabled={isSubmitting}
           onPress={async () => {
             if (!checkLogInFormValidity(logInData, setLogInError, setLogInData))
@@ -96,41 +96,41 @@ const Login = () => {
           {isSubmitting ? (
             <ActivityIndicator size={"small"} color={colors.primaryContent} />
           ) : (
-            <ThemedText type="primaryContent" style={styles.pressableText}>
+            <CustomText type="primaryContent" style={styles.pressableText}>
               Log In
-            </ThemedText>
+            </CustomText>
           )}
-        </ThemedPressable>
+        </CustomPressable>
 
         <Spacer size={20} line={{ type: "divider" }} />
 
-        <ThemedText type="text" style={styles.headingText}>
+        <CustomText type="text" style={styles.headingText}>
           New here?{" "}
-          <ThemedText
+          <CustomText
             style={[styles.headingText, { color: colors.primary }]}
             onPress={() => router.navigate("/(auth)/signUp")}
           >
             Sign Up
-          </ThemedText>
-        </ThemedText>
+          </CustomText>
+        </CustomText>
 
         <Spacer size={12} />
 
-        <ThemedView style={{ flexDirection: "row" }}>
-          <ThemedPressable
+        <CustomView style={{ flexDirection: "row" }}>
+          <CustomPressable
             onPress={() => {
               // TODO: Add forgot password logic here
               // Something like this: await supabase.auth.resetPasswordForEmail()
             }}
             style={{ flex: 1 }}
           >
-            <ThemedText type="primaryContent" style={styles.pressableText}>
+            <CustomText type="primaryContent" style={styles.pressableText}>
               Forgot Password?
-            </ThemedText>
-          </ThemedPressable>
-        </ThemedView>
+            </CustomText>
+          </CustomPressable>
+        </CustomView>
       </ScrollView>
-    </ThemedView>
+    </CustomView>
   );
 };
 

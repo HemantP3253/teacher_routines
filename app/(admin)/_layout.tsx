@@ -1,5 +1,5 @@
 import { HomeIcon, OptionsIcon, RoutinesIcon } from "@/assets/icons";
-import { FloatingTabBar, TabButton } from "@/components/common";
+import { FloatingTabBar, TabButton } from "@/components/ui";
 import { useBlurContext } from "@/contexts/BlurContext";
 import { BlurTargetView } from "expo-blur";
 import { Tabs, usePathname, useRouter } from "expo-router";

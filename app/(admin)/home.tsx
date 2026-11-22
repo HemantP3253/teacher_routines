@@ -1,11 +1,11 @@
 import { ArrowForwardIcon } from "@/assets/icons";
-import UserActionCard from "@/components/admin/users";
-import { ActionableHeaderCard } from "@/components/common";
+import UserActionCard from "@/components/features/userAction";
 import {
-  ThemedLinearGradient,
-  ThemedStatusBar,
-  ThemedText,
-} from "@/components/themed";
+  ActionableHeaderCard,
+  AppLinearGradient,
+  AppStatusBar,
+  CustomText,
+} from "@/components/ui";
 import { useDynamicGreeting } from "@/hooks/useDynamicGreeting";
 import { useProfileStore } from "@/store/useProfileStore";
 import { ProfileStatus } from "@/types/common";
@@ -32,20 +32,20 @@ const Home = () => {
   );
 
   return (
-    <ThemedLinearGradient style={styles.rootContainer}>
-      <ThemedStatusBar />
-      <ThemedText type="text" style={styles.headingText}>
+    <AppLinearGradient style={styles.rootContainer}>
+      <AppStatusBar />
+      <CustomText type="text" style={styles.headingText}>
         {greeting}, admin!
-      </ThemedText>
-      <ThemedText type="text" style={{ fontSize: 16 }}>
+      </CustomText>
+      <CustomText type="text" style={{ fontSize: 16 }}>
         Ready to assign routines?{" "}
-        <ThemedText
+        <CustomText
           style={{ color: colors.primary }}
           onPress={() => router.push("/(admin)/routines")}
         >
           Click here!
-        </ThemedText>
-      </ThemedText>
+        </CustomText>
+      </CustomText>
 
       {/* Approve Users Section */}
       <ActionableHeaderCard
@@ -60,7 +60,7 @@ const Home = () => {
         showBottomBorder
       >
         {pendingProfiles.length === 0 ? (
-          <ThemedText
+          <CustomText
             type="text"
             style={{
               paddingHorizontal: 4,
@@ -69,7 +69,7 @@ const Home = () => {
             }}
           >
             No pending users found
-          </ThemedText>
+          </CustomText>
         ) : (
           pendingProfiles.slice(0, 3).map((profile) => {
             const status = statusMap.get(profile.id) as ProfileStatus;
@@ -91,13 +91,13 @@ const Home = () => {
             onPress={() => router.push("/(misc)/approveUsers")}
             style={{ alignItems: "flex-end", padding: 8 }}
           >
-            <ThemedText style={{ fontWeight: "600", fontSize: 16 }}>
+            <CustomText style={{ fontWeight: "600", fontSize: 16 }}>
               + {pendingProfiles.length - 3} more
-            </ThemedText>
+            </CustomText>
           </Pressable>
         )}
       </ActionableHeaderCard>
-    </ThemedLinearGradient>
+    </AppLinearGradient>
   );
 };
 
