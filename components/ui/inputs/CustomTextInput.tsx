@@ -10,10 +10,10 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { StatusCard } from "../ui/status";
-import ThemedView from "./ThemedView";
+import { CustomView } from "../primitives";
+import { StatusCard } from "../status";
 
-interface ThemedTextInputProps extends TextInputProps {
+interface CustomTextInputProps extends TextInputProps {
   title: string;
   dateEntry?: boolean;
   dateValue?: Date;
@@ -34,7 +34,7 @@ interface ThemedTextInputProps extends TextInputProps {
   };
 }
 
-const ThemedTextInput = ({
+const CustomTextInput = ({
   style,
   ref,
   title,
@@ -46,7 +46,7 @@ const ThemedTextInput = ({
   hideErrorText,
   blendColor,
   ...otherProps
-}: ThemedTextInputProps) => {
+}: CustomTextInputProps) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
@@ -120,7 +120,7 @@ const ThemedTextInput = ({
 
   return (
     <View>
-      <ThemedView
+      <CustomView
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -211,7 +211,7 @@ const ThemedTextInput = ({
         )}
 
         {customComponent}
-      </ThemedView>
+      </CustomView>
 
       {activeStatus && (
         <StatusCard
@@ -240,4 +240,4 @@ const createStyles = (colors: any) =>
     },
   });
 
-export default ThemedTextInput;
+export default CustomTextInput;
