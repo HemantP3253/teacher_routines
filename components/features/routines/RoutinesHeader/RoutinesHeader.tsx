@@ -7,7 +7,7 @@ import BatchAndSectionStep from "./BatchAndSectionStep";
 import RoutineOptionSelector from "./RoutineOptionSelector";
 import CurrentStepMenu from "./StepMenu";
 
-const activeMenuSteps: MenuSteps[] = ["Program", "Branch", "Term"];
+const activeMenuSteps: MenuSteps[] = ["Program", "Branch", "Academic Level"];
 
 const RoutinesHeader = () => {
   const selectedProgram = useRoutineStore((state) => state.selectedProgram);
