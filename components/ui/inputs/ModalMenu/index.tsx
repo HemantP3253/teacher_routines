@@ -1,7 +1,7 @@
 import { MenuProps } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, ListRenderItem, View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { CustomModal } from "../../overlays";
 import { CustomModalProps } from "../../overlays/CustomModal";
@@ -15,6 +15,7 @@ interface ModalMenuProps<T> extends MenuProps<T>, CustomModalProps {
     cancelable?: boolean;
     clearable?: boolean;
   };
+  renderOption?: ListRenderItem<T>;
 }
 
 const ModalMenu = <T,>({
@@ -29,6 +30,7 @@ const ModalMenu = <T,>({
   getSublabel,
   buttonProperties = { cancelable: true },
   addSearchBar = false,
+  renderOption,
   ...props
 }: ModalMenuProps<T>) => {
   const [searchText, setSearchText] = useState<string>("");
@@ -142,7 +144,7 @@ const ModalMenu = <T,>({
             ListHeaderComponentStyle={{
               backgroundColor: colors.surfaceElevated,
             }}
-            renderItem={renderItem}
+            renderItem={renderOption ?? renderItem}
             ListEmptyComponent={
               <CustomText
                 style={{
