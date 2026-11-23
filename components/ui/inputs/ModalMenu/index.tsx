@@ -28,9 +28,12 @@ interface ModalMenuProps<T> extends MenuProps<T>, PressableProps {
 
   alertCondition?: AlertCondition;
 
-  cancelable?: boolean;
   pressableStyle?: StyleProp<ViewStyle>;
 
+  buttonProperties?: {
+    cancelable?: boolean;
+    clearable?: boolean;
+  };
   iconProperties?: IconProperties;
 }
 
@@ -47,7 +50,7 @@ const ModalMenu = <T,>({
   noFill,
   errorText,
   alertCondition,
-  cancelable = true,
+  buttonProperties = { cancelable: true },
   pressableStyle,
   iconProperties,
   addSearchBar = false,
@@ -313,7 +316,27 @@ const ModalMenu = <T,>({
                 </CustomText>
               }
             />
-            {cancelable && (
+            {buttonProperties.clearable && (
+              <CustomView
+                style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
+              >
+                <CustomPressable
+                  noFill
+                  style={{
+                    alignSelf: "flex-end",
+                    width: "32%",
+                    alignItems: "center",
+                  }}
+                  onPress={() => {
+                    onItemSelect?.("");
+                    setModalVisible((prev) => ({ ...prev, mainModal: false }));
+                  }}
+                >
+                  <CustomText style={{ fontWeight: "600" }}>Clear</CustomText>
+                </CustomPressable>
+              </CustomView>
+            )}
+            {buttonProperties.cancelable && (
               <CustomView
                 style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
               >
