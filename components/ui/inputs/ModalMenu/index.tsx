@@ -19,7 +19,7 @@ import CustomTextInput from "../CustomTextInput";
 
 interface ModalMenuProps<T> extends MenuProps<T>, PressableProps {
   selectedItem: T | null;
-  onItemSelect?: (selectedId: string) => void;
+  onItemSelect?: (selectedId: string | null) => void;
   type?: string;
 
   noFill?: boolean;
@@ -328,7 +328,7 @@ const ModalMenu = <T,>({
                     alignItems: "center",
                   }}
                   onPress={() => {
-                    onItemSelect?.("");
+                    onItemSelect?.(null);
                     setModalVisible((prev) => ({ ...prev, mainModal: false }));
                   }}
                 >
