@@ -54,8 +54,8 @@ const commonElements = {
       fontWeight: "400",
       lineHeight: 18,
     },
-  } as const,
-};
+  },
+} as const;
 
 const lightTheme = {
   colors: {
