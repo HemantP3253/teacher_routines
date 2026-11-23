@@ -1,9 +1,5 @@
 import { ErrorIcon, SuccessIcon } from "@/assets/icons";
-import {
-  AlertCondition,
-  IconProperties,
-  MenuProps
-} from "@/types/common";
+import { AlertCondition, IconProperties, MenuProps } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useMemo, useState } from "react";
 import {
@@ -12,7 +8,7 @@ import {
   PressableProps,
   StyleProp,
   View,
-  ViewStyle
+  ViewStyle,
 } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { Spacer } from "../../layout";
@@ -23,7 +19,7 @@ import CustomTextInput from "../CustomTextInput";
 
 interface ModalMenuProps<T> extends MenuProps<T>, PressableProps {
   selectedItem: T | null;
-  onItemSelect?: (selectedId: any) => void;
+  onItemSelect?: (selectedId: string) => void;
   type?: string;
 
   noFill?: boolean;
@@ -111,46 +107,50 @@ const ModalMenu = <T,>({
   }, [sortedData, searchText, getLabel]);
 
   const renderItem = useCallback(
-    ({ item }: { item: T }) => (
-      <CustomView
-        style={{
-          backgroundColor: colors.surfaceElevated,
-          padding: 8,
-        }}
-      >
-        <CustomPressable
-          onPress={() => {
-            onItemSelect?.(item);
-            setModalVisible((prev) => ({
-              ...prev,
-              mainModal: false,
-            }));
-          }}
+    ({ item }: { item: T }) => {
+      const id = getId(item);
+
+      return (
+        <CustomView
           style={{
-            paddingVertical: 8,
-            width: "100%",
-            alignItems: "stretch",
-            justifyContent: "center",
+            backgroundColor: colors.surfaceElevated,
+            padding: 8,
           }}
         >
-          <CustomText
-            type="primaryContent"
+          <CustomPressable
+            onPress={() => {
+              onItemSelect?.(id);
+              setModalVisible((prev) => ({
+                ...prev,
+                mainModal: false,
+              }));
+            }}
             style={{
-              textAlign: "center",
-              fontWeight: "600",
-              flexShrink: 1,
+              paddingVertical: 8,
+              width: "100%",
+              alignItems: "stretch",
+              justifyContent: "center",
             }}
           >
-            {getLabel(item)}
-          </CustomText>
+            <CustomText
+              type="primaryContent"
+              style={{
+                textAlign: "center",
+                fontWeight: "600",
+                flexShrink: 1,
+              }}
+            >
+              {getLabel(item)}
+            </CustomText>
 
-          {getSublabel && (
-            <CustomText type="text">{getSublabel(item)}</CustomText>
-          )}
-        </CustomPressable>
-      </CustomView>
-    ),
-    [onItemSelect, getLabel, getSublabel, colors.surfaceElevated],
+            {getSublabel && (
+              <CustomText type="text">{getSublabel(item)}</CustomText>
+            )}
+          </CustomPressable>
+        </CustomView>
+      );
+    },
+    [onItemSelect, getLabel, getSublabel, colors.surfaceElevated, getId],
   );
 
   return (
