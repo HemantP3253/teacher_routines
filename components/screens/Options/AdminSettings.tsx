@@ -1,11 +1,13 @@
 import { DegreeIcon } from "@/assets/icons";
 import { CheckboxMenu, CustomModal, OptionsCard } from "@/components/ui";
+import { getAllCurriculumEntities } from "@/data/curricula/university/TU/tuHelpers";
 import { useAppStore } from "@/store/useAppStore";
 import { UniversityProgram } from "@/types/academic";
 import { useState } from "react";
 import { View } from "react-native";
 
 const AdminSettings = () => {
+  const { programs } = getAllCurriculumEntities();
   const availableDegrees = useAppStore((state) => state.availablePrograms);
   const setAvailablePrograms = useAppStore(
     (state) => state.setAvailablePrograms,
@@ -39,7 +41,7 @@ const AdminSettings = () => {
       >
         <CheckboxMenu
           title="Select Available Degrees"
-          data={availableDegrees}
+          data={programs}
           minSelection={1}
           initialSelection={availableDegrees}
           getId={(item) => item.id}
