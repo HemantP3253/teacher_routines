@@ -1,7 +1,7 @@
 import { MenuProps } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, ListRenderItem, Pressable, View } from "react-native";
+import { FlatList, ListRenderItem, View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { CustomModal } from "../../overlays";
 import { CustomModalProps } from "../../overlays/CustomModal";
@@ -13,6 +13,7 @@ import {
 import CustomTextInput from "../CustomTextInput";
 
 interface ModalMenuProps<T> extends MenuProps<T>, CustomModalProps {
+  selectedItem?: T | null;
   onItemSelect?: (selectedItem: T | null) => void;
   addSearchBar?: boolean;
   buttonProperties?: {
@@ -27,6 +28,7 @@ const ModalMenu = <T,>({
   setModalVisible,
   data,
   sortType,
+  selectedItem,
   onItemSelect,
   title,
   getId,
@@ -41,6 +43,8 @@ const ModalMenu = <T,>({
 
   const { theme } = useUnistyles();
   const colors = theme.colors;
+
+  const selectedId = selectedItem ? getId(selectedItem) : null;
 
   const sortedData = useMemo(
     () => sortByLabel(data, getLabel, sortType),
@@ -57,45 +61,62 @@ const ModalMenu = <T,>({
   }, [sortedData, searchText, getLabel]);
 
   const renderItem = useCallback(
-    ({ item }: { item: T }) => (
-      <Pressable
-        onPress={() => {
-          onItemSelect?.(item);
-          setModalVisible(false);
-        }}
-        style={{
-          width: "100%",
-          alignItems: "stretch",
-          justifyContent: "center",
-        }}
-      >
-        <AppLinearGradient
-          type="surfaceElevated"
-          style={{
-            borderRadius: 8,
-            padding: 8,
-          }}
-          start={{ x: 1, y: 1 }}
-          end={{ x: 0, y: 0 }}
-        >
-          <CustomText
-            type="text"
-            style={{
-              fontWeight: "600",
-              flexWrap: "wrap",
-              flexShrink: 1,
-            }}
-          >
-            {getLabel(item)}
-          </CustomText>
+    ({ item }: { item: T }) => {
+      const id = getId(item);
+      const isSelected = id === selectedId;
 
-          {getSublabel && (
-            <CustomText type="text">{getSublabel(item)}</CustomText>
-          )}
-        </AppLinearGradient>
-      </Pressable>
-    ),
-    [onItemSelect, getLabel, getSublabel, setModalVisible],
+      return (
+        <CustomPressable
+          inline
+          onPress={() => {
+            onItemSelect?.(item);
+            setModalVisible(false);
+          }}
+          style={{
+            width: "100%",
+            alignItems: "stretch",
+            justifyContent: "center",
+          }}
+        >
+          <AppLinearGradient
+            type={"surfaceElevated"}
+            style={[
+              isSelected && { borderWidth: 1, borderColor: colors.primary },
+              {
+                borderRadius: 8,
+                padding: 8,
+              },
+            ]}
+            start={{ x: 1, y: 1 }}
+            end={{ x: 0, y: 0 }}
+          >
+            <CustomText
+              type="text"
+              style={{
+                fontWeight: "600",
+                flexWrap: "wrap",
+                flexShrink: 1,
+              }}
+            >
+              {getLabel(item)}
+            </CustomText>
+
+            {getSublabel && (
+              <CustomText type="text">{getSublabel(item)}</CustomText>
+            )}
+          </AppLinearGradient>
+        </CustomPressable>
+      );
+    },
+    [
+      getId,
+      selectedId,
+      onItemSelect,
+      getLabel,
+      getSublabel,
+      setModalVisible,
+      colors.primary,
+    ],
   );
 
   return (
