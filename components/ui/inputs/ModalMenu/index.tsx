@@ -1,11 +1,15 @@
 import { MenuProps } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, ListRenderItem, View } from "react-native";
+import { FlatList, ListRenderItem, Pressable, View } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 import { CustomModal } from "../../overlays";
 import { CustomModalProps } from "../../overlays/CustomModal";
-import { CustomPressable, CustomText, CustomView } from "../../primitives";
+import {
+  AppLinearGradient,
+  CustomPressable,
+  CustomText,
+} from "../../primitives";
 import CustomTextInput from "../CustomTextInput";
 
 interface ModalMenuProps<T> extends MenuProps<T>, CustomModalProps {
@@ -54,29 +58,31 @@ const ModalMenu = <T,>({
 
   const renderItem = useCallback(
     ({ item }: { item: T }) => (
-      <CustomView
+      <Pressable
+        onPress={() => {
+          onItemSelect?.(item);
+          setModalVisible(false);
+        }}
         style={{
-          backgroundColor: colors.surfaceElevated,
-          padding: 8,
+          width: "100%",
+          alignItems: "stretch",
+          justifyContent: "center",
         }}
       >
-        <CustomPressable
-          onPress={() => {
-            onItemSelect?.(item);
-            setModalVisible(false);
-          }}
+        <AppLinearGradient
+          type="surfaceElevated"
           style={{
-            paddingVertical: 8,
-            width: "100%",
-            alignItems: "stretch",
-            justifyContent: "center",
+            borderRadius: 8,
+            padding: 8,
           }}
+          start={{ x: 1, y: 1 }}
+          end={{ x: 0, y: 0 }}
         >
           <CustomText
-            type="primaryContent"
+            type="text"
             style={{
-              textAlign: "center",
               fontWeight: "600",
+              flexWrap: "wrap",
               flexShrink: 1,
             }}
           >
@@ -86,36 +92,31 @@ const ModalMenu = <T,>({
           {getSublabel && (
             <CustomText type="text">{getSublabel(item)}</CustomText>
           )}
-        </CustomPressable>
-      </CustomView>
+        </AppLinearGradient>
+      </Pressable>
     ),
-    [
-      onItemSelect,
-      getLabel,
-      getSublabel,
-      colors.surfaceElevated,
-      setModalVisible,
-    ],
+    [onItemSelect, getLabel, getSublabel, setModalVisible],
   );
 
   return (
-    <View>
-      <CustomModal
-        modalVisible={modalVisible}
-        animationType="fade"
-        setModalVisible={(isVisible) => {
-          if (!isVisible) setModalVisible(false);
+    <CustomModal
+      modalVisible={modalVisible}
+      animationType="fade"
+      setModalVisible={(isVisible) => {
+        if (!isVisible) setModalVisible(false);
+      }}
+    >
+      <AppLinearGradient
+        type="background"
+        style={{
+          width: "100%",
+          borderRadius: 16,
+          overflow: "hidden",
+          borderWidth: 1,
+          borderColor: colors.border,
         }}
       >
-        <CustomView
-          style={{
-            width: "100%",
-            maxHeight: "100%",
-            borderRadius: 8,
-            overflow: "hidden",
-            backgroundColor: colors.background,
-          }}
-        >
+        <AppLinearGradient type="surface">
           <CustomText
             type="text"
             style={{
@@ -123,83 +124,79 @@ const ModalMenu = <T,>({
               padding: 8,
               fontWeight: "800",
               textAlign: "center",
-              margin: 4,
             }}
           >
             {title}
           </CustomText>
-          <FlatList
-            data={filteredResults}
-            keyExtractor={(item) => getId(item)}
-            ListHeaderComponent={() =>
-              addSearchBar && (
-                <CustomTextInput
-                  title="Type to Search"
-                  value={searchText}
-                  onChangeText={setSearchText}
-                  blendColor={colors.surfaceElevated}
-                />
-              )
-            }
-            ListHeaderComponentStyle={{
-              backgroundColor: colors.surfaceElevated,
-            }}
-            renderItem={renderOption ?? renderItem}
-            ListEmptyComponent={
-              <CustomText
-                style={{
-                  backgroundColor: colors.surfaceElevated,
-                  padding: 12,
-                  fontWeight: "700",
-                  opacity: 0.9,
-                }}
-              >
-                {filteredResults.length === 0 && addSearchBar
-                  ? `No results found for "${searchText}"`
-                  : "No items available"}
-              </CustomText>
-            }
-          />
-          {buttonProperties.clearable && (
-            <CustomView
-              style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
+        </AppLinearGradient>
+        <FlatList
+          data={filteredResults}
+          keyExtractor={(item) => getId(item)}
+          ListHeaderComponent={() =>
+            addSearchBar &&
+            data.length !== 0 && (
+              <CustomTextInput
+                title="Type to Search"
+                value={searchText}
+                onChangeText={setSearchText}
+                blendColor={colors.surfaceElevated}
+              />
+            )
+          }
+          contentContainerStyle={{
+            gap: 8,
+            padding: 8,
+          }}
+          renderItem={renderOption ?? renderItem}
+          ListEmptyComponent={
+            <CustomText
+              style={{
+                padding: 12,
+                fontWeight: "700",
+                opacity: 0.9,
+              }}
             >
-              <CustomPressable
-                noFill
-                style={{
-                  alignSelf: "flex-end",
-                  width: "32%",
-                  alignItems: "center",
-                }}
-                onPress={() => {
-                  onItemSelect?.(null);
-                  setModalVisible(false);
-                }}
-              >
-                <CustomText style={{ fontWeight: "600" }}>Clear</CustomText>
-              </CustomPressable>
-            </CustomView>
-          )}
-          {buttonProperties.cancelable && (
-            <CustomView
-              style={{ backgroundColor: colors.surfaceElevated, padding: 8 }}
+              {filteredResults.length === 0 && addSearchBar && searchText
+                ? `No results found for "${searchText}"`
+                : "No items available"}
+            </CustomText>
+          }
+        />
+        {buttonProperties.clearable && (
+          <View style={{ padding: 8 }}>
+            <CustomPressable
+              noFill
+              style={{
+                alignSelf: "flex-end",
+                width: "32%",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                onItemSelect?.(null);
+                setModalVisible(false);
+              }}
             >
-              <CustomPressable
-                noFill
-                style={{
-                  alignSelf: "flex-end",
-                  width: "32%",
-                  alignItems: "center",
-                }}
-                onPress={() => setModalVisible(false)}
-              >
-                <CustomText style={{ fontWeight: "600" }}>Cancel</CustomText>
-              </CustomPressable>
-            </CustomView>
-          )}
-        </CustomView>
-      </CustomModal>
-    </View>
+              <CustomText style={{ fontWeight: "600" }}>Clear</CustomText>
+            </CustomPressable>
+          </View>
+        )}
+        {buttonProperties.cancelable && (
+          <View style={{ padding: 8 }}>
+            <CustomPressable
+              noFill
+              style={{
+                alignSelf: "flex-end",
+                width: "32%",
+                alignItems: "center",
+              }}
+              onPress={() => setModalVisible(false)}
+            >
+              <CustomText style={{ fontWeight: "600" }}>Cancel</CustomText>
+            </CustomPressable>
+          </View>
+        )}
+      </AppLinearGradient>
+    </CustomModal>
   );
 };
 
