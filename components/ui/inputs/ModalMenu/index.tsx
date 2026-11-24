@@ -69,8 +69,10 @@ const ModalMenu = <T,>({
         <CustomPressable
           inline
           onPress={() => {
-            onItemSelect?.(item);
             setModalVisible(false);
+            requestAnimationFrame(() => {
+              onItemSelect?.(item);
+            });
           }}
           style={{
             width: "100%",
