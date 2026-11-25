@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 
-interface CustomModalProps extends ModalProps {
+export interface CustomModalProps extends ModalProps {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   children?: ReactNode;
