@@ -13,7 +13,7 @@ import { AppLinearGradient, CustomText } from "@/components/ui";
 import { ProfileStatus } from "@/types/common";
 import { LocalProfilesData } from "@/types/localDbTypes";
 import { calculateAgeByDOB } from "@/utils/dateUtils";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import UserStatusBadge from "./UserStatusBadge";
@@ -189,4 +189,4 @@ const styles = StyleSheet.create((theme) => ({
   },
 }));
 
-export default UserActionCard;
+export default memo(UserActionCard);
