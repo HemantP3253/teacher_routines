@@ -1,3 +1,4 @@
+import { CloseIcon } from "@/assets/icons";
 import { IconProperties } from "@/types/common";
 import {
   GestureResponderEvent,
@@ -8,6 +9,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { Spacer } from "../../layout";
 import { AppLinearGradient, CustomText } from "../../primitives";
 
 interface TagChipProps extends PressableProps {
@@ -19,6 +21,11 @@ interface TagChipProps extends PressableProps {
   dottedBorder?: boolean;
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
+  removeIconProperties?: IconProperties;
+  onRemoveIconPress?:
+    | ((event: GestureResponderEvent) => void)
+    | null
+    | undefined;
 }
 
 const TagChip = ({
@@ -30,6 +37,8 @@ const TagChip = ({
   Icon,
   dottedBorder,
   style,
+  removeIconProperties,
+  onRemoveIconPress,
   ...props
 }: TagChipProps) => {
   const { theme } = useUnistyles();
@@ -63,6 +72,27 @@ const TagChip = ({
         <CustomText type="text" style={[styles.labelText]} numberOfLines={1}>
           {label}
         </CustomText>
+
+        {onRemoveIconPress && (
+          <>
+            <Spacer
+              line={{ type: "divider", size: 1 }}
+              style={styles.removeDivider}
+            />
+            <Pressable
+              onPress={onRemoveIconPress}
+              hitSlop={8}
+              accessibilityRole="button"
+              style={styles.removeButton}
+            >
+              <CloseIcon
+                size={14}
+                fill={selected ? colors.primaryContent : colors.textSecondary}
+                {...removeIconProperties}
+              />
+            </Pressable>
+          </>
+        )}
       </AppLinearGradient>
     </Pressable>
   );
@@ -91,9 +121,16 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     paddingHorizontal: theme.spacing.md,
     justifyContent: "center",
-    alignSelf: "flex-start",
-    height: "100%",
     alignItems: "center",
+    height: "100%",
+  },
+  removeDivider: {
+    height: 24,
+    marginHorizontal: theme.spacing.sm,
+  },
+  removeButton: {
+    alignItems: "center",
+    justifyContent: "center",
   },
   iconWrapper: {
     marginRight: theme.spacing.sm,
