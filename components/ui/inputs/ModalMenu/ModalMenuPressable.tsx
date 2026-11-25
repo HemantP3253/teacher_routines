@@ -1,6 +1,6 @@
 import { IconProperties } from "@/types/common";
 import { Pressable, PressableProps, View } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { Spacer } from "../../layout";
 import { CustomText } from "../../primitives";
 
@@ -33,43 +33,43 @@ const ModalMenuPressable = ({
   return (
     <Pressable
       style={(state) => [
-        state.pressed && { opacity: 0.8 },
-        {
-          backgroundColor: "transparent",
-          borderWidth: 1,
+        state.pressed && styles.pressedContainer,
+        styles.rootContainer,
+        selectedItem && {
+          backgroundColor: colors.primaryContainer,
           borderColor: colors.primary,
-          alignItems: "center",
-          gap: 8,
-          flexDirection: "row",
-          padding: 4,
-          flexWrap: "wrap",
-          borderRadius: 12,
         },
         typeof style === "function" ? style(state) : style,
       ]}
       {...props}
     >
-      {Icon && <Icon size={24} fill={colors.primary} />}
-      <View style={{ flex: 1, paddingHorizontal: 8 }}>
-        <CustomText
-          type="text"
-          style={{
-            flexWrap: "wrap",
-            fontSize: 16,
-            opacity: 0.9,
-            fontWeight: "700",
-          }}
-        >
+      {Icon && (
+        <Icon
+          size={24}
+          fill={selectedItem ? colors.primary : colors.textSecondary}
+        />
+      )}
+      <View style={styles.contentContainer}>
+        <CustomText type="text" style={styles.titleText}>
           {title}
         </CustomText>
-        <Spacer line={{ type: "primaryContainer" }} horizontal useFullWidth />
+
+        <Spacer
+          line={{ type: selectedItem ? "onPrimaryContainer" : "divider" }}
+          horizontal
+          useFullWidth
+        />
+
         <CustomText
-          style={{
-            flexWrap: "wrap",
-            fontSize: 14,
-            fontWeight: "600",
-            opacity: 0.7,
-          }}
+          style={[
+            styles.itemText,
+            !selectedItem && {
+              color: colors.textSecondary,
+              opacity: 0.55,
+              fontWeight: "400",
+              fontStyle: "italic",
+            },
+          ]}
         >
           {selectedItem || noSelectionDescription}
         </CustomText>
@@ -77,5 +77,34 @@ const ModalMenuPressable = ({
     </Pressable>
   );
 };
+
+const styles = StyleSheet.create(({ colors, spacing, radius, typography }) => ({
+  rootContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.sm,
+    padding: spacing.xs,
+    borderRadius: radius.lg,
+  },
+  pressedContainer: { transform: [{ scale: 0.98 }], opacity: 0.85 },
+  contentContainer: { flex: 1, paddingHorizontal: spacing.sm },
+  titleText: {
+    ...typography.caption,
+    flexWrap: "wrap",
+    opacity: 0.9,
+    fontWeight: "700",
+  },
+  itemText: {
+    ...typography.body,
+    color: colors.primary,
+    flexWrap: "wrap",
+    fontWeight: "700",
+  },
+  selectedItemText: {},
+}));
 
 export default ModalMenuPressable;
