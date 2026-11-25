@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Pressable, PressableProps } from "react-native";
 import { useUnistyles } from "react-native-unistyles";
 
@@ -13,16 +12,13 @@ const CustomPressable = ({
   inline,
   ...otherProps
 }: ThemedPressableProps) => {
-  const [pressed, setPressed] = useState<boolean>(false);
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
   return (
     <Pressable
       style={(state) => [
-        pressed
-          ? { borderColor: colors.neutral100 }
-          : { borderColor: colors.success },
+        state.pressed && { transform: [{ scale: 0.98 }], opacity: 0.85 },
         inline
           ? {}
           : {
@@ -37,7 +33,6 @@ const CustomPressable = ({
             },
         typeof style === "function" ? style(state) : style,
       ]}
-      onPress={() => setPressed(true)}
       {...otherProps}
     />
   );
