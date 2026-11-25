@@ -1,5 +1,5 @@
 import { AltRouteIcon, DateRangeIcon, DegreeIcon } from "@/assets/icons";
-import { ModalMenu } from "@/components/ui";
+import { ModalMenu, ModalMenuPressable } from "@/components/ui";
 import {
   getNextCurriculumEntities,
   getProgramContextById,
@@ -12,6 +12,7 @@ import {
   UniversityProgram,
 } from "@/types/academic";
 import { MenuSteps } from "@/types/routines";
+import { useState } from "react";
 
 interface StepMenuProps {
   currentStep: MenuSteps;
@@ -30,69 +31,93 @@ const CurrentStepMenu = ({ currentStep }: StepMenuProps) => {
   const setAcademicLevel = useRoutineStore((state) => state.setAcademicLevel);
 
   const hasBranches: boolean = selectedProgram?.hasBranches ?? false;
+  const title = `Select ${currentStep}`;
 
   const programContext = getProgramContextById(selectedProgram?.id);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   switch (currentStep) {
     case "Program":
       return (
-        <ModalMenu<UniversityProgram>
-          title={"Select Program"}
-          data={programs}
-          selectedItem={selectedProgram ?? null}
-          onItemSelect={setProgram}
-          getId={(item) => item.id}
-          getLabel={(item) => `${item.name} (${item.shortCode})`}
-          iconProperties={{ Icon: DegreeIcon }}
-        />
+        <>
+          <ModalMenuPressable
+            title={title}
+            target={currentStep}
+            iconProperties={{ Icon: DegreeIcon }}
+            selectedItem={selectedProgram?.name ?? null}
+            onPress={() => setModalVisible(true)}
+            style={{ marginHorizontal: 8 }}
+          />
+          <ModalMenu<UniversityProgram>
+            selectedItem={selectedProgram}
+            addSearchBar
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            title={title}
+            data={programs}
+            onItemSelect={setProgram}
+            getId={(item) => item.id}
+            getLabel={(item) => `${item.name} (${item.shortCode})`}
+            sortType="ascending"
+          />
+        </>
       );
     case "Branch":
       return hasBranches ? (
-        <ModalMenu<UniversityBranch>
-          title={"Select Branch"}
-          data={
-            getNextCurriculumEntities(
+        <>
+          <ModalMenuPressable
+            title={title}
+            target={currentStep}
+            iconProperties={{ Icon: AltRouteIcon }}
+            selectedItem={selectedBranch?.name ?? null}
+            onPress={() => setModalVisible(true)}
+            style={{ marginHorizontal: 8 }}
+          />
+          <ModalMenu<UniversityBranch>
+            selectedItem={selectedBranch}
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            title={title}
+            data={getNextCurriculumEntities(
               programContext?.unit.id ?? "",
               programContext?.level.id ?? "",
               selectedProgram?.id ?? "",
-            ) ?? []
-          }
-          selectedItem={selectedBranch ?? null}
-          onItemSelect={setBranch}
-          getId={(item) => item.id}
-          getLabel={(item) => item.name}
-          iconProperties={{ Icon: AltRouteIcon }}
-          alertCondition={{
-            visible: !selectedProgram,
-            title: "Program not selected",
-            description: "Please select a program first!",
-          }}
-        />
-      ) : undefined;
-    case "Term":
-      const alertType = hasBranches ? "Branch" : "Program";
+            )}
+            onItemSelect={setBranch}
+            getId={(item) => item.id}
+            getLabel={(item) => item.name}
+            sortType="ascending"
+          />
+        </>
+      ) : null;
+    case "Academic Level":
       return (
-        <ModalMenu<AcademicLevel>
-          title={"Select Academic Level"}
-          data={
-            getNextCurriculumEntities(
+        <>
+          <ModalMenuPressable
+            title={title}
+            target={currentStep}
+            iconProperties={{ Icon: DateRangeIcon }}
+            selectedItem={selectedAcademicLevel?.name ?? null}
+            onPress={() => setModalVisible(true)}
+            style={{ marginHorizontal: 8 }}
+          />
+          <ModalMenu<AcademicLevel>
+            selectedItem={selectedAcademicLevel}
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            title={title}
+            data={getNextCurriculumEntities(
               programContext?.unit.id ?? "",
               programContext?.level.id ?? "",
               selectedProgram?.id ?? "",
               selectedBranch?.id ?? "",
-            ) ?? []
-          }
-          selectedItem={selectedAcademicLevel ?? null}
-          onItemSelect={setAcademicLevel}
-          getId={(item) => item.id}
-          getLabel={(item) => item.name}
-          iconProperties={{ Icon: DateRangeIcon }}
-          alertCondition={{
-            visible: hasBranches ? !selectedBranch : !selectedProgram,
-            title: `${alertType} not selected.`,
-            description: `Please select a ${alertType.toLowerCase()} first!`,
-          }}
-        />
+            )}
+            onItemSelect={setAcademicLevel}
+            getId={(item) => item.id}
+            getLabel={(item) => item.name}
+            sortType="ascending"
+          />
+        </>
       );
   }
 };
