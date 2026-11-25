@@ -1,7 +1,13 @@
 import { SearchIcon } from "@/assets/icons";
 import { IconProperties } from "@/types/common";
 import { ReactNode } from "react";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleProp,
+  View,
+  ViewStyle,
+} from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { Spacer } from "../layout";
 import { AppLinearGradient, CustomText } from "../primitives";
@@ -13,6 +19,7 @@ interface ActionableHeaderCardProps {
   searchButtonProperties?: {
     onPress: () => void;
   };
+  childrenContainerStyle?: StyleProp<ViewStyle>;
   showBottomBorder?: boolean;
   isDataLoading?: boolean;
   children?: ReactNode;
@@ -28,6 +35,7 @@ const ActionableHeaderCard = ({
   children,
   IconBeforeText,
   summaryText,
+  childrenContainerStyle,
 }: ActionableHeaderCardProps) => {
   const { theme } = useUnistyles();
   const colors = theme.colors;
@@ -71,7 +79,9 @@ const ActionableHeaderCard = ({
       {isDataLoading ? (
         <ActivityIndicator size={"large"} />
       ) : (
-        <View style={styles.contentContainer}>{children}</View>
+        <View style={[styles.contentContainer, childrenContainerStyle]}>
+          {children}
+        </View>
       )}
 
       {summaryText && (
