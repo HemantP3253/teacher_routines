@@ -1,11 +1,9 @@
 import { AssignmentIcon } from "@/assets/icons";
-import { AlertDialog, AppLinearGradient, CustomText } from "@/components/ui";
+import { AppLinearGradient, CustomText } from "@/components/ui";
 import { CurriculumSubject } from "@/types/academic";
 import { calculateFullPeriodTime } from "@/utils/dateUtils";
-import { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import AssignTeacherModal from "./AssignTeacherModal";
 
 interface SubjectCardProps {
   subject: CurriculumSubject;
@@ -17,23 +15,17 @@ interface SubjectCardProps {
     teacherId: string;
     teacherName: string;
   };
-  onTeacherChange: (teacherId: string, teacherName: string) => void;
-  errorInfo?: {
-    title: string;
-    description: string;
-    showError?: boolean;
-  };
+  onAssignmentIconPress: (subjectId: string) => void;
 }
 
 const SubjectCard = ({
   subject,
   durationInfo,
   teacherInfo,
-  onTeacherChange,
-  errorInfo,
+  onAssignmentIconPress,
 }: SubjectCardProps) => {
-  const { colors } = useUnistyles().theme;
-  const [visible, setVisible] = useState<boolean>(false);
+  const { theme } = useUnistyles();
+  const colors = theme.colors;
 
   return (
     <View style={styles.rootView}>
@@ -76,28 +68,8 @@ const SubjectCard = ({
           fillItem={!!teacherInfo}
           fill={colors.secondary}
           style={styles.icon}
-          onPress={() => setVisible(true)}
+          onPress={() => onAssignmentIconPress(subject.id)}
         />
-
-        {/* If error is shown, then the error modal appears, otherwise assign teacher modal appears */}
-        {errorInfo && errorInfo.showError ? (
-          <AlertDialog
-            title={errorInfo.title}
-            description={errorInfo?.description || ""}
-            visible={visible}
-            onClose={() => setVisible(false)}
-            onConfirm={() => setVisible(false)}
-          />
-        ) : (
-          <AssignTeacherModal
-            visible={visible}
-            onClose={() => setVisible(false)}
-            onSelectTeacher={(id, name) => {
-              onTeacherChange(id, name);
-              setVisible(false);
-            }}
-          />
-        )}
       </AppLinearGradient>
     </View>
   );
