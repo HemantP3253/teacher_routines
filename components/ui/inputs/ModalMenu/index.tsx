@@ -2,7 +2,7 @@ import { MenuProps } from "@/types/common";
 import { sortByLabel } from "@/utils/sortUtils";
 import { useCallback, useMemo, useState } from "react";
 import { FlatList, ListRenderItem, View } from "react-native";
-import { useUnistyles } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { CustomModal } from "../../overlays";
 import { CustomModalProps } from "../../overlays/CustomModal";
 import {
@@ -74,32 +74,15 @@ const ModalMenu = <T,>({
               onItemSelect?.(item);
             });
           }}
-          style={{
-            width: "100%",
-            alignItems: "stretch",
-            justifyContent: "center",
-          }}
+          style={styles.menuItemContainer}
         >
           <AppLinearGradient
             type={"surfaceElevated"}
-            style={[
-              isSelected && { borderWidth: 1, borderColor: colors.primary },
-              {
-                borderRadius: 8,
-                padding: 8,
-              },
-            ]}
+            style={[isSelected && styles.selectedItem, styles.menuItemGradient]}
             start={{ x: 1, y: 1 }}
             end={{ x: 0, y: 0 }}
           >
-            <CustomText
-              type="text"
-              style={{
-                fontWeight: "600",
-                flexWrap: "wrap",
-                flexShrink: 1,
-              }}
-            >
+            <CustomText type="text" style={styles.menuItemLabel}>
               {getLabel(item)}
             </CustomText>
 
@@ -110,15 +93,7 @@ const ModalMenu = <T,>({
         </CustomPressable>
       );
     },
-    [
-      getId,
-      selectedId,
-      onItemSelect,
-      getLabel,
-      getSublabel,
-      setModalVisible,
-      colors.primary,
-    ],
+    [getId, selectedId, onItemSelect, getLabel, getSublabel, setModalVisible],
   );
 
   return (
@@ -129,26 +104,9 @@ const ModalMenu = <T,>({
         if (!isVisible) setModalVisible(false);
       }}
     >
-      <AppLinearGradient
-        type="background"
-        style={{
-          width: "100%",
-          borderRadius: 16,
-          overflow: "hidden",
-          borderWidth: 1,
-          borderColor: colors.border,
-        }}
-      >
+      <AppLinearGradient type="background" style={styles.rootContainer}>
         <AppLinearGradient type="surface">
-          <CustomText
-            type="text"
-            style={{
-              fontSize: 18,
-              padding: 8,
-              fontWeight: "800",
-              textAlign: "center",
-            }}
-          >
+          <CustomText type="text" style={styles.titleText}>
             {title}
           </CustomText>
         </AppLinearGradient>
@@ -166,34 +124,21 @@ const ModalMenu = <T,>({
               />
             )
           }
-          contentContainerStyle={{
-            gap: 8,
-            padding: 8,
-          }}
+          contentContainerStyle={styles.menuList}
           renderItem={renderOption ?? renderItem}
           ListEmptyComponent={
-            <CustomText
-              style={{
-                padding: 12,
-                fontWeight: "700",
-                opacity: 0.9,
-              }}
-            >
+            <CustomText style={styles.emptyListText}>
               {filteredResults.length === 0 && addSearchBar && searchText
                 ? `No results found for "${searchText}"`
                 : "No items available"}
             </CustomText>
           }
         />
-        {buttonProperties.clearable && (
-          <View style={{ padding: 8 }}>
+        <View style={styles.footerButtonContainer}>
+          {buttonProperties.clearable && (
             <CustomPressable
               noFill
-              style={{
-                alignSelf: "flex-end",
-                width: "32%",
-                alignItems: "center",
-              }}
+              style={styles.footerButton}
               onPress={() => {
                 onItemSelect?.(null);
                 setModalVisible(false);
@@ -201,26 +146,73 @@ const ModalMenu = <T,>({
             >
               <CustomText style={{ fontWeight: "600" }}>Clear</CustomText>
             </CustomPressable>
-          </View>
-        )}
-        {buttonProperties.cancelable && (
-          <View style={{ padding: 8 }}>
+          )}
+          {buttonProperties.cancelable && (
             <CustomPressable
               noFill
-              style={{
-                alignSelf: "flex-end",
-                width: "32%",
-                alignItems: "center",
-              }}
+              style={[styles.footerButton, styles.cancelButton]}
               onPress={() => setModalVisible(false)}
             >
               <CustomText style={{ fontWeight: "600" }}>Cancel</CustomText>
             </CustomPressable>
-          </View>
-        )}
+          )}
+        </View>
       </AppLinearGradient>
     </CustomModal>
   );
 };
+
+const styles = StyleSheet.create(({ colors, spacing, radius }) => ({
+  rootContainer: {
+    width: "100%",
+    borderRadius: radius.xl,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  selectedItem: { borderWidth: 1, borderColor: colors.primary },
+  menuItemContainer: {
+    width: "100%",
+    alignItems: "stretch",
+    justifyContent: "center",
+  },
+  menuItemGradient: {
+    borderRadius: radius.md,
+    padding: spacing.sm,
+  },
+  menuItemLabel: {
+    fontWeight: "600",
+    flexWrap: "wrap",
+    flexShrink: 1,
+  },
+  titleText: {
+    fontSize: 18,
+    padding: spacing.sm,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+  menuList: {
+    gap: spacing.sm,
+    padding: spacing.sm,
+  },
+  emptyListText: {
+    padding: 12,
+    fontWeight: "700",
+    opacity: 0.9,
+  },
+  footerButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    height: "18%",
+    paddingHorizontal: spacing.xs,
+  },
+  cancelButton: { borderColor: colors.border },
+  footerButton: {
+    flex: 1,
+    alignItems: "center",
+    height: "50%",
+  },
+}));
 
 export default ModalMenu;
