@@ -38,29 +38,54 @@ const Spacer = ({
   const { theme } = useUnistyles();
   const colors = theme.colors;
 
-  const containerStyle: StyleProp<ViewStyle> = [
-    horizontal
-      ? { width: useFullWidth ? "100%" : size, height: "auto" }
-      : { height: size, width: useFullWidth ? "100%" : "auto" },
-    line && {
-      justifyContent: "center",
-      marginHorizontal: useFullWidth ? 0 : 4,
-    },
-  ];
-
   const lineColor = (
     line?.type ? colors[line.type] : line?.color ? line.color : colors.divider
   ) as ColorValue;
   const lineSize = line?.size ?? 1;
 
+  const containerStyle: StyleProp<ViewStyle> = [
+    horizontal
+      ? {
+          width: useFullWidth ? "100%" : size,
+          ...(line ? { height: lineSize } : {}),
+        }
+      : {
+          height: size,
+          ...(useFullWidth
+            ? { width: "100%" }
+            : { width: line ? lineSize : undefined }),
+          ...(line ? { alignSelf: "stretch" } : {}),
+        },
+    line &&
+      (horizontal
+        ? {
+            justifyContent: "center",
+            marginVertical: 4,
+          }
+        : {
+            justifyContent: "center",
+            alignItems: "center",
+            marginHorizontal: 4,
+          }),
+  ];
+
   return (
-    <View style={containerStyle} {...props}>
+    <View style={[containerStyle, props.style]} {...props}>
       {line && (
         <View
-          style={{
-            backgroundColor: lineColor,
-            height: lineSize,
-          }}
+          style={
+            horizontal
+              ? {
+                  backgroundColor: lineColor,
+                  width: "100%",
+                  height: lineSize,
+                }
+              : {
+                  backgroundColor: lineColor,
+                  width: lineSize,
+                  height: "100%",
+                }
+          }
         />
       )}
     </View>
