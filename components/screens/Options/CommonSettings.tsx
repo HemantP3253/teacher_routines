@@ -32,16 +32,18 @@ const CommonSettings = () => {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
       >
-        <RadioButtonMenu
-          title="Select Theme"
-          data={availableThemeOptions}
-          selectedItem={themePreference}
-          getId={(item) => item.toLowerCase().replace(/\s+/gu, "-")}
-          getLabel={(item) => item}
-          getSublabel={(item) => themeSublabel[item]}
-          alwaysShowSubLabel
-          onItemSelect={setThemePreference}
-        />
+        <View style={{ width: "100%" }}>
+          <RadioButtonMenu
+            title="Select Theme"
+            data={availableThemeOptions}
+            selectedItem={themePreference}
+            getId={(item) => item.toLowerCase().replace(/\s+/gu, "-")}
+            getLabel={(item) => item}
+            getSublabel={(item) => themeSublabel[item]}
+            alwaysShowSubLabel
+            onItemSelect={setThemePreference}
+          />
+        </View>
       </CustomModal>
     </View>
   );
