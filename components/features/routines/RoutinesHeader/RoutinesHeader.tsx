@@ -56,6 +56,7 @@ const RoutinesHeader = () => {
         isDataLoading={false}
         summaryText={isExpanded ? undefined : summaryText}
         showBottomBorder={isExpanded}
+        childrenContainerStyle={{ gap: 4 }}
       >
         {isExpanded && (
           <>
