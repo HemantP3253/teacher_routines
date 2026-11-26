@@ -54,6 +54,7 @@ const CurrentStepMenu = ({ currentStep }: StepMenuProps) => {
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             title={title}
+            buttonProperties={{ cancelable: true, clearable: true }}
             data={programs}
             onItemSelect={setProgram}
             getId={(item) => item.id}
@@ -78,6 +79,7 @@ const CurrentStepMenu = ({ currentStep }: StepMenuProps) => {
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             title={title}
+            buttonProperties={{ cancelable: true, clearable: true }}
             data={getNextCurriculumEntities(
               programContext?.unit.id ?? "",
               programContext?.level.id ?? "",
@@ -106,6 +108,7 @@ const CurrentStepMenu = ({ currentStep }: StepMenuProps) => {
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             title={title}
+            buttonProperties={{ cancelable: true, clearable: true }}
             data={getNextCurriculumEntities(
               programContext?.unit.id ?? "",
               programContext?.level.id ?? "",
