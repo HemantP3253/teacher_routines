@@ -96,6 +96,41 @@ const ModalMenu = <T,>({
     [getId, selectedId, onItemSelect, getLabel, getSublabel, setModalVisible],
   );
 
+  const listFooter = useMemo(
+    () => (
+      <View style={styles.footerButtonContainer}>
+        {buttonProperties.clearable && selectedItem !== null && (
+          <CustomPressable
+            noFill
+            style={styles.footerButton}
+            onPress={() => {
+              onItemSelect?.(null);
+              setModalVisible(false);
+            }}
+          >
+            <CustomText style={{ fontWeight: "600" }}>Clear</CustomText>
+          </CustomPressable>
+        )}
+        {buttonProperties.cancelable && (
+          <CustomPressable
+            noFill
+            style={[styles.footerButton, styles.cancelButton]}
+            onPress={() => setModalVisible(false)}
+          >
+            <CustomText style={{ fontWeight: "600" }}>Cancel</CustomText>
+          </CustomPressable>
+        )}
+      </View>
+    ),
+    [
+      buttonProperties.cancelable,
+      buttonProperties.clearable,
+      onItemSelect,
+      selectedItem,
+      setModalVisible,
+    ],
+  );
+
   return (
     <CustomModal
       modalVisible={modalVisible}
@@ -133,30 +168,8 @@ const ModalMenu = <T,>({
                 : "No items available"}
             </CustomText>
           }
+          ListFooterComponent={listFooter}
         />
-        <View style={styles.footerButtonContainer}>
-          {buttonProperties.clearable && (
-            <CustomPressable
-              noFill
-              style={styles.footerButton}
-              onPress={() => {
-                onItemSelect?.(null);
-                setModalVisible(false);
-              }}
-            >
-              <CustomText style={{ fontWeight: "600" }}>Clear</CustomText>
-            </CustomPressable>
-          )}
-          {buttonProperties.cancelable && (
-            <CustomPressable
-              noFill
-              style={[styles.footerButton, styles.cancelButton]}
-              onPress={() => setModalVisible(false)}
-            >
-              <CustomText style={{ fontWeight: "600" }}>Cancel</CustomText>
-            </CustomPressable>
-          )}
-        </View>
       </AppLinearGradient>
     </CustomModal>
   );
@@ -202,16 +215,14 @@ const styles = StyleSheet.create(({ colors, spacing, radius }) => ({
   },
   footerButtonContainer: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "flex-end",
     alignItems: "center",
-    height: "18%",
-    paddingHorizontal: spacing.xs,
   },
   cancelButton: { borderColor: colors.border },
   footerButton: {
     flex: 1,
     alignItems: "center",
-    height: "50%",
+    maxWidth: "50%",
   },
 }));
 
