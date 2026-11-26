@@ -109,6 +109,14 @@ const ModalMenu = <T,>({
     [getId, selectedId, onItemSelect, getLabel, getSublabel, setModalVisible],
   );
 
+  const listEmpty = useMemo(() => {
+    const message =
+      filteredResults.length === 0 && addSearchBar && searchText
+        ? `No results found for "${searchText}"`
+        : "No items available";
+    return <CustomText style={styles.emptyListText}>{message}</CustomText>;
+  }, [filteredResults.length, searchText, addSearchBar]);
+
   const listFooter = useMemo(
     () => (
       <View style={styles.footerButtonContainer}>
@@ -164,13 +172,7 @@ const ModalMenu = <T,>({
           ListHeaderComponent={listHeader}
           contentContainerStyle={styles.menuList}
           renderItem={renderOption ?? renderItem}
-          ListEmptyComponent={
-            <CustomText style={styles.emptyListText}>
-              {filteredResults.length === 0 && addSearchBar && searchText
-                ? `No results found for "${searchText}"`
-                : "No items available"}
-            </CustomText>
-          }
+          ListEmptyComponent={listEmpty}
           ListFooterComponent={listFooter}
         />
       </AppLinearGradient>
