@@ -60,6 +60,19 @@ const ModalMenu = <T,>({
     );
   }, [sortedData, searchText, getLabel]);
 
+  const listHeader = useMemo(
+    () =>
+      addSearchBar && data.length !== 0 ? (
+        <CustomTextInput
+          title="Type to Search"
+          value={searchText}
+          onChangeText={setSearchText}
+          blendColor={colors.surfaceElevated}
+        />
+      ) : null,
+    [addSearchBar, data.length, searchText, colors.surfaceElevated],
+  );
+
   const renderItem = useCallback(
     ({ item }: { item: T }) => {
       const id = getId(item);
@@ -148,17 +161,7 @@ const ModalMenu = <T,>({
         <FlatList
           data={filteredResults}
           keyExtractor={(item) => getId(item)}
-          ListHeaderComponent={() =>
-            addSearchBar &&
-            data.length !== 0 && (
-              <CustomTextInput
-                title="Type to Search"
-                value={searchText}
-                onChangeText={setSearchText}
-                blendColor={colors.surfaceElevated}
-              />
-            )
-          }
+          ListHeaderComponent={listHeader}
           contentContainerStyle={styles.menuList}
           renderItem={renderOption ?? renderItem}
           ListEmptyComponent={
